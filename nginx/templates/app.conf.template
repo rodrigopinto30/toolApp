@@ -1,0 +1,73 @@
+# Processed by envsubst when the container starts (defined environment variables only).
+
+# Empty HSTS in dev: an HSTS header on "localhost" would affect all your local projects.
+map "" $hsts_header {
+    default "${NGINX_HSTS}";
+}
+
+server {
+    listen 8080 default_server;
+    server_name _;
+
+    location = /nginx-health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 301 https://$host:${PUBLIC_HTTPS_PORT}$request_uri;
+    }
+}
+
+server {
+    listen 8443 ssl default_server;
+    http2 on;
+    server_name _;
+
+    ssl_certificate     /etc/nginx/certs/tls.crt;
+    ssl_certificate_key /etc/nginx/certs/tls.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    include /etc/nginx/snippets/security-headers.conf;
+
+    limit_conn perip 50;
+
+    # --- API (FastAPI) ---
+    location /api/v1/auth/ {
+        limit_req zone=auth burst=5 nodelay;
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_pass http://backend;
+    }
+
+    location /api/ {
+        limit_req zone=api burst=30 nodelay;
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_pass http://backend;
+    }
+
+    # --- Product images (local volume) ---
+    location /media/ {
+        alias /var/www/media/;
+        autoindex off;
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "public, max-age=604800" always;
+    }
+
+    # --- Next.js assets (Next sends its own Cache-Control: immutable in prod, no-store in dev) ---
+    location /_next/static/ {
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_pass http://frontend;
+    }
+
+    # --- Frontend (Next.js) ---
+    location / {
+        limit_req zone=general burst=60 nodelay;
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_pass http://frontend;
+    }
+}
