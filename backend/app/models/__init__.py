@@ -1,0 +1,73 @@
+"""Importing this package registers every table in Base.metadata (Alembic needs them all)."""
+
+from app.models.audit import AuditLog
+from app.models.catalog import (
+    Attribute,
+    AttributeValue,
+    Brand,
+    Category,
+    Locale,
+    Product,
+    ProductImage,
+    ProductTranslation,
+    ProductVariant,
+    variant_attribute_values,
+)
+from app.models.community import Favorite, Review, ReviewStatus
+from app.models.identity import Address, BillingProfile, TaxCondition, TaxIdType, User, UserRole
+from app.models.pricing import ExchangeRate, PickupPoint, Province, ShippingZone
+from app.models.shopping import (
+    Cart,
+    CartItem,
+    Coupon,
+    CouponRedemption,
+    CouponType,
+    Currency,
+    DeliveryMethod,
+    Order,
+    OrderItem,
+    OrderStatus,
+    OrderStatusHistory,
+    Payment,
+    PaymentStatus,
+)
+
+__all__ = [
+    "Address",
+    "Attribute",
+    "AttributeValue",
+    "AuditLog",
+    "BillingProfile",
+    "Brand",
+    "Cart",
+    "CartItem",
+    "Category",
+    "Coupon",
+    "CouponRedemption",
+    "CouponType",
+    "Currency",
+    "DeliveryMethod",
+    "ExchangeRate",
+    "Favorite",
+    "Locale",
+    "Order",
+    "OrderItem",
+    "OrderStatus",
+    "OrderStatusHistory",
+    "Payment",
+    "PaymentStatus",
+    "PickupPoint",
+    "Product",
+    "ProductImage",
+    "ProductTranslation",
+    "ProductVariant",
+    "Province",
+    "Review",
+    "ReviewStatus",
+    "ShippingZone",
+    "TaxCondition",
+    "TaxIdType",
+    "User",
+    "UserRole",
+    "variant_attribute_values",
+]

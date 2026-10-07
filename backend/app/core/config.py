@@ -31,6 +31,13 @@ class Settings(BaseSettings):
 
     health_check_timeout: float = 2.0
 
+    log_level: str = "INFO"
+    request_timeout_seconds: float = 25.0
+    max_body_bytes: int = 1_048_576
+
+    admin_email: str | None = None
+    admin_password: SecretStr | None = None
+
     @property
     def is_dev(self) -> bool:
         return self.app_env == "development"
@@ -50,4 +57,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()  # type: ignore[call-arg]
+    return Settings() 

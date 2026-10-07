@@ -1,7 +1,9 @@
 import asyncio
 
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Response, status
 from sqlalchemy import text
+
+from app.core.container import EngineDep, RedisDep, SettingsDep
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -13,18 +15,19 @@ async def live() -> dict[str, str]:
 
 
 @router.get("/ready")
-async def ready(request: Request, response: Response) -> dict[str, object]:
+async def ready(
+    response: Response, settings: SettingsDep, engine: EngineDep, redis: RedisDep
+) -> dict[str, object]:
     """MySQL is required; if Redis is down the API keeps working without cache (degraded)."""
-    state = request.app.state
-    timeout = state.settings.health_check_timeout
+    timeout = settings.health_check_timeout
 
     async def check_db() -> bool:
-        async with state.engine.connect() as conn:
+        async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
         return True
 
     async def check_redis() -> bool:
-        return bool(await state.redis.ping())
+        return bool(await redis.ping())
 
     results: dict[str, str] = {}
     for name, check in (("mysql", check_db), ("redis", check_redis)):

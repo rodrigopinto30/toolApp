@@ -76,6 +76,7 @@ services:
     depends_on:
       mysql: { condition: service_healthy }
       redis: { condition: service_healthy }
+      migrations: { condition: service_completed_successfully }
     environment:
       APP_ENV: production
       MYSQL_HOST: mysql
@@ -102,17 +103,51 @@ services:
       resources:
         limits: { cpus: "1.00", memory: 512M }
 
+  # Run-once job: applies the Alembic migrations and the idempotent seed, then exits.
+  # Uses the migrator user (DDL); the API only gets SELECT/INSERT/UPDATE/DELETE.
+  migrations:
+    <<: *hardening
+    restart: "no"
+    build:
+      context: ./backend
+      target: prod
+    image: toolapp-backend:latest
+    command: ["sh", "-c", "alembic upgrade head && python -m app.seed"]
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      APP_ENV: production
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_MIGRATOR_USER}
+      MYSQL_PASSWORD: ${MYSQL_MIGRATOR_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    networks: [internal]
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 256M }
+
   mysql:
     <<: *hardening
     image: mysql:8.4
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      # Users are created by mysql/initdb/01-users.sh (least privilege), not by the entrypoint.
+      APP_DB_USER: ${MYSQL_USER}
+      APP_DB_PASSWORD: ${MYSQL_PASSWORD}
+      MIGRATOR_DB_USER: ${MYSQL_MIGRATOR_USER}
+      MIGRATOR_DB_PASSWORD: ${MYSQL_MIGRATOR_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./mysql/initdb:/docker-entrypoint-initdb.d:ro
     networks: [internal]
     healthcheck:
       # 127.0.0.1 (TCP) so it does not report healthy while the temporary init server runs.
