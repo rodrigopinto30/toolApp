@@ -30,6 +30,21 @@ services:
       SMTP_PORT: 1025
     volumes:
       - ./backend/app:/app/app:ro
+      - ./backend/migrations:/app/migrations:ro
+      - ./backend/alembic.ini:/app/alembic.ini:ro
+      - ./backend/tests:/app/tests:ro
+      - ./backend/pytest.ini:/app/pytest.ini:ro
+
+  migrations:
+    build:
+      target: dev
+    image: toolapp-backend:dev
+    environment:
+      APP_ENV: development
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./backend/migrations:/app/migrations:ro
+      - ./backend/alembic.ini:/app/alembic.ini:ro
 
   mailpit:
     image: axllent/mailpit:v1.27
@@ -42,3 +57,22 @@ services:
     networks: [internal, edge]
     security_opt:
       - no-new-privileges:true
+
+  # Database UI (dev only), bound to localhost. Log in with a MySQL user from .env:
+  # MYSQL_USER (read/write rows) or MYSQL_MIGRATOR_USER (also schema changes).
+  phpmyadmin:
+    image: phpmyadmin:5.2-apache
+    restart: unless-stopped
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "127.0.0.1:${PHPMYADMIN_PORT:-8081}:80"
+    networks: [internal, edge]
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 256M }

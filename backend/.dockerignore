@@ -4,3 +4,5 @@
 .venv
 .env*
 Dockerfile
+tests
+pytest.ini
