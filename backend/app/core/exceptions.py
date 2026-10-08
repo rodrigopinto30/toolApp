@@ -49,6 +49,12 @@ class UnauthorizedError(AppError):
     message = "Authentication required."
 
 
+class ServiceUnavailableError(AppError):
+    status_code = 503
+    code = "service_unavailable"
+    message = "The service is temporarily unavailable."
+
+
 class BusinessRuleViolation(AppError):
     status_code = 422
     code = "business_rule_violation"

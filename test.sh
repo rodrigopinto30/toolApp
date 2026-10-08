@@ -13,7 +13,8 @@ set -a; source .env; set +a
 export MYSQL_DATABASE="${MYSQL_DATABASE}_test"
 export MYSQL_USER="$MYSQL_MIGRATOR_USER"
 export MYSQL_PASSWORD="$MYSQL_MIGRATOR_PASSWORD"
+export REDIS_DB=1
 
 exec "${COMPOSE[@]}" run --rm --no-deps -T \
-  -e MYSQL_DATABASE -e MYSQL_USER -e MYSQL_PASSWORD \
+  -e MYSQL_DATABASE -e MYSQL_USER -e MYSQL_PASSWORD -e REDIS_DB \
   backend pytest "$@"

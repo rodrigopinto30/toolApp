@@ -1,0 +1,5 @@
+{
+  "executionEnvironments": [
+    { "root": "backend", "pythonVersion": "3.12" }
+  ]
+}
