@@ -28,12 +28,19 @@ class Settings(BaseSettings):
     redis_port: int = 6379
     redis_password: SecretStr
     redis_socket_timeout: float = 2.0
+    redis_db: int = 0
 
     health_check_timeout: float = 2.0
 
     log_level: str = "INFO"
     request_timeout_seconds: float = 25.0
     max_body_bytes: int = 1_048_576
+
+    ars_rounding_step: int = 1
+    low_stock_threshold: int = 5
+    cache_ttl_catalog: int = 300
+    cache_ttl_pricing: int = 600
+    cache_ttl_shipping: int = 3600
 
     admin_email: str | None = None
     admin_password: SecretStr | None = None

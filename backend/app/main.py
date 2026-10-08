@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from app.api import health
 from app.api.v1 import api_router
+from app.cache.decorators import Cache
 from app.cache.redis import create_redis
 from app.core.config import Settings, get_settings
 from app.core.exceptions import register_exception_handlers
@@ -28,6 +29,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.engine = create_engine(settings)
         app.state.session_factory = create_session_factory(app.state.engine)
         app.state.redis = create_redis(settings)
+        app.state.cache = Cache(app.state.redis)
         try:
             yield
         finally:

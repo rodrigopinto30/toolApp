@@ -6,6 +6,7 @@
   SAVEPOINTs, so code that commits (the Unit of Work) works without leaking data.
 """
 
+import uuid
 from collections.abc import AsyncIterator
 
 import pytest
@@ -16,9 +17,11 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import Connection, NullPool, text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
+from app.cache.decorators import Cache
 from app.core.config import Settings, get_settings
-from app.core.container import get_session_factory
+from app.core.container import get_cache, get_session_factory
 from app.main import create_app
+from app.seed import run_seed
 
 
 @pytest.fixture(scope="session")
@@ -84,10 +87,21 @@ async def app(settings: Settings, engine: AsyncEngine) -> AsyncIterator[FastAPI]
 
 
 @pytest.fixture
+def cache(app: FastAPI) -> Cache:
+    return Cache(app.state.redis, prefix=f"test:{uuid.uuid4().hex}")
+
+
+@pytest.fixture
+async def seeded(session: AsyncSession, settings: Settings) -> None:
+    await run_seed(session, settings)
+
+
+@pytest.fixture
 async def client(
-    app: FastAPI, session_factory: async_sessionmaker[AsyncSession]
+    app: FastAPI, session_factory: async_sessionmaker[AsyncSession], cache: Cache
 ) -> AsyncIterator[AsyncClient]:
     app.dependency_overrides[get_session_factory] = lambda: session_factory
+    app.dependency_overrides[get_cache] = lambda: cache
     transport = ASGITransport(app=app, raise_app_exceptions=False)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
