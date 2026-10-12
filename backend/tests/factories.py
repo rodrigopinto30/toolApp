@@ -1,10 +1,13 @@
 """Minimal valid entities for tests. Each call uses unique slugs/emails."""
 
+import uuid
 from decimal import Decimal
 from itertools import count
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.security import hash_password
+from app.db.types import utcnow
 from app.models import (
     Address,
     Category,
@@ -13,14 +16,30 @@ from app.models import (
     Province,
     ShippingZone,
     User,
+    UserRole,
 )
 
 _sequence = count(1)
 
 
-async def make_user(session: AsyncSession) -> User:
+async def make_user(
+    session: AsyncSession,
+    *,
+    password: str | None = None,
+    verified: bool = False,
+    role: UserRole = UserRole.CUSTOMER,
+    is_active: bool = True,
+) -> User:
     n = next(_sequence)
-    user = User(email=f"user{n}@example.com", password_hash="x", first_name="Ana", last_name="Diaz")
+    user = User(
+        email=f"user{n}-{uuid.uuid4().hex[:8]}@example.com",
+        password_hash=hash_password(password) if password else "x",
+        first_name="Ana",
+        last_name="Diaz",
+        role=role,
+        is_active=is_active,
+        email_verified_at=utcnow() if verified else None,
+    )
     session.add(user)
     await session.flush()
     return user
@@ -45,7 +64,7 @@ async def make_province(session: AsyncSession) -> Province:
         eta_min_days=1,
         eta_max_days=3,
     )
-    province = Province(code=f"T-{n}", name="Test", zone=zone)
+    province = Province(code=f"TP-{n}", name="Test", zone=zone)
     session.add(province)
     await session.flush()
     return province

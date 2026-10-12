@@ -13,14 +13,18 @@ from app.core.logging import configure_logging
 from app.core.middleware import (
     BodySizeLimitMiddleware,
     CacheControlMiddleware,
+    CsrfMiddleware,
     RequestContextMiddleware,
     TimeoutMiddleware,
 )
 from app.db.session import create_engine, create_session_factory
+from app.email.sender import create_email_sender
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
+    if settings.jwt_secret is None:
+        raise RuntimeError("JWT_SECRET is not set")
     configure_logging(settings.log_level)
 
     @asynccontextmanager
@@ -30,6 +34,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.session_factory = create_session_factory(app.state.engine)
         app.state.redis = create_redis(settings)
         app.state.cache = Cache(app.state.redis)
+        app.state.email_sender = create_email_sender(settings)
         try:
             yield
         finally:
@@ -47,6 +52,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     register_exception_handlers(app)
 
+    app.add_middleware(
+        CsrfMiddleware,
+        allowed_origin=settings.public_url,
+        always_protected_prefix=f"{prefix}/v1/auth/",
+    )
     app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_body_bytes)
     app.add_middleware(TimeoutMiddleware, timeout=settings.request_timeout_seconds)
     app.add_middleware(CacheControlMiddleware)

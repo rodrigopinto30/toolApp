@@ -3,13 +3,20 @@
 
 from typing import Annotated
 
-from fastapi import Depends, Request
+from fastapi import BackgroundTasks, Depends, Request
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
+from app.auth.rate_limit import LoginLockout, RateLimiter
+from app.auth.sessions import RefreshSessionStore
+from app.auth.tokens import OneTimeTokenStore
 from app.cache.decorators import Cache
 from app.core.config import Settings
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
+from app.email.mailer import Mailer
+from app.email.sender import EmailMessage, EmailSender, deliver
+from app.services.account import AccountService
+from app.services.auth import AuthService
 from app.services.catalog import CatalogService
 from app.services.pricing import PricingService
 from app.services.shipping import ShippingService
@@ -77,3 +84,82 @@ def get_shipping_service(
 
 CatalogServiceDep = Annotated[CatalogService, Depends(get_catalog_service)]
 ShippingServiceDep = Annotated[ShippingService, Depends(get_shipping_service)]
+
+
+def get_key_prefix() -> str:
+    return "auth"
+
+
+KeyPrefixDep = Annotated[str, Depends(get_key_prefix)]
+
+
+def get_rate_limiter(redis: RedisDep, prefix: KeyPrefixDep) -> RateLimiter:
+    return RateLimiter(redis, prefix=f"{prefix}:rate")
+
+
+def get_login_lockout(redis: RedisDep, settings: SettingsDep, prefix: KeyPrefixDep) -> LoginLockout:
+    return LoginLockout(
+        redis,
+        prefix=f"{prefix}:lockout",
+        max_failures=settings.login_max_failures,
+        lockout_seconds=settings.login_lockout_seconds,
+    )
+
+
+def get_session_store(
+    redis: RedisDep, settings: SettingsDep, prefix: KeyPrefixDep
+) -> RefreshSessionStore:
+    return RefreshSessionStore(redis, settings, prefix=prefix)
+
+
+def get_token_store(redis: RedisDep, prefix: KeyPrefixDep) -> OneTimeTokenStore:
+    return OneTimeTokenStore(redis, prefix=f"{prefix}:token")
+
+
+RateLimiterDep = Annotated[RateLimiter, Depends(get_rate_limiter)]
+SessionStoreDep = Annotated[RefreshSessionStore, Depends(get_session_store)]
+
+
+def get_email_sender(request: Request) -> EmailSender:
+    return request.app.state.email_sender
+
+
+def get_mailer(
+    background_tasks: BackgroundTasks,
+    sender: Annotated[EmailSender, Depends(get_email_sender)],
+    settings: SettingsDep,
+) -> Mailer:
+    def schedule(message: EmailMessage) -> None:
+        background_tasks.add_task(deliver, sender, message)
+
+    return Mailer(settings, schedule)
+
+
+MailerDep = Annotated[Mailer, Depends(get_mailer)]
+
+
+def get_auth_service(
+    session_factory: SessionFactoryDep,
+    sessions: SessionStoreDep,
+    tokens: Annotated[OneTimeTokenStore, Depends(get_token_store)],
+    lockout: Annotated[LoginLockout, Depends(get_login_lockout)],
+    limiter: RateLimiterDep,
+    mailer: MailerDep,
+    settings: SettingsDep,
+) -> AuthService:
+    return AuthService(
+        SqlAlchemyUnitOfWork(session_factory), sessions, tokens, lockout, limiter, mailer, settings
+    )
+
+
+def get_account_service(
+    session_factory: SessionFactoryDep,
+    sessions: SessionStoreDep,
+    mailer: MailerDep,
+    settings: SettingsDep,
+) -> AccountService:
+    return AccountService(SqlAlchemyUnitOfWork(session_factory), sessions, mailer, settings)
+
+
+AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+AccountServiceDep = Annotated[AccountService, Depends(get_account_service)]

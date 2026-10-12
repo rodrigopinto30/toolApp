@@ -18,11 +18,25 @@ class AppError(Exception):
     code = "internal_error"
     message = "Internal server error."
 
-    def __init__(self, message: str | None = None, *, code: str | None = None, details: Any = None):
+    def __init__(
+        self,
+        message: str | None = None,
+        *,
+        code: str | None = None,
+        details: Any = None,
+        headers: dict[str, str] | None = None,
+    ):
         self.message = message or self.message
         self.code = code or self.code
         self.details = details
+        self.headers = headers
         super().__init__(self.message)
+
+
+class BadRequestError(AppError):
+    status_code = 400
+    code = "bad_request"
+    message = "The request is not valid."
 
 
 class NotFoundError(AppError):
@@ -47,6 +61,15 @@ class UnauthorizedError(AppError):
     status_code = 401
     code = "unauthorized"
     message = "Authentication required."
+
+
+class TooManyRequestsError(AppError):
+    status_code = 429
+    code = "rate_limited"
+    message = "Too many requests. Try again later."
+
+    def __init__(self, message: str | None = None, *, code: str | None = None, retry_after: int):
+        super().__init__(message, code=code, headers={"Retry-After": str(max(retry_after, 1))})
 
 
 class ServiceUnavailableError(AppError):
@@ -94,7 +117,12 @@ def error_response(
 async def _app_error_handler(request: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, AppError)
     return error_response(
-        get_request_id(request), exc.status_code, exc.code, exc.message, details=exc.details
+        get_request_id(request),
+        exc.status_code,
+        exc.code,
+        exc.message,
+        details=exc.details,
+        headers=exc.headers,
     )
 
 
