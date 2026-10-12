@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL
 
@@ -42,8 +42,47 @@ class Settings(BaseSettings):
     cache_ttl_pricing: int = 600
     cache_ttl_shipping: int = 3600
 
+    jwt_secret: SecretStr | None = None
+    jwt_issuer: str = "toolapp"
+    jwt_audience: str = "toolapp-api"
+    access_token_ttl: int = 900
+    refresh_token_ttl: int = 7 * 24 * 3600
+    refresh_session_max_age: int = 30 * 24 * 3600
+    refresh_reuse_grace: int = 10
+    verify_email_token_ttl: int = 24 * 3600
+    reset_password_token_ttl: int = 30 * 60
+    login_max_failures: int = 5
+    login_lockout_seconds: int = 15 * 60
+    max_addresses: int = 10
+    max_billing_profiles: int = 5
+
+    public_url: str = "https://localhost:8443"
+    smtp_host: str | None = None
+    smtp_port: int = 25
+    smtp_from: str = "ToolApp <no-reply@toolapp.local>"
+
     admin_email: str | None = None
     admin_password: SecretStr | None = None
+
+    @field_validator("jwt_secret")
+    @classmethod
+    def check_jwt_secret(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and len(value.get_secret_value().encode()) < 32:
+            raise ValueError("JWT_SECRET must be at least 32 bytes")
+        return value
+
+    @field_validator("public_url")
+    @classmethod
+    def strip_trailing_slash(cls, value: str) -> str:
+        return value.rstrip("/")
+
+    @property
+    def jwt_key(self) -> str:
+        """Optional in the settings because the migrations job does not get the secret;
+        create_app() refuses to start without it."""
+        if self.jwt_secret is None:
+            raise RuntimeError("JWT_SECRET is not set")
+        return self.jwt_secret.get_secret_value()
 
     @property
     def is_dev(self) -> bool:
@@ -64,4 +103,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings() 
+    return Settings()

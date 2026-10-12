@@ -2,15 +2,18 @@
 
 import asyncio
 import re
+import secrets
 import time
 import uuid
 
 import structlog
 from fastapi import HTTPException
 from starlette.datastructures import Headers, MutableHeaders
+from starlette.requests import cookie_parser
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app.core.exceptions import REQUEST_ID_HEADER, error_response
+from app.core.security import ACCESS_COOKIE, CSRF_COOKIE, CSRF_HEADER, REFRESH_COOKIE
 
 logger = structlog.get_logger("app.access")
 
@@ -153,3 +156,46 @@ class BodySizeLimitMiddleware:
             return message
 
         await self.app(scope, receive_limited, send)
+
+
+class CsrfMiddleware:
+    """Double-submit CSRF check for unsafe methods: the X-CSRF-Token header must equal the
+    csrf cookie when the request carries a session cookie, and always under
+    `always_protected_prefix` (login CSRF). A cross-origin Origin header is rejected."""
+
+    SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+    SESSION_COOKIES = (ACCESS_COOKIE, REFRESH_COOKIE)
+
+    def __init__(self, app: ASGIApp, *, allowed_origin: str, always_protected_prefix: str) -> None:
+        self.app = app
+        self.allowed_origin = allowed_origin
+        self.always_protected_prefix = always_protected_prefix
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or scope["method"] in self.SAFE_METHODS:
+            await self.app(scope, receive, send)
+            return
+
+        headers = Headers(scope=scope)
+        origin = headers.get("origin")
+        cookies = cookie_parser(headers.get("cookie", ""))
+        protected = scope["path"].startswith(self.always_protected_prefix) or any(
+            name in cookies for name in self.SESSION_COOKIES
+        )
+        if (origin is not None and origin != self.allowed_origin) or (
+            protected and not _tokens_match(cookies.get(CSRF_COOKIE), headers.get(CSRF_HEADER))
+        ):
+            logger.warning("csrf_failed", path=scope["path"], origin=origin)
+            response = error_response(
+                _request_id(scope), 403, "csrf_failed", "Missing or invalid CSRF token."
+            )
+            await response(scope, receive, send)
+            return
+
+        await self.app(scope, receive, send)
+
+
+def _tokens_match(cookie: str | None, header: str | None) -> bool:
+    if not cookie or not header:
+        return False
+    return secrets.compare_digest(cookie.encode(), header.encode())

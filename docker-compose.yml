@@ -86,6 +86,7 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      PUBLIC_URL: ${PUBLIC_URL}
     volumes:
       - media:/app/media
     read_only: true
