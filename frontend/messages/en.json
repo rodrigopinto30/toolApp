@@ -1,0 +1,38 @@
+{
+  "Metadata": {
+    "title": "ToolApp",
+    "titleTemplate": "%s | ToolApp",
+    "description": "Work tools with nationwide shipping in Argentina."
+  },
+  "Layout": {
+    "skipToContent": "Skip to content",
+    "home": "ToolApp, go to the home page"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  },
+  "Footer": {
+    "tagline": "Tools for work, shipped anywhere in Argentina.",
+    "rights": "© {year} ToolApp"
+  },
+  "Home": {
+    "title": "Tools for work",
+    "subtitle": "Soon you will find the full catalog here, with prices in pesos or dollars and nationwide shipping."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has moved.",
+    "home": "Back to the home page"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error happened. Try again in a few seconds.",
+    "retry": "Try again",
+    "reference": "Reference code: {digest}"
+  },
+  "Loading": {
+    "label": "Loading…"
+  }
+}

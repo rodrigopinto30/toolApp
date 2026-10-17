@@ -1,0 +1,38 @@
+{
+  "Metadata": {
+    "title": "ToolApp",
+    "titleTemplate": "%s | ToolApp",
+    "description": "Herramientas de trabajo con envío a todo el país."
+  },
+  "Layout": {
+    "skipToContent": "Saltar al contenido",
+    "home": "ToolApp, ir al inicio"
+  },
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "English"
+  },
+  "Footer": {
+    "tagline": "Herramientas para trabajar, con envío a todo el país.",
+    "rights": "© {year} ToolApp"
+  },
+  "Home": {
+    "title": "Herramientas para trabajar",
+    "subtitle": "Muy pronto vas a encontrar acá el catálogo completo, con precios en pesos o dólares y envío a todo el país."
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscás no existe o se movió.",
+    "home": "Volver al inicio"
+  },
+  "Error": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado. Probá de nuevo en unos segundos.",
+    "retry": "Reintentar",
+    "reference": "Código de referencia: {digest}"
+  },
+  "Loading": {
+    "label": "Cargando…"
+  }
+}
