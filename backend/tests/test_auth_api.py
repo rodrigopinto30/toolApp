@@ -35,7 +35,7 @@ async def test_register_sends_verification_email(client: AsyncClient, outbox: Ou
     assert response.status_code == 202
     [email] = outbox.sent("verify_email")
     assert email.to == "new.user@example.com"
-    assert "/verify-email?token=" in email.text
+    assert "/es/verify-email#token=" in email.text
     assert ACCESS_COOKIE not in response.cookies
     assert await login(client, "new.user@example.com") == 200
 
@@ -53,7 +53,9 @@ async def test_register_existing_email_looks_the_same(
     assert [m.to for m in outbox.sent("account_exists")] == [user.email]
 
 
-async def test_login_sets_session_cookies(client: AsyncClient, session: AsyncSession) -> None:
+async def test_login_sets_session_cookies(
+    client: AsyncClient, session: AsyncSession, settings: Settings
+) -> None:
     user = await make_user(session, password=PASSWORD)
 
     response = await client.post(f"{AUTH}/login", json={"email": user.email, "password": PASSWORD})
@@ -64,6 +66,7 @@ async def test_login_sets_session_cookies(client: AsyncClient, session: AsyncSes
     access = next(c for c in cookies if c.startswith(f"{ACCESS_COOKIE}="))
     refresh = next(c for c in cookies if c.startswith(f"{REFRESH_COOKIE}="))
     assert "HttpOnly" in access and "Secure" in access and "Path=/;" in access
+    assert f"Max-Age={settings.refresh_token_ttl}" in access
     assert "SameSite=strict" in refresh and "Path=/api/v1/auth" in refresh
     assert (await client.get("/api/v1/me")).json()["id"] == user.id
 

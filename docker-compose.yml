@@ -87,6 +87,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       PUBLIC_URL: ${PUBLIC_URL}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-900}
     volumes:
       - media:/app/media
     read_only: true

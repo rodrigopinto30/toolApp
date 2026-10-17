@@ -24,10 +24,13 @@ def set_csrf_cookie(response: Response, settings: Settings) -> None:
 
 
 def set_session_cookies(response: Response, settings: Settings, tokens: SessionTokens) -> None:
+    # The JWT expires after access_token_ttl, but the cookie lives as long as the refresh
+    # token: an expired token still reaches the API, which answers 401 token_expired, so
+    # the client knows it can refresh instead of looking anonymous.
     response.set_cookie(
         ACCESS_COOKIE,
         tokens.access_token,
-        max_age=settings.access_token_ttl,
+        max_age=settings.refresh_token_ttl,
         path="/",
         secure=True,
         httponly=True,

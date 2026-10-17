@@ -14,7 +14,7 @@ from app.core.exceptions import UnauthorizedError
 
 ACCESS_COOKIE = "__Host-access"
 REFRESH_COOKIE = "refresh"
-CSRF_COOKIE = "csrf"
+CSRF_COOKIE = "__Host-csrf"
 CSRF_HEADER = "X-CSRF-Token"
 
 JWT_ALGORITHM = "HS256"

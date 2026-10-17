@@ -38,16 +38,53 @@ server {
     limit_conn perip 50;
 
     # --- API (FastAPI) ---
-    location /api/v1/auth/ {
+    # Strict zone only for endpoints that check credentials or send emails; csrf, refresh
+    # and logout use the api zone (the backend applies its own per-IP limits).
+    location ~ ^/api/v1/auth/(login|register|forgot-password|reset-password|verify-email|resend-verification)$ {
         limit_req zone=auth burst=5 nodelay;
+        error_page 429 = @auth_rate_limited;
+        include /etc/nginx/snippets/api-errors.conf;
         include /etc/nginx/snippets/proxy.conf;
         proxy_pass http://backend;
     }
 
     location /api/ {
         limit_req zone=api burst=30 nodelay;
+        error_page 429 = @api_rate_limited;
+        include /etc/nginx/snippets/api-errors.conf;
         include /etc/nginx/snippets/proxy.conf;
         proxy_pass http://backend;
+    }
+
+    # add_header inside a location drops the server-level headers, so each one includes them again.
+    location @auth_rate_limited {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-store" always;
+        add_header Retry-After 60 always;
+        default_type application/json;
+        return 429 '{"code":"rate_limited","message":"Too many requests. Try again later.","request_id":"$request_id"}';
+    }
+
+    location @api_rate_limited {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-store" always;
+        add_header Retry-After 5 always;
+        default_type application/json;
+        return 429 '{"code":"rate_limited","message":"Too many requests. Try again later.","request_id":"$request_id"}';
+    }
+
+    location @api_payload_too_large {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-store" always;
+        default_type application/json;
+        return 413 '{"code":"payload_too_large","message":"Request body too large.","request_id":"$request_id"}';
+    }
+
+    location @api_unavailable {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-store" always;
+        default_type application/json;
+        return 503 '{"code":"service_unavailable","message":"The service is temporarily unavailable.","request_id":"$request_id"}';
     }
 
     # --- Product images (local volume) ---
@@ -64,10 +101,17 @@ server {
         proxy_pass http://frontend;
     }
 
+    # The Next.js image optimizer is not used (product images are pre-generated variants).
+    location ^~ /_next/image {
+        return 404;
+    }
+
     # --- Frontend (Next.js) ---
     location / {
         limit_req zone=general burst=60 nodelay;
         include /etc/nginx/snippets/proxy.conf;
+        # Without this nginx holds streamed pages (loading.tsx, Suspense) until they finish.
+        proxy_buffering off;
         proxy_pass http://frontend;
     }
 }

@@ -16,21 +16,23 @@ class Mailer:
         self.settings = settings
         self.schedule = schedule
 
-    def _link(self, path: str, token: str | None = None) -> str:
-        query = f"?{urlencode({'token': token})}" if token else ""
-        return f"{self.settings.public_url}{path}{query}"
+    def _link(self, locale: Locale, path: str, token: str | None = None) -> str:
+        """The token goes in the fragment: browsers never send it to a server, so it stays
+        out of access logs, Referer headers and link scanners (which would use it up)."""
+        fragment = f"#{urlencode({'token': token})}" if token else ""
+        return f"{self.settings.public_url}/{locale}{path}{fragment}"
 
     def _send(self, name: str, user: User, locale: Locale, link: str | None = None) -> None:
         self.schedule(render(name, locale, to=user.email, first_name=user.first_name, link=link))
 
     def verify_email(self, user: User, token: str, locale: Locale) -> None:
-        self._send("verify_email", user, locale, self._link("/verify-email", token))
+        self._send("verify_email", user, locale, self._link(locale, "/verify-email", token))
 
     def account_exists(self, user: User, locale: Locale) -> None:
-        self._send("account_exists", user, locale, self._link("/forgot-password"))
+        self._send("account_exists", user, locale, self._link(locale, "/forgot-password"))
 
     def reset_password(self, user: User, token: str, locale: Locale) -> None:
-        self._send("reset_password", user, locale, self._link("/reset-password", token))
+        self._send("reset_password", user, locale, self._link(locale, "/reset-password", token))
 
     def password_changed(self, user: User, locale: Locale) -> None:
         self._send("password_changed", user, locale)
