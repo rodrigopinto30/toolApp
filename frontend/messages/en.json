@@ -13,6 +13,18 @@
     "es": "Español",
     "en": "English"
   },
+  "CurrencySwitcher": {
+    "label": "Currency",
+    "ARS": "Pesos (ARS)",
+    "USD": "Dollars (USD)"
+  },
+  "UserMenu": {
+    "label": "Account menu",
+    "login": "Log in",
+    "account": "My account",
+    "logout": "Log out",
+    "loading": "Loading the account"
+  },
   "Footer": {
     "tagline": "Tools for work, shipped anywhere in Argentina.",
     "rights": "© {year} ToolApp"
@@ -31,8 +43,5 @@
     "description": "An unexpected error happened. Try again in a few seconds.",
     "retry": "Try again",
     "reference": "Reference code: {digest}"
-  },
-  "Loading": {
-    "label": "Loading…"
   }
 }

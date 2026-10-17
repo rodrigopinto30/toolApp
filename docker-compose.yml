@@ -53,7 +53,7 @@ services:
       target: runner
     image: toolapp-frontend:latest
     environment:
-      INTERNAL_API_URL: http://backend:8000/api
+      INTERNAL_API_ORIGIN: http://backend:8000
     read_only: true
     tmpfs:
       - /tmp
