@@ -1,0 +1,10 @@
+import type { AbstractIntlMessages } from "next-intl";
+import { getMessages } from "next-intl/server";
+
+export async function clientMessages(namespaces: readonly string[]): Promise<AbstractIntlMessages> {
+  const messages = await getMessages();
+  return Object.fromEntries(namespaces.map((namespace) => [namespace, messages[namespace as keyof typeof messages]]));
+}
+
+export const LAYOUT_NAMESPACES = ["LocaleSwitcher", "CurrencySwitcher", "UserMenu", "Error"] as const;
+export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;

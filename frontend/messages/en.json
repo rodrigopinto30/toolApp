@@ -43,5 +43,126 @@
     "description": "An unexpected error happened. Try again in a few seconds.",
     "retry": "Try again",
     "reference": "Reference code: {digest}"
+  },
+  "Auth": {
+    "login": {
+      "metaTitle": "Log in",
+      "title": "Log in",
+      "description": "Log in with your email and password.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "forgot": "Forgot your password?",
+      "noAccount": "No account yet?",
+      "register": "Create one"
+    },
+    "register": {
+      "metaTitle": "Create account",
+      "title": "Create account",
+      "description": "You need an account to buy.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "Between 10 and 128 characters.",
+      "submit": "Create account",
+      "submitting": "Creating the account…",
+      "hasAccount": "Already have an account?",
+      "login": "Log in",
+      "successTitle": "Check your email",
+      "successBody": "If {email} can be used, we sent you a link to confirm the account. It expires in 24 hours."
+    },
+    "verify": {
+      "metaTitle": "Confirm email",
+      "title": "Confirm email",
+      "verifying": "Confirming your email…",
+      "success": "Done, your email is confirmed.",
+      "requestNew": "You can request a new link from your account.",
+      "toLogin": "Log in",
+      "toAccount": "Go to my account"
+    },
+    "forgot": {
+      "metaTitle": "Reset password",
+      "title": "Reset password",
+      "description": "We will send you a link to create a new password.",
+      "email": "Email",
+      "submit": "Send link",
+      "submitting": "Sending…",
+      "success": "If the email belongs to an account, we sent you a link. It expires in 30 minutes.",
+      "back": "Back to log in"
+    },
+    "reset": {
+      "metaTitle": "New password",
+      "title": "New password",
+      "description": "Choose a new password for your account.",
+      "password": "New password",
+      "confirm": "Repeat the password",
+      "hint": "Between 10 and 128 characters.",
+      "submit": "Save password",
+      "submitting": "Saving…",
+      "success": "Your password changed and your other sessions were closed.",
+      "missingToken": "This link is not valid. Request a new one.",
+      "requestNew": "Request a new link",
+      "toLogin": "Log in"
+    }
+  },
+  "Account": {
+    "metaTitle": "My account",
+    "title": "My account",
+    "loading": "Loading your account…",
+    "logout": "Log out",
+    "verification": {
+      "pending": "You have not confirmed your email yet. You will need it to buy.",
+      "resend": "Resend the link",
+      "resending": "Sending…",
+      "sent": "We sent you a new link."
+    },
+    "profile": {
+      "title": "Personal details",
+      "email": "Email",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone",
+      "phoneHint": "Optional.",
+      "submit": "Save changes",
+      "submitting": "Saving…",
+      "saved": "Your details were saved."
+    },
+    "password": {
+      "title": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Repeat the new password",
+      "hint": "Between 10 and 128 characters. Your other sessions will be closed.",
+      "submit": "Change password",
+      "submitting": "Changing…",
+      "saved": "Your password changed and your other sessions were closed."
+    }
+  },
+  "Validation": {
+    "required": "Fill in this field.",
+    "email": "Enter a valid email.",
+    "passwordLength": "The password must have between 10 and 128 characters.",
+    "passwordIsEmail": "The password cannot be your email.",
+    "passwordMismatch": "The passwords do not match.",
+    "nameLength": "Use up to 80 characters.",
+    "phone": "Enter a valid phone number.",
+    "invalid": "Check this value."
+  },
+  "Errors": {
+    "invalid_credentials": "Wrong email or password.",
+    "account_locked": "Too many failed attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+    "account_disabled": "Your account is disabled.",
+    "rate_limited": "Too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+    "invalid_token": "The link is not valid or has expired.",
+    "invalid_current_password": "The current password is not correct.",
+    "csrf_failed": "The security session expired. Reload the page.",
+    "service_unavailable": "The service is unavailable. Try again in a few minutes.",
+    "network_error": "No connection. Check your network.",
+    "timeout": "The server took too long. Try again.",
+    "validation_error": "Check the form data.",
+    "unexpected": "An unexpected error happened.",
+    "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }
 }
