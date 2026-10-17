@@ -35,7 +35,7 @@ def test_mailer_builds_links_from_public_url(settings: Settings) -> None:
 
     [message] = scheduled
     assert message.to == "ana@example.com"
-    assert f"{settings.public_url}/reset-password?token=abc123" in message.text
+    assert f"{settings.public_url}/es/reset-password#token=abc123" in message.text
     assert message.subject == "Recuperá tu contraseña"
 
 
@@ -54,3 +54,18 @@ async def test_log_sender_never_logs_the_body() -> None:
             "log_level": "info",
         }
     ]
+
+
+def test_links_use_the_email_locale_and_keep_tokens_out_of_the_query(settings: Settings) -> None:
+    scheduled: list[EmailMessage] = []
+    mailer = Mailer(settings, scheduled.append)
+    user = User(email="ana@example.com", first_name="Ana")
+
+    mailer.verify_email(user, "tok_en", Locale.EN)
+    mailer.account_exists(user, Locale.ES)
+
+    verify, exists = scheduled
+    assert f"{settings.public_url}/en/verify-email#token=tok_en" in verify.text
+    assert "?token=" not in verify.text and "?token=" not in verify.html
+    assert f"{settings.public_url}/es/forgot-password" in exists.text
+    assert "#" not in exists.text
