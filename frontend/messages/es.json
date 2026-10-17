@@ -13,6 +13,18 @@
     "es": "Español",
     "en": "English"
   },
+  "CurrencySwitcher": {
+    "label": "Moneda",
+    "ARS": "Pesos (ARS)",
+    "USD": "Dólares (USD)"
+  },
+  "UserMenu": {
+    "label": "Menú de la cuenta",
+    "login": "Ingresar",
+    "account": "Mi cuenta",
+    "logout": "Cerrar sesión",
+    "loading": "Cargando la cuenta"
+  },
   "Footer": {
     "tagline": "Herramientas para trabajar, con envío a todo el país.",
     "rights": "© {year} ToolApp"
@@ -31,8 +43,5 @@
     "description": "Ocurrió un error inesperado. Probá de nuevo en unos segundos.",
     "retry": "Reintentar",
     "reference": "Código de referencia: {digest}"
-  },
-  "Loading": {
-    "label": "Cargando…"
   }
 }
