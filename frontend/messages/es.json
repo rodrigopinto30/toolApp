@@ -43,5 +43,126 @@
     "description": "Ocurrió un error inesperado. Probá de nuevo en unos segundos.",
     "retry": "Reintentar",
     "reference": "Código de referencia: {digest}"
+  },
+  "Auth": {
+    "login": {
+      "metaTitle": "Ingresar",
+      "title": "Ingresar",
+      "description": "Ingresá con tu email y tu contraseña.",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Ingresar",
+      "submitting": "Ingresando…",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tenés cuenta?",
+      "register": "Creá una"
+    },
+    "register": {
+      "metaTitle": "Crear cuenta",
+      "title": "Crear cuenta",
+      "description": "Necesitás una cuenta para comprar.",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "password": "Contraseña",
+      "passwordHint": "Entre 10 y 128 caracteres.",
+      "submit": "Crear cuenta",
+      "submitting": "Creando la cuenta…",
+      "hasAccount": "¿Ya tenés cuenta?",
+      "login": "Ingresá",
+      "successTitle": "Revisá tu email",
+      "successBody": "Si {email} puede usarse, te enviamos un link para confirmar la cuenta. Vence en 24 horas."
+    },
+    "verify": {
+      "metaTitle": "Confirmar email",
+      "title": "Confirmar email",
+      "verifying": "Confirmando tu email…",
+      "success": "Listo, tu email quedó confirmado.",
+      "requestNew": "Podés pedir un link nuevo desde tu cuenta.",
+      "toLogin": "Ingresar",
+      "toAccount": "Ir a mi cuenta"
+    },
+    "forgot": {
+      "metaTitle": "Recuperar contraseña",
+      "title": "Recuperar contraseña",
+      "description": "Te enviamos un link para que crees una contraseña nueva.",
+      "email": "Email",
+      "submit": "Enviar link",
+      "submitting": "Enviando…",
+      "success": "Si el email corresponde a una cuenta, te enviamos un link. Vence en 30 minutos.",
+      "back": "Volver a ingresar"
+    },
+    "reset": {
+      "metaTitle": "Nueva contraseña",
+      "title": "Nueva contraseña",
+      "description": "Elegí una contraseña nueva para tu cuenta.",
+      "password": "Nueva contraseña",
+      "confirm": "Repetí la contraseña",
+      "hint": "Entre 10 y 128 caracteres.",
+      "submit": "Guardar contraseña",
+      "submitting": "Guardando…",
+      "success": "Tu contraseña cambió y cerramos las demás sesiones.",
+      "missingToken": "Este link no es válido. Pedí uno nuevo.",
+      "requestNew": "Pedir un link nuevo",
+      "toLogin": "Ingresar"
+    }
+  },
+  "Account": {
+    "metaTitle": "Mi cuenta",
+    "title": "Mi cuenta",
+    "loading": "Cargando tu cuenta…",
+    "logout": "Cerrar sesión",
+    "verification": {
+      "pending": "Todavía no confirmaste tu email. Lo vas a necesitar para comprar.",
+      "resend": "Reenviar el link",
+      "resending": "Enviando…",
+      "sent": "Te enviamos un link nuevo."
+    },
+    "profile": {
+      "title": "Datos personales",
+      "email": "Email",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "phone": "Teléfono",
+      "phoneHint": "Opcional.",
+      "submit": "Guardar cambios",
+      "submitting": "Guardando…",
+      "saved": "Guardamos tus datos."
+    },
+    "password": {
+      "title": "Cambiar contraseña",
+      "current": "Contraseña actual",
+      "new": "Contraseña nueva",
+      "confirm": "Repetí la contraseña nueva",
+      "hint": "Entre 10 y 128 caracteres. Se cierran las demás sesiones.",
+      "submit": "Cambiar contraseña",
+      "submitting": "Cambiando…",
+      "saved": "Tu contraseña cambió y cerramos las demás sesiones."
+    }
+  },
+  "Validation": {
+    "required": "Completá este campo.",
+    "email": "Ingresá un email válido.",
+    "passwordLength": "La contraseña debe tener entre 10 y 128 caracteres.",
+    "passwordIsEmail": "La contraseña no puede ser tu email.",
+    "passwordMismatch": "Las contraseñas no coinciden.",
+    "nameLength": "Usá hasta 80 caracteres.",
+    "phone": "Ingresá un teléfono válido.",
+    "invalid": "Revisá este valor."
+  },
+  "Errors": {
+    "invalid_credentials": "Email o contraseña incorrectos.",
+    "account_locked": "Demasiados intentos fallidos. Probá de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+    "account_disabled": "Tu cuenta está deshabilitada.",
+    "rate_limited": "Demasiados intentos. Probá de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+    "invalid_token": "El link no es válido o venció.",
+    "invalid_current_password": "La contraseña actual no es correcta.",
+    "csrf_failed": "La sesión de seguridad venció. Recargá la página.",
+    "service_unavailable": "El servicio no está disponible. Probá en unos minutos.",
+    "network_error": "No hay conexión. Revisá tu red.",
+    "timeout": "El servidor tardó demasiado. Probá de nuevo.",
+    "validation_error": "Revisá los datos del formulario.",
+    "unexpected": "Ocurrió un error inesperado.",
+    "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }
 }
