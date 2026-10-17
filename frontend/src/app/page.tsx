@@ -1,10 +1,12 @@
 import { connection } from "next/server";
 
+import { serverEnv } from "@/lib/env";
+
 type Readiness = { status: string; checks: Record<string, string> };
 
 async function getBackendStatus(): Promise<Readiness | null> {
   try {
-    const res = await fetch(`${process.env.INTERNAL_API_URL}/health/ready`, {
+    const res = await fetch(`${serverEnv().INTERNAL_API_URL}/health/ready`, {
       cache: "no-store",
       signal: AbortSignal.timeout(3000),
     });
