@@ -1,4 +1,3 @@
-# Base configuration (production). In development it is merged with docker-compose.dev.yml.
 name: toolapp
 
 x-logging: &logging
@@ -55,6 +54,10 @@ services:
     image: toolapp-frontend:latest
     environment:
       INTERNAL_API_URL: http://backend:8000/api
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.next/cache:uid=1000,gid=1000
     cap_drop: [ALL]
     networks: [edge]
     healthcheck:
@@ -105,8 +108,6 @@ services:
       resources:
         limits: { cpus: "1.00", memory: 512M }
 
-  # Run-once job: applies the Alembic migrations and the idempotent seed, then exits.
-  # Uses the migrator user (DDL); the API only gets SELECT/INSERT/UPDATE/DELETE.
   migrations:
     <<: *hardening
     restart: "no"
@@ -141,7 +142,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      # Users are created by mysql/initdb/01-users.sh (least privilege), not by the entrypoint.
       APP_DB_USER: ${MYSQL_USER}
       APP_DB_PASSWORD: ${MYSQL_PASSWORD}
       MIGRATOR_DB_USER: ${MYSQL_MIGRATOR_USER}
@@ -152,7 +152,6 @@ services:
       - ./mysql/initdb:/docker-entrypoint-initdb.d:ro
     networks: [internal]
     healthcheck:
-      # 127.0.0.1 (TCP) so it does not report healthy while the temporary init server runs.
       test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysqladmin ping -h 127.0.0.1 -uroot --silent"]
       interval: 5s
       timeout: 5s
@@ -185,7 +184,7 @@ services:
 networks:
   edge: {}
   internal:
-    internal: true   # no internet access and no published ports
+    internal: true
 
 volumes:
   mysql-data:
