@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { categoryPath } from "@/features/catalog/paths";
 import { Link } from "@/i18n/navigation";
 
 export type CategoryLink = { slug: string; name: string; children: { slug: string; name: string }[] };
@@ -32,11 +33,11 @@ export function CategoryMenu({ categories }: { categories: CategoryLink[] }) {
           <DropdownMenuGroup key={category.slug}>
             {index > 0 && <DropdownMenuSeparator />}
             <DropdownMenuItem asChild className="font-medium">
-              <Link href={`/categories/${category.slug}`}>{category.name}</Link>
+              <Link href={categoryPath(category.slug)}>{category.name}</Link>
             </DropdownMenuItem>
             {category.children.map((child) => (
               <DropdownMenuItem key={child.slug} asChild className="pl-6">
-                <Link href={`/categories/${child.slug}`}>{child.name}</Link>
+                <Link href={categoryPath(child.slug)}>{child.name}</Link>
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>

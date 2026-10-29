@@ -16,10 +16,12 @@ import type { Attribute, Brand, FilterQuery, ProductQuery, ProductSort } from ".
 
 export const PRODUCT_SORTS = ["relevance", "newest", "price_asc", "price_desc", "name"] as const satisfies readonly ProductSort[];
 export const QUERY_MIN_LENGTH = 2;
+export const PRICE_PARAMS = ["min", "max"] as const;
 const QUERY_MAX_LENGTH = 100;
 const ATTRIBUTE_PATTERN = /^[a-z0-9_]+:[a-z0-9-]+$/;
 const ATTRIBUTE_MAX_LENGTH = 100;
 const PRICE_PATTERN = /^\d{1,12}(?:\.\d{1,2})?$/;
+const PRICE_INPUT_PATTERN = /^\d{0,12}(?:\.\d{0,2})?$/;
 const MAX_VALUES = 20;
 const MAX_PAGE = 1000;
 
@@ -44,6 +46,10 @@ const parseAsPage = createParser({
 });
 
 const parseAsPrice = parseAsMatching((value) => PRICE_PATTERN.test(value));
+
+export function isPriceInput(value: string): boolean {
+  return PRICE_INPUT_PATTERN.test(value);
+}
 
 export const catalogSearchParams = {
   q: parseAsQuery,

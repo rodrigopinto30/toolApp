@@ -55,6 +55,44 @@
     },
     "rating": "{average} de 5, {count, plural, one {# opinión} other {# opiniones}}"
   },
+  "Breadcrumbs": {
+    "label": "Ruta de navegación",
+    "home": "Inicio"
+  },
+  "Category": {
+    "subcategories": "Subcategorías"
+  },
+  "Search": {
+    "metaTitle": "Buscar",
+    "metaTitleWithQuery": "Búsqueda: {query}",
+    "title": "Buscar productos",
+    "resultsFor": "Resultados para “{query}”",
+    "hint": "Escribí al menos 2 letras para buscar."
+  },
+  "Listing": {
+    "count": "{count, plural, =0 {Ningún producto} one {# producto} other {# productos}}",
+    "filters": "Filtros",
+    "closeFilters": "Cerrar filtros",
+    "brand": "Marca",
+    "price": "Precio ({currency})",
+    "minPrice": "Precio mínimo",
+    "maxPrice": "Precio máximo",
+    "inStock": "Solo con stock",
+    "clearFilters": "Limpiar filtros",
+    "sort": "Ordenar por",
+    "sorts": {
+      "relevance": "Más relevantes",
+      "newest": "Más nuevos",
+      "price_asc": "Menor precio",
+      "price_desc": "Mayor precio",
+      "name": "Nombre"
+    },
+    "empty": "No encontramos productos con estos filtros.",
+    "pagination": "Paginación",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {page}"
+  },
   "NotFound": {
     "title": "Página no encontrada",
     "description": "La página que buscás no existe o se movió.",
