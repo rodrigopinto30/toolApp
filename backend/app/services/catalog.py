@@ -251,18 +251,18 @@ class CatalogService:
             if product is None or not variants:
                 raise NotFoundError("Product not found.")
             card = self._card(product, locale)
-            translation = _translation(product, locale)
+            translation = product_translation(product, locale)
             return ProductDetail(
                 **card.model_dump(),
                 description=translation.description,
                 specs=translation.specs or {},
                 category_path=_category_path(rows, product.category_id, locale),
-                images=[_image(image, locale, translation.name) for image in product.images],
+                images=[product_image(image, locale, translation.name) for image in product.images],
                 variants=[self._variant(variant, locale) for variant in variants],
             )
 
     def _card(self, product: Product, locale: Locale) -> ProductCard:
-        translation = _translation(product, locale)
+        translation = product_translation(product, locale)
         variants = _active_variants(product)
         cheapest = min(variants, key=lambda v: (v.price_usd, v.position))
         images = product.images
@@ -271,7 +271,7 @@ class CatalogService:
             name=translation.name,
             short_description=translation.short_description,
             brand=BrandRef(slug=product.brand.slug, name=product.brand.name) if product.brand else None,
-            image=_image(images[0], locale, translation.name) if images else None,
+            image=product_image(images[0], locale, translation.name) if images else None,
             price_from=_usd(cheapest.price_usd),
             price_varies=len({variant.price_usd for variant in variants}) > 1,
             compare_at=_usd(cheapest.compare_at_price_usd),
@@ -299,11 +299,7 @@ class CatalogService:
         )
 
     def _stock_status(self, stock: int) -> StockStatus:
-        if stock <= 0:
-            return StockStatus.OUT_OF_STOCK
-        if stock < self.settings.low_stock_threshold:
-            return StockStatus.LOW_STOCK
-        return StockStatus.IN_STOCK
+        return stock_status(stock, self.settings.low_stock_threshold)
 
 
 def _usd(amount: Decimal | None) -> Money | None:
@@ -345,11 +341,19 @@ def _active_variants(product: Product) -> list[ProductVariant]:
     return [variant for variant in product.variants if variant.is_active]
 
 
-def _translation(product: Product, locale: Locale) -> ProductTranslation:
+def product_translation(product: Product, locale: Locale) -> ProductTranslation:
     return next(t for t in product.translations if t.locale == locale)
 
 
-def _image(image: ProductImage, locale: Locale, fallback_alt: str) -> ImageRead:
+def stock_status(stock: int, low_stock_threshold: int) -> StockStatus:
+    if stock <= 0:
+        return StockStatus.OUT_OF_STOCK
+    if stock < low_stock_threshold:
+        return StockStatus.LOW_STOCK
+    return StockStatus.IN_STOCK
+
+
+def product_image(image: ProductImage, locale: Locale, fallback_alt: str) -> ImageRead:
     alt = (image.alt or {}).get(locale) or fallback_alt
     return ImageRead(url=media_url(image.path) or "", alt=alt)
 

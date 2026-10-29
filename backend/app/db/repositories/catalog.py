@@ -216,6 +216,21 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         )
         return await self.session.scalar(statement)
 
+    async def variants_with_details(self, variant_ids: Sequence[int]) -> Sequence[ProductVariant]:
+        if not variant_ids:
+            return []
+        statement = (
+            select(ProductVariant)
+            .where(ProductVariant.id.in_(variant_ids))
+            .options(
+                selectinload(ProductVariant.product).options(
+                    *_PRODUCT_OPTIONS, selectinload(Product.category)
+                ),
+                selectinload(ProductVariant.attribute_values).selectinload(AttributeValue.attribute),
+            )
+        )
+        return (await self.session.scalars(statement)).all()
+
     async def active_variants(self, variant_ids: Sequence[int]) -> Sequence[ProductVariant]:
         statement = (
             select(ProductVariant)

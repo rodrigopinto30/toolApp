@@ -1,6 +1,3 @@
-"""Dependency providers. Routers depend on these; tests replace them with
-`app.dependency_overrides`."""
-
 from typing import Annotated
 
 from fastapi import BackgroundTasks, Depends, Request
@@ -17,6 +14,7 @@ from app.email.mailer import Mailer
 from app.email.sender import EmailMessage, EmailSender, deliver
 from app.services.account import AccountService
 from app.services.auth import AuthService
+from app.services.cart import CartService
 from app.services.catalog import CatalogService
 from app.services.pricing import PricingService
 from app.services.shipping import ShippingService
@@ -82,8 +80,15 @@ def get_shipping_service(
     return ShippingService(SqlAlchemyUnitOfWork(session_factory), pricing, settings)
 
 
+def get_cart_service(
+    session_factory: SessionFactoryDep, pricing: PricingServiceDep, settings: SettingsDep
+) -> CartService:
+    return CartService(SqlAlchemyUnitOfWork(session_factory), pricing, settings)
+
+
 CatalogServiceDep = Annotated[CatalogService, Depends(get_catalog_service)]
 ShippingServiceDep = Annotated[ShippingService, Depends(get_shipping_service)]
+CartServiceDep = Annotated[CartService, Depends(get_cart_service)]
 
 
 def get_key_prefix() -> str:
