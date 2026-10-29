@@ -3,19 +3,19 @@ from typing import Self
 from pydantic import BaseModel, Field, model_validator
 
 from app.models import Currency, DeliveryMethod
-from app.schemas.common import Money, RequestModel
+from app.schemas.common import MAX_LINE_QUANTITY, MAX_LINES, Money, RequestModel
 from app.schemas.pricing import PickupPointRead, ZoneRead
 
 
 class QuoteItem(RequestModel):
     variant_id: int = Field(gt=0)
-    quantity: int = Field(ge=1, le=99)
+    quantity: int = Field(ge=1, le=MAX_LINE_QUANTITY)
 
 
 class ShippingQuoteRequest(RequestModel):
     delivery_method: DeliveryMethod
     province_code: str | None = Field(None, min_length=4, max_length=8)
-    items: list[QuoteItem] = Field(min_length=1, max_length=50)
+    items: list[QuoteItem] = Field(min_length=1, max_length=MAX_LINES)
     currency: Currency = Currency.ARS
 
     @model_validator(mode="after")

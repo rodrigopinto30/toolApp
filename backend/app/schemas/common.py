@@ -4,6 +4,9 @@ from pydantic import BaseModel, ConfigDict
 
 from app.models import Currency
 
+MAX_LINE_QUANTITY = 99
+MAX_LINES = 50
+
 
 class ReadModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
