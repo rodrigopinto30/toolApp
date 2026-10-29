@@ -1,15 +1,12 @@
 import type { JsonLdData } from "@/components/seo/json-ld";
 import type { Locale } from "@/i18n/locales";
 
+import { localizedUrl } from "./seo";
 import type { ProductDetail } from "./types";
 
 const SCHEMA = "https://schema.org";
 
 export type BreadcrumbEntry = { name: string; href: string };
-
-export function localizedUrl(origin: string, locale: Locale, href: string): string {
-  return `${origin}/${locale}${href === "/" ? "" : href}`;
-}
 
 export function breadcrumbJsonLd(origin: string, locale: Locale, entries: BreadcrumbEntry[]): JsonLdData {
   return {

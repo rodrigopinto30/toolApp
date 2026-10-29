@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 
 import { server } from "@/test/msw/server";
 
-import { findCategory, getProduct, listingCache } from "./api";
+import { findCategory, getAllProductSlugs, getProduct, listingCache } from "./api";
 import type { CategoryNode } from "./types";
 
 const ORIGIN = "http://backend.test:8000";
@@ -62,5 +62,21 @@ describe("getProduct", () => {
     server.use(http.get(`${ORIGIN}/api/v1/products/:slug`, () => new HttpResponse(null, { status: 503 })));
 
     await expect(getProduct("drill", "es", "ARS")).rejects.toMatchObject({ code: "service_unavailable" });
+  });
+});
+
+describe("getAllProductSlugs", () => {
+  it("walks every page of the catalog", async () => {
+    const pages: string[] = [];
+    server.use(
+      http.get(`${ORIGIN}/api/v1/products`, ({ request }) => {
+        const page = Number(new URL(request.url).searchParams.get("page"));
+        pages.push(new URL(request.url).search);
+        return HttpResponse.json({ items: [{ slug: `product-${page}` }], page, size: 48, total: 2, pages: 2 });
+      }),
+    );
+
+    await expect(getAllProductSlugs("es")).resolves.toEqual(["product-1", "product-2"]);
+    expect(pages).toEqual(["?locale=es&currency=USD&size=48&page=1", "?locale=es&currency=USD&size=48&page=2"]);
   });
 });

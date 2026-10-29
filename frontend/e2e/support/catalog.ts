@@ -73,3 +73,17 @@ export async function productWithPriceVariants(request: APIRequestContext): Prom
   }
   return productDetail(request, card.slug);
 }
+
+export function flattenCategories(nodes: CategoryNode[]): CategoryNode[] {
+  return nodes.flatMap((node) => [node, ...flattenCategories(node.children ?? [])]);
+}
+
+export async function allProductSlugs(request: APIRequestContext): Promise<string[]> {
+  const slugs: string[] = [];
+  for (let page = 1, pages = 1; page <= pages; page++) {
+    const result = await searchProducts(request, { currency: "USD", size: "48", page: String(page) });
+    pages = result.pages;
+    slugs.push(...result.items.map((item) => item.slug));
+  }
+  return slugs;
+}

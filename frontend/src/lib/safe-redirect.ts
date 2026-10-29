@@ -1,9 +1,9 @@
 import { hasLocale } from "next-intl";
 
 import { routing, type Locale } from "@/i18n/routing";
+import { AUTH_PATHS } from "@/lib/routes";
 
 const PROBE_ORIGIN = "https://toolapp.invalid";
-const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"];
 
 export function safeRedirect(target: string | undefined, locale: Locale): string {
   const fallback = `/${locale}/account`;
