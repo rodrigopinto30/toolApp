@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 
+from app.schemas.common import ReadModel
+
 
 class ExchangeRateRead(BaseModel):
     rate: Decimal
@@ -22,7 +24,7 @@ class ProvinceRead(BaseModel):
     zone: ZoneRead
 
 
-class PickupPointRead(BaseModel):
+class PickupPointRead(ReadModel):
     id: int
     name: str
     address: str

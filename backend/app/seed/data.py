@@ -1,11 +1,10 @@
-"""Initial store data. Labels are {"es": ..., "en": ...}; prices are in USD."""
-
 from decimal import Decimal
 from typing import Any
 
-INITIAL_EXCHANGE_RATE = Decimal("1450.000000")  # ARS per 1 USD (the admin updates it)
+from app.models import CouponType
 
-# code -> name, cost_usd, free_over_usd, eta_min_days, eta_max_days
+INITIAL_EXCHANGE_RATE = Decimal("1450.000000")
+
 SHIPPING_ZONES: dict[str, tuple[dict[str, str], str, str, int, int]] = {
     "amba": ({"es": "AMBA", "en": "AMBA"}, "8.00", "150.00", 1, 3),
     "center": ({"es": "Centro", "en": "Center"}, "12.00", "200.00", 3, 5),
@@ -13,7 +12,6 @@ SHIPPING_ZONES: dict[str, tuple[dict[str, str], str, str, int, int]] = {
     "patagonia": ({"es": "Patagonia", "en": "Patagonia"}, "18.00", "300.00", 5, 9),
 }
 
-# ISO 3166-2:AR code -> name, shipping zone code
 PROVINCES: dict[str, tuple[str, str]] = {
     "AR-C": ("Ciudad Autónoma de Buenos Aires", "amba"),
     "AR-B": ("Buenos Aires", "amba"),
@@ -49,7 +47,6 @@ PICKUP_POINTS: list[dict[str, Any]] = [
     },
 ]
 
-# slug -> name, children (slug -> name)
 CATEGORIES: dict[str, tuple[dict[str, str], dict[str, dict[str, str]]]] = {
     "power-tools": (
         {"es": "Herramientas eléctricas", "en": "Power tools"},
@@ -89,7 +86,6 @@ def _same(label: str) -> dict[str, str]:
     return {"es": label, "en": label}
 
 
-# code -> name, values (slug -> label)
 ATTRIBUTES: dict[str, tuple[dict[str, str], dict[str, dict[str, str]]]] = {
     "voltage": (
         {"es": "Voltaje", "en": "Voltage"},
@@ -126,13 +122,11 @@ ATTRIBUTES: dict[str, tuple[dict[str, str], dict[str, dict[str, str]]]] = {
     ),
 }
 
-# Warranty text per locale: (description sentence, spec label, spec value).
 WARRANTY_TEXT: dict[str, tuple[str, str, str]] = {
     "es": ("Garantía oficial de {months} meses.", "Garantía", "{months} meses"),
     "en": ("Official {months}-month warranty.", "Warranty", "{months} months"),
 }
 
-# Each variant: (sku, price_usd, compare_at_price_usd | None, stock, {attribute_code: value_slug})
 Variant = tuple[str, str, str | None, int, dict[str, str]]
 
 PRODUCTS: list[dict[str, Any]] = [
@@ -412,5 +406,20 @@ PRODUCTS: list[dict[str, Any]] = [
             ("TRU-WP-8", "4.50", None, 150, {"size": "8mm"}),
             ("TRU-WP-10", "5.90", None, 100, {"size": "10mm"}),
         ],
+    },
+]
+
+DEMO_COUPONS: list[dict[str, Any]] = [
+    {
+        "code": "BIENVENIDA10",
+        "type": CouponType.PERCENT,
+        "value": Decimal("10.00"),
+        "min_subtotal_usd": Decimal("20.00"),
+    },
+    {
+        "code": "ENVIO5",
+        "type": CouponType.FIXED,
+        "value": Decimal("5.00"),
+        "max_uses_per_user": 1,
     },
 ]

@@ -9,13 +9,22 @@ from app.db.repositories.pricing import (
     ProvinceRepository,
 )
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
-from app.models import Currency, Locale
+from app.models import Currency, Locale, ShippingZone
 from app.schemas.common import Money
 from app.schemas.pricing import ExchangeRateRead, PickupPointRead, ProvinceRead, ZoneRead
 
 CENT = Decimal("0.01")
 MICRO = Decimal("0.000001")
 HALF = Decimal("0.5")
+
+
+def zone_read(zone: ShippingZone, locale: Locale) -> ZoneRead:
+    return ZoneRead(
+        code=zone.code,
+        name=zone.name[locale],
+        eta_min_days=zone.eta_min_days,
+        eta_max_days=zone.eta_max_days,
+    )
 
 
 class PriceConverter:
@@ -30,11 +39,15 @@ class PriceConverter:
             )
         return self.rate
 
+    def round(self, amount: Decimal, currency: Currency) -> Decimal:
+        if currency == Currency.USD:
+            return amount.quantize(CENT, ROUND_HALF_UP)
+        return (amount / self.step).quantize(Decimal(1), ROUND_HALF_UP) * self.step
+
     def from_usd(self, amount_usd: Decimal, currency: Currency) -> Decimal:
         if currency == Currency.USD:
-            return amount_usd.quantize(CENT, ROUND_HALF_UP)
-        steps = (amount_usd * self.require_rate() / self.step).quantize(Decimal(1), ROUND_HALF_UP)
-        return steps * self.step
+            return self.round(amount_usd, currency)
+        return self.round(amount_usd * self.require_rate(), currency)
 
     def min_usd(self, amount: Decimal, currency: Currency) -> Decimal:
         if currency == Currency.USD:
@@ -71,11 +84,15 @@ class PricingService:
         return ExchangeRateRead(rate=latest.rate, updated_at=latest.created_at)
 
     async def converter(self, currency: Currency) -> PriceConverter:
-        step = self.settings.ars_rounding_step
         if currency == Currency.USD:
-            return PriceConverter(None, ars_rounding_step=step)
+            return PriceConverter(None, ars_rounding_step=self.settings.ars_rounding_step)
+        return await self.rate_converter()
+
+    async def rate_converter(self) -> PriceConverter:
         current = await self.current_rate()
-        converter = PriceConverter(current.rate if current else None, ars_rounding_step=step)
+        converter = PriceConverter(
+            current.rate if current else None, ars_rounding_step=self.settings.ars_rounding_step
+        )
         converter.require_rate()
         return converter
 
@@ -85,14 +102,7 @@ class PricingService:
             provinces = await ProvinceRepository(self.uow.session).list_with_zone()
             return [
                 ProvinceRead(
-                    code=province.code,
-                    name=province.name,
-                    zone=ZoneRead(
-                        code=province.zone.code,
-                        name=province.zone.name[locale],
-                        eta_min_days=province.zone.eta_min_days,
-                        eta_max_days=province.zone.eta_max_days,
-                    ),
+                    code=province.code, name=province.name, zone=zone_read(province.zone, locale)
                 )
                 for province in provinces
             ]
@@ -101,7 +111,4 @@ class PricingService:
     async def pickup_points(self) -> list[PickupPointRead]:
         async with self.uow:
             points = await PickupPointRepository(self.uow.session).list_active()
-            return [
-                PickupPointRead(id=p.id, name=p.name, address=p.address, hours=p.hours)
-                for p in points
-            ]
+            return [PickupPointRead.model_validate(point) for point in points]

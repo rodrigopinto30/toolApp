@@ -1,6 +1,3 @@
-"""Idempotent seed: each section only runs if its table is empty, so it is safe to run on
-every start (the "migrations" service does). It never commits; the caller does."""
-
 from decimal import Decimal
 from typing import Any
 
@@ -17,6 +14,7 @@ from app.models import (
     AttributeValue,
     Brand,
     Category,
+    Coupon,
     ExchangeRate,
     Locale,
     PickupPoint,
@@ -36,12 +34,12 @@ POWER_TOOL_CATEGORIES = {"drills", "angle-grinders", "saws"}
 
 
 async def run_seed(session: AsyncSession, settings: Settings) -> dict[str, Any]:
-    """Seeds what is missing and returns what was done, per section."""
     report: dict[str, Any] = {
         "shipping": await _seed_shipping(session),
         "pickup_points": await _seed_pickup_points(session),
         "admin": await _seed_admin(session, settings),
         "catalog": await _seed_catalog(session),
+        "coupons": await _seed_coupons(session),
     }
     report["exchange_rate"] = await _seed_exchange_rate(session, settings)
     await session.flush()
@@ -173,10 +171,19 @@ def _build_product(
     return product
 
 
+async def _seed_coupons(session: AsyncSession) -> str:
+    created: list[str] = []
+    for coupon in data.DEMO_COUPONS:
+        if not await _repo(session, Coupon).exists(code=coupon["code"]):
+            session.add(Coupon(**coupon, starts_at=utcnow()))
+            created.append(coupon["code"])
+    return f"created {', '.join(created)}" if created else "skipped"
+
+
 async def _seed_exchange_rate(session: AsyncSession, settings: Settings) -> str:
     if await _repo(session, ExchangeRate).exists():
         return "skipped"
-    await session.flush()  # the admin (if created above) needs its id
+    await session.flush()
     admin = None
     if settings.admin_email:
         admin = await _repo(session, User).get_by(email=settings.admin_email.strip().lower())
