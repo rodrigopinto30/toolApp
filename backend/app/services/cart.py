@@ -65,15 +65,17 @@ class CartEntry:
 
 
 async def load_variants(
-    session: AsyncSession, variant_ids: Sequence[int]
+    session: AsyncSession, variant_ids: Sequence[int], *, lock: bool = False
 ) -> dict[int, ProductVariant]:
-    variants = await ProductRepository(session).variants_with_details(variant_ids)
+    variants = await ProductRepository(session).variants_with_details(variant_ids, lock=lock)
     return {variant.id: variant for variant in variants}
 
 
-async def cart_entries(session: AsyncSession, cart: Cart | None) -> list[CartEntry]:
+async def cart_entries(
+    session: AsyncSession, cart: Cart | None, *, lock: bool = False
+) -> list[CartEntry]:
     items = sorted(cart.items, key=lambda item: item.id) if cart else []
-    variants = await load_variants(session, [item.variant_id for item in items])
+    variants = await load_variants(session, [item.variant_id for item in items], lock=lock)
     return [
         CartEntry(variants[item.variant_id], item.quantity)
         for item in items

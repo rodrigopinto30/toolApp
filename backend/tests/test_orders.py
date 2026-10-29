@@ -2,9 +2,16 @@ from decimal import Decimal
 
 import pytest
 
-from app.models import Coupon, CouponType, Currency
+from app.core.exceptions import ConflictError
+from app.models import Coupon, CouponType, Currency, Order, OrderStatus
 from app.services.coupons import FixedDiscount, PercentDiscount, discount_for
-from app.services.orders import OrderCalculator, OrderLine
+from app.services.orders import (
+    OrderCalculator,
+    OrderLine,
+    OrderStateMachine,
+    order_number,
+    temporary_order_number,
+)
 from app.services.pricing import PriceConverter
 from app.services.shipping import PickupShipping, ZoneShipping
 
@@ -12,6 +19,7 @@ RATE = Decimal("1450")
 AMBA = ZoneShipping(Decimal("8.00"), Decimal("150.00"), 1, 3)
 ARS = OrderCalculator(PriceConverter(RATE), Currency.ARS)
 USD = OrderCalculator(PriceConverter(RATE), Currency.USD)
+STATES = OrderStateMachine()
 
 
 def _lines(*items: tuple[str, int]) -> list[OrderLine]:
@@ -116,3 +124,82 @@ def test_discount_for_picks_the_strategy_from_the_coupon_type() -> None:
 
     assert discount_for(percent) == PercentDiscount(Decimal("10"))
     assert discount_for(fixed) == FixedDiscount(Decimal("5"))
+
+
+def _order(status: OrderStatus) -> Order:
+    order = Order(status=status)
+    order.status_history = []
+    return order
+
+
+@pytest.mark.parametrize(
+    ("current", "target"),
+    [
+        (OrderStatus.PENDING_PAYMENT, OrderStatus.PAID),
+        (OrderStatus.PENDING_PAYMENT, OrderStatus.CANCELLED),
+        (OrderStatus.PAID, OrderStatus.PREPARING),
+        (OrderStatus.PAID, OrderStatus.CANCELLED),
+        (OrderStatus.PAID, OrderStatus.REFUNDED),
+        (OrderStatus.PREPARING, OrderStatus.SHIPPED),
+        (OrderStatus.PREPARING, OrderStatus.READY_FOR_PICKUP),
+        (OrderStatus.PREPARING, OrderStatus.REFUNDED),
+        (OrderStatus.SHIPPED, OrderStatus.DELIVERED),
+        (OrderStatus.READY_FOR_PICKUP, OrderStatus.DELIVERED),
+    ],
+)
+def test_allowed_transitions(current: OrderStatus, target: OrderStatus) -> None:
+    order = _order(current)
+
+    STATES.transition(order, target, actor_id=7, note="why")
+
+    assert order.status == target
+    change = order.status_history[-1]
+    assert (change.from_status, change.to_status, change.changed_by, change.note) == (
+        current,
+        target,
+        7,
+        "why",
+    )
+
+
+@pytest.mark.parametrize(
+    ("current", "target"),
+    [
+        (OrderStatus.PENDING_PAYMENT, OrderStatus.PREPARING),
+        (OrderStatus.PENDING_PAYMENT, OrderStatus.REFUNDED),
+        (OrderStatus.PAID, OrderStatus.PAID),
+        (OrderStatus.PREPARING, OrderStatus.CANCELLED),
+        (OrderStatus.SHIPPED, OrderStatus.CANCELLED),
+        (OrderStatus.DELIVERED, OrderStatus.REFUNDED),
+        (OrderStatus.CANCELLED, OrderStatus.PAID),
+        (OrderStatus.REFUNDED, OrderStatus.PAID),
+    ],
+)
+def test_forbidden_transitions(current: OrderStatus, target: OrderStatus) -> None:
+    order = _order(current)
+
+    with pytest.raises(ConflictError) as error:
+        STATES.transition(order, target, actor_id=None)
+
+    assert error.value.code == "invalid_transition"
+    assert (order.status, order.status_history) == (current, [])
+
+
+def test_start_and_timestamps() -> None:
+    order = Order()
+
+    STATES.start(order, actor_id=3)
+    STATES.transition(order, OrderStatus.PAID, actor_id=3)
+    STATES.transition(order, OrderStatus.CANCELLED, actor_id=3)
+
+    assert [(c.from_status, c.to_status) for c in order.status_history] == [
+        (None, OrderStatus.PENDING_PAYMENT),
+        (OrderStatus.PENDING_PAYMENT, OrderStatus.PAID),
+        (OrderStatus.PAID, OrderStatus.CANCELLED),
+    ]
+    assert order.paid_at is not None and order.cancelled_at is not None
+
+
+def test_order_number() -> None:
+    assert order_number(123, 2026) == "TA-2026-000123"
+    assert len(temporary_order_number()) <= 20

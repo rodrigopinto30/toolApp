@@ -216,7 +216,9 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         )
         return await self.session.scalar(statement)
 
-    async def variants_with_details(self, variant_ids: Sequence[int]) -> Sequence[ProductVariant]:
+    async def variants_with_details(
+        self, variant_ids: Sequence[int], *, lock: bool = False
+    ) -> Sequence[ProductVariant]:
         if not variant_ids:
             return []
         statement = (
@@ -229,6 +231,12 @@ class ProductRepository(SqlAlchemyRepository[Product]):
                 selectinload(ProductVariant.attribute_values).selectinload(AttributeValue.attribute),
             )
         )
+        if lock:
+            statement = (
+                statement.order_by(ProductVariant.id)
+                .with_for_update()
+                .execution_options(populate_existing=True)
+            )
         return (await self.session.scalars(statement)).all()
 
     async def active_variants(self, variant_ids: Sequence[int]) -> Sequence[ProductVariant]:

@@ -12,11 +12,12 @@ from app.core.config import Settings
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
 from app.email.mailer import Mailer
 from app.email.sender import EmailMessage, EmailSender, deliver
+from app.payments.gateway import PaymentGateway
 from app.services.account import AccountService
 from app.services.auth import AuthService
 from app.services.cart import CartService
-from app.services.checkout import CheckoutService
 from app.services.catalog import CatalogService
+from app.services.checkout import CheckoutService
 from app.services.pricing import PricingService
 from app.services.shipping import ShippingService
 
@@ -171,13 +172,21 @@ AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 AccountServiceDep = Annotated[AccountService, Depends(get_account_service)]
 
 
+def get_payment_gateway(request: Request) -> PaymentGateway:
+    return request.app.state.payment_gateway
+
+
 def get_checkout_service(
     session_factory: SessionFactoryDep,
     pricing: PricingServiceDep,
+    gateway: Annotated[PaymentGateway, Depends(get_payment_gateway)],
     limiter: RateLimiterDep,
+    mailer: MailerDep,
     settings: SettingsDep,
 ) -> CheckoutService:
-    return CheckoutService(SqlAlchemyUnitOfWork(session_factory), pricing, limiter, settings)
+    return CheckoutService(
+        SqlAlchemyUnitOfWork(session_factory), pricing, gateway, limiter, mailer, settings
+    )
 
 
 CheckoutServiceDep = Annotated[CheckoutService, Depends(get_checkout_service)]
