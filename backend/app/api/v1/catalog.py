@@ -11,6 +11,8 @@ from app.schemas.catalog import (
     CategoryNode,
     ProductCard,
     ProductDetail,
+    ProductFacets,
+    ProductFilterParams,
     ProductSearchParams,
     Slug,
 )
@@ -43,6 +45,13 @@ async def search_products(
     params: Annotated[ProductSearchParams, Query()], service: CatalogServiceDep
 ) -> Page[ProductCard]:
     return await service.search(params)
+
+
+@router.get("/products/facets")
+async def product_facets(
+    params: Annotated[ProductFilterParams, Query()], service: CatalogServiceDep
+) -> ProductFacets:
+    return await service.facets(params)
 
 
 @router.get("/products/featured")

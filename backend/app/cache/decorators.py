@@ -8,7 +8,7 @@ from functools import wraps
 from typing import Any, Protocol, get_type_hints
 
 import structlog
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, ValidationError
 from redis.asyncio import Redis
 from redis.exceptions import RedisError
 
@@ -66,8 +66,13 @@ class Cache:
             return await loader()
 
         if cached is not None:
-            logger.debug("cache_hit", namespace=namespace, key=key)
-            return adapter.validate_json(cached)
+            try:
+                value = adapter.validate_json(cached)
+            except ValidationError:
+                logger.info("cache_stale_entry", namespace=namespace, key=key)
+            else:
+                logger.debug("cache_hit", namespace=namespace, key=key)
+                return value
 
         logger.debug("cache_miss", namespace=namespace, key=key)
         value = await loader()

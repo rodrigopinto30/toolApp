@@ -131,9 +131,24 @@ async def test_provinces_and_pickup_points(client: AsyncClient) -> None:
     assert pickup[0]["name"] == "ToolApp Store"
 
 
+async def test_price_varies_only_when_variant_prices_differ(client: AsyncClient) -> None:
+    response = await client.get("/api/v1/products", params={"currency": "USD", "size": 48})
+
+    cards = {card["slug"]: card["price_varies"] for card in response.json()["items"]}
+    assert cards["truper-nylon-wall-plugs-100"] is True
+    assert cards["truper-leather-work-gloves"] is False
+    assert cards[DRILL] is False
+
+
 @pytest.mark.parametrize(
     "path",
-    ["/api/v1/categories", "/api/v1/brands", "/api/v1/products", "/api/v1/provinces"],
+    [
+        "/api/v1/categories",
+        "/api/v1/brands",
+        "/api/v1/products",
+        "/api/v1/products/facets",
+        "/api/v1/provinces",
+    ],
 )
 async def test_public_endpoints_are_cacheable(client: AsyncClient, path: str) -> None:
     response = await client.get(path)

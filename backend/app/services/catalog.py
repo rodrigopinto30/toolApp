@@ -1,6 +1,7 @@
 import math
 from collections import defaultdict
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
+from dataclasses import replace
 from decimal import Decimal
 
 from app.cache.decorators import Cache, cached
@@ -12,10 +13,11 @@ from app.db.repositories.catalog import (
     CategoryRepository,
     ProductRepository,
 )
-from app.db.repositories.product_filter import ProductFilter, ProductSort
+from app.db.repositories.product_filter import AttributeSelection, ProductFilter, ProductSort
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
 from app.models import Currency, Locale, Product, ProductImage, ProductTranslation, ProductVariant
 from app.schemas.catalog import (
+    AttributeFacet,
     AttributeRead,
     AttributeValueRead,
     BrandRead,
@@ -23,9 +25,14 @@ from app.schemas.catalog import (
     CategoryNode,
     CategoryRef,
     CategoryRow,
+    FacetValue,
     ImageRead,
+    PriceRange,
     ProductCard,
     ProductDetail,
+    ProductFacetCounts,
+    ProductFacets,
+    ProductFilterParams,
     ProductSearchParams,
     StockStatus,
     VariantAttribute,
@@ -112,19 +119,43 @@ class CatalogService:
 
     async def search(self, params: ProductSearchParams) -> Page[ProductCard]:
         converter = await self.pricing.converter(params.currency)
-        product_filter = ProductFilter(
-            q=params.q,
-            category_ids=await self._category_ids(params.category) if params.category else None,
-            brand_slugs=tuple(sorted(set(params.brand))),
-            attributes=_group_attributes(params.attr),
-            min_price_usd=_optional_usd(converter, params.min_price, params.currency),
-            max_price_usd=_optional_usd(converter, params.max_price, params.currency),
-            in_stock=params.in_stock,
+        product_filter = replace(
+            await self._product_filter(params, converter),
             sort=params.sort or (ProductSort.RELEVANCE if params.q else ProductSort.NEWEST),
         )
         page = await self._search_usd(product_filter, params.locale, params.page, params.size)
         return page.model_copy(
             update={"items": [_card_in(card, converter, params.currency) for card in page.items]}
+        )
+
+    async def facets(self, params: ProductFilterParams) -> ProductFacets:
+        converter = await self.pricing.converter(params.currency)
+        counts = await self._facet_counts_usd(
+            await self._product_filter(params, converter), params.locale
+        )
+        attributes = [
+            AttributeFacet(
+                code=attribute.code,
+                name=attribute.name,
+                values=_facet_values(
+                    [(value.slug, value.label) for value in attribute.values],
+                    counts.attribute_values.get(attribute.code, {}),
+                ),
+            )
+            for attribute in await self.attributes(params.locale)
+        ]
+        price = None
+        if counts.price_min_usd is not None and counts.price_max_usd is not None:
+            price = PriceRange(
+                min=converter.money(counts.price_min_usd, params.currency),
+                max=converter.money(counts.price_max_usd, params.currency),
+            )
+        return ProductFacets(
+            brands=_facet_values(
+                [(brand.slug, brand.name) for brand in await self.brands()], counts.brands
+            ),
+            attributes=[attribute for attribute in attributes if attribute.values],
+            price=price,
         )
 
     async def featured(self, locale: Locale, currency: Currency) -> list[ProductCard]:
@@ -152,6 +183,19 @@ class CatalogService:
                     for variant in detail.variants
                 ],
             }
+        )
+
+    async def _product_filter(
+        self, params: ProductFilterParams, converter: PriceConverter
+    ) -> ProductFilter:
+        return ProductFilter(
+            q=params.q,
+            category_ids=await self._category_ids(params.category) if params.category else None,
+            brand_slugs=tuple(sorted(set(params.brand))),
+            attributes=_group_attributes(params.attr),
+            min_price_usd=_price_bound(converter.min_usd, params.min_price, params.currency),
+            max_price_usd=_price_bound(converter.max_usd, params.max_price, params.currency),
+            in_stock=params.in_stock,
         )
 
     async def _category_ids(self, slug: str) -> tuple[int, ...]:
@@ -190,6 +234,15 @@ class CatalogService:
         )
 
     @cached("catalog", ttl_setting="cache_ttl_catalog")
+    async def _facet_counts_usd(
+        self, product_filter: ProductFilter, locale: Locale
+    ) -> ProductFacetCounts:
+        async with self.uow:
+            return await ProductRepository(self.uow.session).facet_counts(
+                product_filter, locale=locale
+            )
+
+    @cached("catalog", ttl_setting="cache_ttl_catalog")
     async def _detail_usd(self, slug: str, locale: Locale) -> ProductDetail:
         rows = {row.id: row for row in await self.active_categories()}
         async with self.uow:
@@ -220,6 +273,7 @@ class CatalogService:
             brand=BrandRef(slug=product.brand.slug, name=product.brand.name) if product.brand else None,
             image=_image(images[0], locale, translation.name) if images else None,
             price_from=_usd(cheapest.price_usd),
+            price_varies=len({variant.price_usd for variant in variants}) > 1,
             compare_at=_usd(cheapest.compare_at_price_usd),
             stock_status=self._stock_status(sum(v.stock for v in variants)),
             rating_avg=product.rating_avg,
@@ -265,13 +319,21 @@ def _card_in[CardT: ProductCard](card: CardT, converter: PriceConverter, currenc
     )
 
 
-def _optional_usd(
-    converter: PriceConverter, amount: Decimal | None, currency: Currency
+def _price_bound(
+    to_usd: Callable[[Decimal, Currency], Decimal], amount: Decimal | None, currency: Currency
 ) -> Decimal | None:
-    return None if amount is None else converter.to_usd(amount, currency)
+    return None if amount is None else to_usd(amount, currency)
 
 
-def _group_attributes(pairs: Sequence[str]) -> tuple[tuple[str, tuple[str, ...]], ...]:
+def _facet_values(options: Sequence[tuple[str, str]], counts: dict[str, int]) -> list[FacetValue]:
+    return [
+        FacetValue(slug=slug, label=label, count=counts[slug])
+        for slug, label in options
+        if counts.get(slug)
+    ]
+
+
+def _group_attributes(pairs: Sequence[str]) -> AttributeSelection:
     grouped: dict[str, set[str]] = defaultdict(set)
     for pair in pairs:
         code, slug = pair.split(":", 1)

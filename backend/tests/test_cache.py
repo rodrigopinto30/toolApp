@@ -49,6 +49,21 @@ async def test_invalidate_drops_the_whole_namespace(cache: Cache) -> None:
     assert await cache.get_or_load("other", ["key"], 60, other, ADAPTER) == [1]
 
 
+async def test_an_entry_that_no_longer_fits_its_type_is_loaded_again(cache: Cache) -> None:
+    await cache.get_or_load("ns", ["key"], 60, Loader(), ADAPTER)
+    names = TypeAdapter(list[str])
+    calls = 0
+
+    async def load_names() -> list[str]:
+        nonlocal calls
+        calls += 1
+        return ["fresh"]
+
+    assert await cache.get_or_load("ns", ["key"], 60, load_names, names) == ["fresh"]
+    assert await cache.get_or_load("ns", ["key"], 60, load_names, names) == ["fresh"]
+    assert calls == 1
+
+
 async def test_falls_back_to_loader_when_redis_is_down() -> None:
     redis = Redis(host="127.0.0.1", port=1, socket_connect_timeout=0.2, socket_timeout=0.2)
     cache = Cache(redis, prefix=f"test:{uuid.uuid4().hex}")

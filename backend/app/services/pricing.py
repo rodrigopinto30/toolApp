@@ -1,4 +1,4 @@
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP, Decimal
 
 from app.cache.decorators import Cache, cached
 from app.core.config import Settings
@@ -14,6 +14,8 @@ from app.schemas.common import Money
 from app.schemas.pricing import ExchangeRateRead, PickupPointRead, ProvinceRead, ZoneRead
 
 CENT = Decimal("0.01")
+MICRO = Decimal("0.000001")
+HALF = Decimal("0.5")
 
 
 class PriceConverter:
@@ -34,10 +36,18 @@ class PriceConverter:
         steps = (amount_usd * self.require_rate() / self.step).quantize(Decimal(1), ROUND_HALF_UP)
         return steps * self.step
 
-    def to_usd(self, amount: Decimal, currency: Currency) -> Decimal:
+    def min_usd(self, amount: Decimal, currency: Currency) -> Decimal:
         if currency == Currency.USD:
             return amount
-        return (amount / self.require_rate()).quantize(Decimal("0.000001"), ROUND_HALF_UP)
+        steps = (amount / self.step).to_integral_value(ROUND_CEILING)
+        return ((steps - HALF) * self.step / self.require_rate()).quantize(MICRO, ROUND_CEILING)
+
+    def max_usd(self, amount: Decimal, currency: Currency) -> Decimal:
+        if currency == Currency.USD:
+            return amount
+        steps = (amount / self.step).to_integral_value(ROUND_FLOOR)
+        limit = (steps + HALF) * self.step / self.require_rate()
+        return limit.quantize(MICRO, ROUND_CEILING) - MICRO
 
     def money(self, amount_usd: Decimal, currency: Currency) -> Money:
         return Money(amount=self.from_usd(amount_usd, currency), currency=currency)

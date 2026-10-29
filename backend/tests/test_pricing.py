@@ -34,11 +34,38 @@ def test_usd_is_returned_with_cents() -> None:
     assert PriceConverter(None).from_usd(Decimal("3.5"), Currency.USD) == Decimal("3.50")
 
 
-def test_inverse_conversion_for_filters() -> None:
+@pytest.mark.parametrize(
+    ("usd", "shown_ars"),
+    [
+        (Decimal("0.01"), Decimal("15")),
+        (Decimal("3.51"), Decimal("5090")),
+        (Decimal("100"), Decimal("145000")),
+    ],
+)
+def test_price_bounds_match_the_rounded_prices_shown(usd: Decimal, shown_ars: Decimal) -> None:
     converter = PriceConverter(RATE)
 
-    assert converter.to_usd(Decimal("145000"), Currency.ARS) == Decimal("100.000000")
-    assert converter.to_usd(Decimal("12.50"), Currency.USD) == Decimal("12.50")
+    assert converter.from_usd(usd, Currency.ARS) == shown_ars
+    assert converter.min_usd(shown_ars, Currency.ARS) <= usd
+    assert converter.min_usd(shown_ars + 1, Currency.ARS) > usd
+    assert converter.max_usd(shown_ars, Currency.ARS) >= usd
+    assert converter.max_usd(shown_ars - 1, Currency.ARS) < usd
+
+
+def test_price_bounds_with_a_rounding_step() -> None:
+    converter = PriceConverter(RATE, ars_rounding_step=10)
+
+    assert converter.from_usd(Decimal("12.34"), Currency.ARS) == Decimal("17890")
+    assert converter.min_usd(Decimal("17885"), Currency.ARS) <= Decimal("12.34")
+    assert converter.max_usd(Decimal("17899"), Currency.ARS) >= Decimal("12.34")
+    assert converter.max_usd(Decimal("17880"), Currency.ARS) < Decimal("12.34")
+
+
+def test_price_bounds_in_usd_are_exact() -> None:
+    converter = PriceConverter(None)
+
+    assert converter.min_usd(Decimal("12.50"), Currency.USD) == Decimal("12.50")
+    assert converter.max_usd(Decimal("12.50"), Currency.USD) == Decimal("12.50")
 
 
 def test_ars_without_rate_is_unavailable() -> None:

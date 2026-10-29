@@ -20,6 +20,8 @@ from app.models import (
 
 MIN_FULLTEXT_TOKEN = 3
 
+type AttributeSelection = tuple[tuple[str, tuple[str, ...]], ...]
+
 
 class ProductSort(StrEnum):
     RELEVANCE = "relevance"
@@ -41,7 +43,7 @@ class ProductFilter:
     q: str | None = None
     category_ids: tuple[int, ...] | None = None
     brand_slugs: tuple[str, ...] = ()
-    attributes: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    attributes: AttributeSelection = ()
     min_price_usd: Decimal | None = None
     max_price_usd: Decimal | None = None
     in_stock: bool = False
@@ -80,24 +82,14 @@ class ProductFilter:
 
     def _variant_matches_attributes(self) -> ColumnElement[bool]:
         variant = aliased(ProductVariant)
-        per_attribute = [
-            exists(
-                select(1)
-                .select_from(variant_attribute_values)
-                .join(AttributeValue, AttributeValue.id == variant_attribute_values.c.attribute_value_id)
-                .join(Attribute, Attribute.id == AttributeValue.attribute_id)
-                .where(
-                    variant_attribute_values.c.variant_id == variant.id,
-                    Attribute.code == code,
-                    AttributeValue.slug.in_(slugs),
-                )
-            )
-            for code, slugs in self.attributes
-        ]
         return exists(
             select(1)
             .select_from(variant)
-            .where(variant.product_id == Product.id, variant.is_active.is_(true()), *per_attribute)
+            .where(
+                variant.product_id == Product.id,
+                variant.is_active.is_(true()),
+                *variant_attribute_conditions(variant, self.attributes),
+            )
         )
 
     def _order_by(
@@ -115,3 +107,21 @@ class ProductFilter:
                 return [translation.name.asc(), Product.id.asc()]
             case _:
                 return [Product.created_at.desc(), Product.id.desc()]
+
+
+def variant_attribute_conditions(
+    variant: Any, attributes: AttributeSelection
+) -> list[ColumnElement[bool]]:
+    links = variant_attribute_values.alias()
+    value = aliased(AttributeValue)
+    attribute = aliased(Attribute)
+    return [
+        exists(
+            select(1)
+            .select_from(links)
+            .join(value, value.id == links.c.attribute_value_id)
+            .join(attribute, attribute.id == value.attribute_id)
+            .where(links.c.variant_id == variant.id, attribute.code == code, value.slug.in_(slugs))
+        )
+        for code, slugs in attributes
+    ]
