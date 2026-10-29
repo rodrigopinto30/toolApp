@@ -8,6 +8,12 @@ Object.assign(Element.prototype, {
   scrollIntoView: () => undefined,
 });
 
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+};
+
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());

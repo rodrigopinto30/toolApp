@@ -8,11 +8,12 @@ export const BUYERS_FILE = path.join(AUTH_DIR, "buyers.json");
 export const BUYER_COUNT = 2;
 
 export type Buyer = Credentials & { storageState: string };
+export type Shoppers = { buyers: Buyer[]; unverified: Buyer };
 
-export function buyerStatePath(index: number): string {
-  return path.join(AUTH_DIR, `buyer-${index}.json`);
+export function statePath(name: string): string {
+  return path.join(AUTH_DIR, `${name}.json`);
 }
 
-export function readBuyers(): Buyer[] {
-  return JSON.parse(readFileSync(BUYERS_FILE, "utf8")) as Buyer[];
+export function readShoppers(): Shoppers {
+  return JSON.parse(readFileSync(BUYERS_FILE, "utf8")) as Shoppers;
 }

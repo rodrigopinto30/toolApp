@@ -10,9 +10,9 @@ import { ChoiceChip } from "@/components/form/choice-chip";
 import { FormAlert } from "@/components/form/form-alert";
 import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SelectField } from "@/components/form/select-field";
 import type { LineItem } from "@/features/cart/types";
+import { PickupPointDetails } from "@/features/catalog/components/pickup-point-details";
 import { useShippingQuote } from "@/features/catalog/hooks";
 import {
   DELIVERY_METHODS,
@@ -27,8 +27,6 @@ import { useErrorMessage } from "@/features/errors/use-error-message";
 import type { Currency } from "@/lib/currency";
 import { useCurrency } from "@/lib/currency-context";
 import { formatMoney } from "@/lib/money";
-
-const OPENING_DAYS = ["mon_fri", "sat", "sun"] as const;
 
 export type ProvinceOption = { code: string; name: string };
 export type QuoteItems = (quantity: number) => LineItem[];
@@ -77,8 +75,6 @@ export function ShippingQuote({
   });
   const { errors } = useFormState({ control: form.control });
   const method = useWatch({ control: form.control, name: "method" });
-  const provinceId = `${id}-province`;
-  const provinceErrorId = errors.province ? `${provinceId}-error` : undefined;
 
   useEffect(() => {
     if (!variables) {
@@ -103,37 +99,21 @@ export function ShippingQuote({
         </div>
       </fieldset>
       {method === "shipping" && (
-        <div className="grid gap-2">
-          <Label htmlFor={provinceId}>{t("province")}</Label>
-          <Controller
-            control={form.control}
-            name="province"
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger
-                  id={provinceId}
-                  aria-invalid={errors.province ? true : undefined}
-                  aria-describedby={provinceErrorId}
-                  className="w-full"
-                >
-                  <SelectValue placeholder={t("provincePlaceholder")} />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  {provinces.map((province) => (
-                    <SelectItem key={province.code} value={province.code}>
-                      {province.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.province && (
-            <p id={provinceErrorId} className="text-sm text-destructive">
-              {errors.province.message}
-            </p>
+        <Controller
+          control={form.control}
+          name="province"
+          render={({ field }) => (
+            <SelectField
+              id={`${id}-province`}
+              label={t("province")}
+              placeholder={t("provincePlaceholder")}
+              options={provinces.map(({ code, name }) => ({ value: code, label: name }))}
+              value={field.value}
+              error={errors.province?.message}
+              onChange={field.onChange}
+            />
           )}
-        </div>
+        />
       )}
       {withQuantity && (
         <TextField
@@ -160,10 +140,6 @@ export function ShippingQuote({
 function QuoteResult({ quote }: { quote: ShippingQuoteResult }) {
   const t = useTranslations("Product.shipping");
   const locale = useLocale();
-  const dayLabel = (day: string) => {
-    const known = OPENING_DAYS.find((candidate) => candidate === day);
-    return known ? t(`hours.${known}`) : day;
-  };
 
   if (quote.delivery_method === "pickup") {
     return (
@@ -171,14 +147,8 @@ function QuoteResult({ quote }: { quote: ShippingQuoteResult }) {
         <p className="font-medium">{t("pickup")}</p>
         <ul className="grid gap-2">
           {quote.pickup_points.map((point) => (
-            <li key={point.id} className="grid gap-0.5">
-              <p className="font-medium">{point.name}</p>
-              <p className="text-muted-foreground">{point.address}</p>
-              {Object.entries(point.hours ?? {}).map(([day, hours]) => (
-                <p key={day} className="text-muted-foreground">
-                  {dayLabel(day)}: {hours}
-                </p>
-              ))}
+            <li key={point.id}>
+              <PickupPointDetails point={point} />
             </li>
           ))}
         </ul>

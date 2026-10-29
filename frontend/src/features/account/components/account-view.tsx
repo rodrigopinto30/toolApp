@@ -1,8 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
-import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 import { FormAlert } from "@/components/form/form-alert";
 import { Button } from "@/components/ui/button";
@@ -12,26 +10,14 @@ import { PasswordForm } from "@/features/account/components/password-form";
 import { ProfileForm } from "@/features/account/components/profile-form";
 import { VerificationBanner } from "@/features/account/components/verification-banner";
 import { useErrorMessage } from "@/features/errors/use-error-message";
-import { useLogout, useMe } from "@/features/session/hooks";
-import { useSession } from "@/features/session/session-provider";
-import { ApiError } from "@/lib/api/errors";
+import { useLogout } from "@/features/session/hooks";
+import { useProtectedMe } from "@/features/session/use-protected-me";
 
 export function AccountView() {
   const t = useTranslations("Account");
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
   const errorMessage = useErrorMessage();
-  const { hasSession } = useSession();
-  const me = useMe();
+  const { me, unauthenticated } = useProtectedMe();
   const logout = useLogout();
-  const unauthenticated = !hasSession || (me.error instanceof ApiError && me.error.status === 401);
-
-  useEffect(() => {
-    if (unauthenticated) {
-      router.replace(`/${locale}/login?next=${encodeURIComponent(pathname)}`);
-    }
-  }, [unauthenticated, router, locale, pathname]);
 
   if (me.error && !unauthenticated) {
     return <FormAlert message={errorMessage(me.error)} />;

@@ -176,6 +176,77 @@
       "outOfStock": "Esta variante no tiene stock."
     }
   },
+  "Checkout": {
+    "metaTitle": "Pagar",
+    "title": "Finalizá tu compra",
+    "loading": "Preparando el checkout",
+    "verify": "Para comprar necesitás confirmar tu email.",
+    "emptyCart": "Tu carrito está vacío.",
+    "cartIssues": "Hay productos de tu carrito que necesitan atención.",
+    "backToCart": "Volver al carrito",
+    "placed": "¡Listo! Te llevamos a tu pedido…",
+    "delivery": {
+      "title": "Entrega",
+      "method": "Cómo lo recibís",
+      "methods": {
+        "shipping": "Envío a domicilio",
+        "pickup": "Retiro en el local"
+      },
+      "address": "Dirección de envío",
+      "addAddress": "Agregar una dirección",
+      "pickupPoint": "Punto de retiro",
+      "noPickupPoints": "No hay puntos de retiro disponibles."
+    },
+    "billing": {
+      "title": "Facturación",
+      "profile": "Datos de facturación",
+      "finalConsumer": "Consumidor final",
+      "finalConsumerHint": "Factura sin datos fiscales.",
+      "addProfile": "Agregar datos de facturación"
+    },
+    "coupon": {
+      "title": "Cupón de descuento",
+      "label": "Código",
+      "apply": "Aplicar",
+      "applying": "Aplicando…",
+      "applied": "Cupón {code} aplicado.",
+      "remove": "Quitar el cupón",
+      "needsDelivery": "Elegí la entrega para aplicar un cupón."
+    },
+    "payment": {
+      "title": "Pago",
+      "number": "Número de tarjeta",
+      "expiry": "Vencimiento (MM/AA)",
+      "cvc": "Código de seguridad",
+      "holder": "Nombre como figura en la tarjeta",
+      "testCards": "Los pagos son de prueba. Usá una de estas tarjetas con cualquier vencimiento futuro y código:",
+      "cards": {
+        "approved": "aprobada",
+        "rejected": "rechazada",
+        "slow": "queda pendiente (el pago tarda)"
+      },
+      "submit": "Pagar {total}",
+      "submitNoTotal": "Pagar",
+      "submitting": "Procesando el pago…"
+    },
+    "summary": {
+      "title": "Tu pedido",
+      "chooseDelivery": "Elegí cómo recibís tu compra para ver el total.",
+      "updating": "Actualizando el total…",
+      "subtotal": "Subtotal",
+      "discount": "Descuento ({code})",
+      "shipping": "Envío",
+      "free": "Gratis",
+      "total": "Total",
+      "eta": "Llega en {min} a {max} días hábiles.",
+      "pickupAt": "Retirás en {name}."
+    },
+    "outcome": {
+      "rejected": "Tu tarjeta fue rechazada y cancelamos el pedido {number}. Los productos siguen en tu carrito: probá con otra tarjeta.",
+      "totalChanged": "El total cambió desde que lo viste. Revisalo y confirmá de nuevo.",
+      "cart": "Tu carrito cambió mientras pagabas."
+    }
+  },
   "NotFound": {
     "title": "Página no encontrada",
     "description": "La página que buscás no existe o se movió.",
@@ -283,6 +354,43 @@
       "saved": "Tu contraseña cambió y cerramos las demás sesiones."
     }
   },
+  "AddressForm": {
+    "label": "Nombre de la dirección",
+    "labelHint": "Por ejemplo: Casa, Trabajo.",
+    "recipient": "Quién recibe",
+    "phone": "Teléfono",
+    "street": "Calle",
+    "number": "Número",
+    "floorApt": "Piso y depto.",
+    "optional": "Opcional.",
+    "city": "Ciudad",
+    "province": "Provincia",
+    "provincePlaceholder": "Elegí una provincia",
+    "postalCode": "Código postal",
+    "notes": "Indicaciones para la entrega",
+    "isDefault": "Usar como dirección principal",
+    "submit": "Guardar la dirección",
+    "submitting": "Guardando…",
+    "cancel": "Cancelar"
+  },
+  "BillingForm": {
+    "taxIdType": "Tipo de documento",
+    "taxId": "Número",
+    "taxIdHint": "Podés escribirlo con o sin guiones.",
+    "taxCondition": "Condición frente al IVA",
+    "conditions": {
+      "consumidor_final": "Consumidor final",
+      "monotributo": "Monotributo",
+      "responsable_inscripto": "Responsable inscripto",
+      "exento": "Exento"
+    },
+    "legalName": "Nombre o razón social",
+    "fiscalAddress": "Domicilio fiscal",
+    "isDefault": "Usar como datos principales",
+    "submit": "Guardar los datos",
+    "submitting": "Guardando…",
+    "cancel": "Cancelar"
+  },
   "Validation": {
     "required": "Completá este campo.",
     "email": "Ingresá un email válido.",
@@ -292,7 +400,16 @@
     "nameLength": "Usá hasta 80 caracteres.",
     "phone": "Ingresá un teléfono válido.",
     "invalid": "Revisá este valor.",
-    "quantity": "Ingresá una cantidad entre 1 y 99."
+    "quantity": "Ingresá una cantidad entre 1 y 99.",
+    "tooLong": "El texto es demasiado largo.",
+    "postalCode": "Usá entre 4 y 10 letras o números.",
+    "cuit": "El CUIT no es válido.",
+    "dni": "El DNI tiene 7 u 8 números.",
+    "dniCondition": "Con DNI solo podés facturar como consumidor final.",
+    "cardNumber": "El número de tarjeta no es válido.",
+    "cardExpiry": "Usá el formato MM/AA.",
+    "cardExpired": "La tarjeta está vencida.",
+    "cardCvc": "El código tiene 3 o 4 números."
   },
   "Errors": {
     "invalid_credentials": "Email o contraseña incorrectos.",
@@ -310,6 +427,24 @@
     "insufficient_stock_unknown": "No hay stock suficiente.",
     "cart_limit": "El carrito admite hasta 50 productos distintos.",
     "not_found": "No lo encontramos o ya no está disponible.",
+    "cart_empty": "Tu carrito está vacío.",
+    "cart_has_issues": "Hay productos de tu carrito que necesitan atención.",
+    "coupon_not_found": "Ese cupón no existe.",
+    "coupon_not_started": "Ese cupón todavía no está vigente.",
+    "coupon_expired": "Ese cupón venció.",
+    "coupon_exhausted": "Ese cupón ya no tiene usos disponibles.",
+    "coupon_limit_reached": "Ya usaste ese cupón.",
+    "coupon_min_subtotal": "El cupón pide una compra mínima de {amount}.",
+    "coupon_min_subtotal_unknown": "Tu compra no llega al mínimo del cupón.",
+    "shipping_unavailable": "No hacemos envíos a esa dirección por ahora.",
+    "total_changed": "El total cambió. Revisalo y confirmá de nuevo.",
+    "payment_rejected": "La tarjeta fue rechazada.",
+    "payment_unavailable": "Los pagos no están disponibles en este momento. Probá en un minuto.",
+    "email_not_verified": "Confirmá tu email para poder comprar.",
+    "exchange_rate_unavailable": "Los precios en pesos no están disponibles en este momento.",
+    "limit_reached": "Llegaste al máximo permitido.",
+    "unknown_province": "Elegí una provincia de la lista.",
+    "invalid_tax_id": "El documento no es válido para esa condición.",
     "unexpected": "Ocurrió un error inesperado.",
     "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }

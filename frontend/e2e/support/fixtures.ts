@@ -9,7 +9,7 @@ import { ResetPasswordPage } from "../pages/reset-password-page";
 import { SearchPage } from "../pages/search-page";
 import { VerifyEmailPage } from "../pages/verify-email-page";
 import { registerUser } from "./api";
-import { readBuyers, type Buyer } from "./buyers";
+import { readShoppers, type Buyer } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
 import { newUser, type TestUser } from "./users";
@@ -32,13 +32,20 @@ type Fixtures = {
 
 type WorkerFixtures = {
   buyer: Buyer;
+  unverifiedShopper: Buyer;
 };
 
 export const test = base.extend<Fixtures, WorkerFixtures>({
   buyer: [
     async ({}, use, workerInfo) => {
-      const buyers = readBuyers();
+      const { buyers } = readShoppers();
       await use(buyers[workerInfo.parallelIndex % buyers.length]);
+    },
+    { scope: "worker" },
+  ],
+  unverifiedShopper: [
+    async ({}, use) => {
+      await use(readShoppers().unverified);
     },
     { scope: "worker" },
   ],
@@ -108,6 +115,12 @@ export const customerTest = test.extend<{ emptyCart: void }>({
     },
     { auto: true },
   ],
+});
+
+export const unverifiedTest = test.extend({
+  storageState: async ({ unverifiedShopper }, use) => {
+    await use(unverifiedShopper.storageState);
+  },
 });
 
 export { expect };

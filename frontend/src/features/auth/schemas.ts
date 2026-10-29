@@ -8,12 +8,22 @@ export type ValidationKey =
   | "passwordMismatch"
   | "nameLength"
   | "phone"
-  | "quantity";
+  | "quantity"
+  | "invalid"
+  | "tooLong"
+  | "postalCode"
+  | "cuit"
+  | "dni"
+  | "dniCondition"
+  | "cardNumber"
+  | "cardExpiry"
+  | "cardExpired"
+  | "cardCvc";
 
 export type Translate = (key: ValidationKey) => string;
 
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const PHONE_PATTERN = /^\+?[0-9 ()-]{6,30}$/;
+export const PHONE_PATTERN = /^\+?[0-9 ()-]{6,30}$/;
 
 export const email = (t: Translate) =>
   z
