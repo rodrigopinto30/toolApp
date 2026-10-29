@@ -1,10 +1,19 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from typing import Annotated
+
+from pydantic import AfterValidator, BaseModel, Field
 
 from app.models import Currency
 from app.schemas.catalog import ImageRead, StockStatus
-from app.schemas.common import MAX_LINE_QUANTITY, MAX_LINES, Money, RequestModel
+from app.schemas.common import (
+    MAX_LINE_QUANTITY,
+    MAX_LINES,
+    LineItem,
+    Money,
+    RequestModel,
+    unique_variants,
+)
 
 
 class CartLineIssue(StrEnum):
@@ -23,13 +32,14 @@ class CartItemUpdate(RequestModel):
     quantity: int = Field(ge=1, le=MAX_LINE_QUANTITY)
 
 
-class CartMergeItem(RequestModel):
-    variant_id: int = Field(gt=0)
-    quantity: int = Field(ge=1, le=MAX_LINE_QUANTITY)
-
-
 class CartMergeRequest(RequestModel):
-    items: list[CartMergeItem] = Field(max_length=MAX_LINES)
+    items: list[LineItem] = Field(max_length=MAX_LINES)
+
+
+class CartQuoteRequest(RequestModel):
+    items: Annotated[
+        list[LineItem], Field(min_length=1, max_length=MAX_LINES), AfterValidator(unique_variants)
+    ]
 
 
 class CartLine(BaseModel):

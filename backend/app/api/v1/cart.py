@@ -6,9 +6,16 @@ from app.api.v1.deps import CurrentUser
 from app.api.v1.params import CurrencyQuery, LocaleQuery
 from app.core.container import CartServiceDep
 from app.models import Currency, Locale
-from app.schemas.cart import CartItemUpdate, CartMergeRead, CartMergeRequest, CartRead
+from app.schemas.cart import (
+    CartItemUpdate,
+    CartMergeRead,
+    CartMergeRequest,
+    CartQuoteRequest,
+    CartRead,
+)
 
 router = APIRouter(prefix="/me/cart", tags=["cart"])
+guest_router = APIRouter(prefix="/cart", tags=["cart"])
 
 VariantId = Annotated[int, Path(gt=0)]
 
@@ -49,3 +56,13 @@ async def merge_cart(
     locale: LocaleQuery = Locale.ES,
 ) -> CartMergeRead:
     return await cart.merge(user.id, body, currency, locale)
+
+
+@guest_router.post("/quote")
+async def quote_cart(
+    body: CartQuoteRequest,
+    cart: CartServiceDep,
+    currency: CurrencyQuery = Currency.ARS,
+    locale: LocaleQuery = Locale.ES,
+) -> CartRead:
+    return await cart.quote(body, currency, locale)
