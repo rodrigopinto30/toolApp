@@ -10,10 +10,12 @@ export const LAYOUT_NAMESPACES = [
   "LocaleSwitcher",
   "CurrencySwitcher",
   "UserMenu",
+  "CartLink",
   "CategoryMenu",
   "SearchBox",
   "Error",
 ] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;
 export const SHOP_NAMESPACES = ["Listing"] as const;
-export const PRODUCT_NAMESPACES = ["Catalog", "Product", "Validation", "Errors"] as const;
+export const PRODUCT_NAMESPACES = ["Catalog", "Product", "Cart", "Validation", "Errors"] as const;
+export const PURCHASE_NAMESPACES = PRODUCT_NAMESPACES;

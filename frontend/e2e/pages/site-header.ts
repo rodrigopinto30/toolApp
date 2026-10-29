@@ -10,6 +10,7 @@ export class SiteHeader {
   readonly language: Locator;
   readonly categoryMenu: Locator;
   readonly searchBox: Locator;
+  readonly cartLink: Locator;
   private readonly page: Page;
   private readonly t: Messages;
 
@@ -23,6 +24,7 @@ export class SiteHeader {
     this.language = banner.getByRole("button", { name: this.t.LocaleSwitcher.label });
     this.categoryMenu = banner.getByRole("button", { name: this.t.CategoryMenu.label });
     this.searchBox = banner.getByRole("searchbox", { name: this.t.SearchBox.label });
+    this.cartLink = banner.getByRole("link", { name: new RegExp(`^${this.t.CartLink.loading}`) });
   }
 
   async search(query: string): Promise<void> {

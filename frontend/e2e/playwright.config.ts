@@ -19,5 +19,8 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "buyers", testMatch: /buyers\.setup\.ts/ },
+    { name: "chromium", testIgnore: /\.setup\.ts/, use: { ...devices["Desktop Chrome"] } },
+  ],
 });

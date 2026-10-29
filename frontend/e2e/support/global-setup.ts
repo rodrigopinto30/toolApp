@@ -4,7 +4,7 @@ import { PROTECTED_PATHS } from "../../src/lib/routes";
 import { ACCESS_COOKIE } from "../../src/lib/session-cookies";
 import { BASE_URL, isDevStack } from "./stack";
 
-const PUBLIC_PATHS = ["", "/login", "/register", "/verify-email", "/forgot-password", "/reset-password"];
+const PUBLIC_PATHS = ["", "/cart", "/login", "/register", "/verify-email", "/forgot-password", "/reset-password"];
 const ATTEMPTS = 5;
 
 export default async function warmUpDevServer(): Promise<void> {

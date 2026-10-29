@@ -25,6 +25,10 @@
     "logout": "Log out",
     "loading": "Loading the account"
   },
+  "CartLink": {
+    "label": "Cart, {count, plural, =0 {empty} one {# unit} other {# units}}",
+    "loading": "Cart"
+  },
   "CategoryMenu": {
     "label": "Categories"
   },
@@ -121,6 +125,55 @@
         "sat": "Saturdays",
         "sun": "Sundays"
       }
+    }
+  },
+  "Cart": {
+    "metaTitle": "Cart",
+    "title": "Your cart",
+    "loading": "Loading the cart",
+    "lines": "Products in the cart",
+    "empty": {
+      "title": "Your cart is empty",
+      "body": "Browse the catalog and add what you need.",
+      "cta": "Go to the home page"
+    },
+    "quantity": "Quantity",
+    "quantityOf": "Quantity of {name}",
+    "decrease": "Remove one unit",
+    "increase": "Add one unit",
+    "unitPrice": "{price} each",
+    "remove": "Remove {name}",
+    "issues": {
+      "unavailable": "No longer available. Remove it to continue.",
+      "out_of_stock": "Out of stock. Remove it to continue.",
+      "insufficient_stock": "Only {available, plural, one {# unit} other {# units}} left."
+    },
+    "useAvailable": "Keep {available, plural, one {# unit} other {# units}}",
+    "summary": {
+      "title": "Summary",
+      "units": "{count, plural, one {# unit} other {# units}}",
+      "subtotal": "Subtotal",
+      "note": "Shipping and discounts are calculated at checkout.",
+      "issues": "Fix the marked products to check out."
+    },
+    "checkout": "Check out",
+    "loginToCheckout": "Log in to check out",
+    "shipping": "Estimate shipping",
+    "merged": {
+      "title": "We added the products you had picked to your account",
+      "insufficient_stock": "{name}: {applied, plural, =0 {no units left} one {# unit left} other {# units left}} of the {requested} you asked for.",
+      "unavailable": "One of the products is no longer available.",
+      "cart_limit": "One product did not fit because the cart reached its maximum.",
+      "unknownProduct": "A product",
+      "dismiss": "Got it"
+    },
+    "add": {
+      "label": "Buy",
+      "submit": "Add to cart",
+      "submitting": "Adding…",
+      "added": "Added to the cart.",
+      "view": "View cart",
+      "outOfStock": "This variant is out of stock."
     }
   },
   "NotFound": {
@@ -253,6 +306,10 @@
     "network_error": "No connection. Check your network.",
     "timeout": "The server took too long. Try again.",
     "validation_error": "Check the form data.",
+    "insufficient_stock": "Not enough stock: {available, plural, one {# unit} other {# units}} left.",
+    "insufficient_stock_unknown": "Not enough stock.",
+    "cart_limit": "The cart holds up to 50 different products.",
+    "not_found": "We could not find it, or it is no longer available.",
     "unexpected": "An unexpected error happened.",
     "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }

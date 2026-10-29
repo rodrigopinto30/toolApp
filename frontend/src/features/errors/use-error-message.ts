@@ -28,10 +28,24 @@ export function useErrorMessage() {
       case "service_unavailable":
       case "auth_unavailable":
         return t("service_unavailable");
+      case "cart_limit":
+      case "not_found":
+        return t(error.code);
+      case "insufficient_stock": {
+        const available = availableUnits(error.details);
+        return available === undefined ? t("insufficient_stock_unknown") : t("insufficient_stock", { available });
+      }
       default:
         return error.requestId ? t("unexpectedWithId", { requestId: error.requestId }) : t("unexpected");
     }
   };
+}
+
+function availableUnits(details: unknown): number | undefined {
+  if (typeof details !== "object" || details === null || !("available" in details)) {
+    return undefined;
+  }
+  return typeof details.available === "number" ? details.available : undefined;
 }
 
 export function invalidFields(error: unknown): string[] {
