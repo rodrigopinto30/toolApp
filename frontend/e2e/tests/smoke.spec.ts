@@ -1,13 +1,12 @@
 import { buildCsp } from "../../src/lib/csp";
 import { CURRENCY_COOKIE, DEFAULT_CURRENCY } from "../../src/lib/currency";
-import { PROTECTED_PATHS } from "../../src/lib/routes";
+import { AUTH_PATHS, PROTECTED_PATHS } from "../../src/lib/routes";
 import { redirectedToLogin } from "../pages/login-page";
 import { expect, test } from "../support/fixtures";
 import { messages, type Locale } from "../support/i18n";
 import { BASE_URL, HTTP_URL, isDevStack } from "../support/stack";
 
 const LOCALES = Object.keys(messages) as Locale[];
-const AUTH_PATHS = ["/login", "/register", "/verify-email", "/forgot-password", "/reset-password"];
 
 test.describe("security", () => {
   test("every page gets the security headers and a new CSP nonce", async ({ request }) => {

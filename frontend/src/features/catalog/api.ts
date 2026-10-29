@@ -12,6 +12,7 @@ const PRICED = publicCache(["catalog", "pricing"]);
 const SHIPPING = publicCache(["shipping"]);
 const NO_STORE = { cache: "no-store" } as const;
 const FILTER_KEYS = ["q", "brand", "attr[]", "min_price", "max_price", "in_stock", "sort"] as const;
+const ALL_PRODUCTS_PAGE_SIZE = 48;
 
 export function listingCache(query: FilterQuery | ProductQuery) {
   return FILTER_KEYS.some((key) => key in query) ? NO_STORE : PRICED;
@@ -37,6 +38,15 @@ export function getFeatured(locale: Locale, currency: Currency) {
 
 export function searchProducts(query: ProductQuery) {
   return unwrap(serverApi().GET("/api/v1/products", { params: { query }, ...listingCache(query) }));
+}
+
+export async function getAllProductSlugs(locale: Locale): Promise<string[]> {
+  const query = { locale, currency: "USD" as const, size: ALL_PRODUCTS_PAGE_SIZE };
+  const first = await searchProducts({ ...query, page: 1 });
+  const rest = await Promise.all(
+    Array.from({ length: first.pages - 1 }, (_, index) => searchProducts({ ...query, page: index + 2 })),
+  );
+  return [first, ...rest].flatMap((page) => page.items.map((item) => item.slug));
 }
 
 export function getFacets(query: FilterQuery) {
