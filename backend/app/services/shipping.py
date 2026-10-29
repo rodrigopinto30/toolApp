@@ -11,7 +11,7 @@ from app.models import DeliveryMethod, Locale, ShippingZone
 from app.schemas.common import Money
 from app.schemas.pricing import PickupPointRead, ZoneRead
 from app.schemas.shipping import ShippingQuoteRead, ShippingQuoteRequest
-from app.services.pricing import PricingService
+from app.services.pricing import PricingService, zone_read
 
 ZERO = Decimal("0.00")
 
@@ -81,12 +81,7 @@ class ShippingService:
                 if province is None or not province.zone.is_active:
                     raise BusinessRuleViolation("Unknown province.", code="unknown_province")
                 strategy = ZoneShipping.from_zone(province.zone)
-                zone = ZoneRead(
-                    code=province.zone.code,
-                    name=province.zone.name[locale],
-                    eta_min_days=province.zone.eta_min_days,
-                    eta_max_days=province.zone.eta_max_days,
-                )
+                zone = zone_read(province.zone, locale)
 
         subtotal_usd = sum((v.price_usd * quantities[v.id] for v in variants), ZERO)
         subtotal = sum(

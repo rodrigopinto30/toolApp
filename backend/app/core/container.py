@@ -15,6 +15,7 @@ from app.email.sender import EmailMessage, EmailSender, deliver
 from app.services.account import AccountService
 from app.services.auth import AuthService
 from app.services.cart import CartService
+from app.services.checkout import CheckoutService
 from app.services.catalog import CatalogService
 from app.services.pricing import PricingService
 from app.services.shipping import ShippingService
@@ -168,3 +169,15 @@ def get_account_service(
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 AccountServiceDep = Annotated[AccountService, Depends(get_account_service)]
+
+
+def get_checkout_service(
+    session_factory: SessionFactoryDep,
+    pricing: PricingServiceDep,
+    limiter: RateLimiterDep,
+    settings: SettingsDep,
+) -> CheckoutService:
+    return CheckoutService(SqlAlchemyUnitOfWork(session_factory), pricing, limiter, settings)
+
+
+CheckoutServiceDep = Annotated[CheckoutService, Depends(get_checkout_service)]

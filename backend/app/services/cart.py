@@ -1,5 +1,8 @@
 from collections.abc import Sequence
+from dataclasses import dataclass
 from decimal import Decimal
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
 from app.core.exceptions import BusinessRuleViolation, ConflictError, NotFoundError
@@ -18,6 +21,7 @@ from app.schemas.cart import (
 )
 from app.schemas.common import MAX_LINES, Money
 from app.services.catalog import product_image, product_translation, stock_status
+from app.services.orders import OrderCalculator, OrderLine
 from app.services.pricing import PriceConverter, PricingService
 
 
@@ -46,6 +50,82 @@ def line_issue(variant: ProductVariant, quantity: int) -> CartLineIssue | None:
     return None
 
 
+@dataclass(frozen=True)
+class CartEntry:
+    variant: ProductVariant
+    quantity: int
+
+    @property
+    def issue(self) -> CartLineIssue | None:
+        return line_issue(self.variant, self.quantity)
+
+    @property
+    def order_line(self) -> OrderLine:
+        return OrderLine(self.variant.id, self.variant.price_usd, self.quantity)
+
+
+async def load_variants(
+    session: AsyncSession, variant_ids: Sequence[int]
+) -> dict[int, ProductVariant]:
+    variants = await ProductRepository(session).variants_with_details(variant_ids)
+    return {variant.id: variant for variant in variants}
+
+
+async def cart_entries(session: AsyncSession, cart: Cart | None) -> list[CartEntry]:
+    items = sorted(cart.items, key=lambda item: item.id) if cart else []
+    variants = await load_variants(session, [item.variant_id for item in items])
+    return [
+        CartEntry(variants[item.variant_id], item.quantity)
+        for item in items
+        if item.variant_id in variants
+    ]
+
+
+class CartPresenter:
+    def __init__(self, calculator: OrderCalculator, locale: Locale, low_stock_threshold: int) -> None:
+        self.calculator = calculator
+        self.locale = locale
+        self.low_stock_threshold = low_stock_threshold
+
+    def money(self, amount: Decimal) -> Money:
+        return Money(amount=amount, currency=self.calculator.currency)
+
+    def line(self, entry: CartEntry) -> CartLine:
+        variant = entry.variant
+        product = variant.product
+        translation = product_translation(product, self.locale)
+        amounts = self.calculator.line(entry.order_line)
+        issue = entry.issue
+        image = product.images[0] if product.images else None
+        return CartLine(
+            variant_id=variant.id,
+            sku=variant.sku,
+            product_slug=product.slug,
+            product_name=translation.name,
+            variant_label=variant_label(variant, self.locale),
+            image=product_image(image, self.locale, translation.name) if image else None,
+            quantity=entry.quantity,
+            unit_price=self.money(amounts.unit_price),
+            line_total=self.money(amounts.line_total),
+            stock_status=stock_status(variant.stock, self.low_stock_threshold),
+            issue=issue,
+            available=variant.stock if issue == CartLineIssue.INSUFFICIENT_STOCK else None,
+        )
+
+    def cart(self, entries: Sequence[CartEntry]) -> CartRead:
+        lines = [self.line(entry) for entry in entries]
+        subtotal = sum(
+            (line.line_total.amount for line in lines if line.issue is None), self.calculator.zero()
+        )
+        return CartRead(
+            items=lines,
+            item_count=sum(line.quantity for line in lines),
+            subtotal=self.money(subtotal),
+            has_issues=any(line.issue is not None for line in lines),
+            currency=self.calculator.currency,
+        )
+
+
 class CartService:
     def __init__(self, uow: SqlAlchemyUnitOfWork, pricing: PricingService, settings: Settings) -> None:
         self.uow = uow
@@ -63,7 +143,7 @@ class CartService:
     ) -> CartRead:
         converter = await self.pricing.converter(currency)
         async with self.uow:
-            variant = (await self._variants([variant_id])).get(variant_id)
+            variant = (await load_variants(self.uow.session, [variant_id])).get(variant_id)
             if variant is None or not is_purchasable(variant):
                 raise NotFoundError("Product not found.")
             if quantity > variant.stock:
@@ -98,10 +178,11 @@ class CartService:
         adjustments: list[CartAdjustment] = []
         async with self.uow:
             cart = await CartRepository(self.uow.session).lock_or_create(user_id)
-            variants = await self._variants(list(requested))
+            variants = await load_variants(self.uow.session, list(requested))
             lines = {item.variant_id: item for item in cart.items}
             for variant_id, quantity in requested.items():
-                adjustment = self._merge_line(cart, lines, variants.get(variant_id), variant_id, quantity)
+                variant = variants.get(variant_id)
+                adjustment = self._merge_line(cart, lines, variant, variant_id, quantity)
                 if adjustment is not None:
                     adjustments.append(adjustment)
             await self.uow.flush()
@@ -118,7 +199,9 @@ class CartService:
         quantity: int,
     ) -> CartAdjustment | None:
         def adjustment(applied: int, reason: CartAdjustmentReason) -> CartAdjustment:
-            return CartAdjustment(variant_id=variant_id, requested=quantity, applied=applied, reason=reason)
+            return CartAdjustment(
+                variant_id=variant_id, requested=quantity, applied=applied, reason=reason
+            )
 
         if variant is None or not is_purchasable(variant):
             return adjustment(0, CartAdjustmentReason.UNAVAILABLE)
@@ -131,54 +214,15 @@ class CartService:
         elif target > 0:
             lines[variant_id] = CartItem(variant_id=variant_id, quantity=target)
             cart.items.append(lines[variant_id])
-        return adjustment(target, CartAdjustmentReason.INSUFFICIENT_STOCK) if target < quantity else None
-
-    async def _variants(self, variant_ids: Sequence[int]) -> dict[int, ProductVariant]:
-        variants = await ProductRepository(self.uow.session).variants_with_details(variant_ids)
-        return {variant.id: variant for variant in variants}
+        if target < quantity:
+            return adjustment(target, CartAdjustmentReason.INSUFFICIENT_STOCK)
+        return None
 
     async def _read(
         self, cart: Cart | None, converter: PriceConverter, currency: Currency, locale: Locale
     ) -> CartRead:
-        items = sorted(cart.items, key=lambda item: item.id) if cart else []
-        variants = await self._variants([item.variant_id for item in items])
-        lines = [
-            self._line(item.quantity, variants[item.variant_id], converter, currency, locale)
-            for item in items
-            if item.variant_id in variants
-        ]
-        subtotal = sum((line.line_total.amount for line in lines if line.issue is None), Decimal(0))
-        return CartRead(
-            items=lines,
-            item_count=sum(line.quantity for line in lines),
-            subtotal=Money(amount=subtotal, currency=currency),
-            has_issues=any(line.issue is not None for line in lines),
-            currency=currency,
+        entries = await cart_entries(self.uow.session, cart)
+        presenter = CartPresenter(
+            OrderCalculator(converter, currency), locale, self.settings.low_stock_threshold
         )
-
-    def _line(
-        self,
-        quantity: int,
-        variant: ProductVariant,
-        converter: PriceConverter,
-        currency: Currency,
-        locale: Locale,
-    ) -> CartLine:
-        product = variant.product
-        translation = product_translation(product, locale)
-        unit_price = converter.money(variant.price_usd, currency)
-        issue = line_issue(variant, quantity)
-        return CartLine(
-            variant_id=variant.id,
-            sku=variant.sku,
-            product_slug=product.slug,
-            product_name=translation.name,
-            variant_label=variant_label(variant, locale),
-            image=product_image(product.images[0], locale, translation.name) if product.images else None,
-            quantity=quantity,
-            unit_price=unit_price,
-            line_total=Money(amount=unit_price.amount * quantity, currency=currency),
-            stock_status=stock_status(variant.stock, self.settings.low_stock_threshold),
-            issue=issue,
-            available=variant.stock if issue == CartLineIssue.INSUFFICIENT_STOCK else None,
-        )
+        return presenter.cart(entries)
