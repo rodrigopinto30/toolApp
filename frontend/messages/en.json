@@ -93,6 +93,36 @@
     "next": "Next",
     "page": "Page {page}"
   },
+  "Product": {
+    "sku": "SKU: {sku}",
+    "outOfStock": "out of stock",
+    "description": "Description",
+    "specs": "Specifications",
+    "yes": "Yes",
+    "no": "No",
+    "shipping": {
+      "title": "Estimate shipping",
+      "method": "Delivery",
+      "methods": {
+        "shipping": "Home delivery",
+        "pickup": "Store pickup"
+      },
+      "province": "Province",
+      "provincePlaceholder": "Choose a province",
+      "quantity": "Quantity",
+      "submit": "Estimate",
+      "submitting": "Estimating…",
+      "cost": "Shipping: {cost}",
+      "free": "Free shipping",
+      "eta": "Arrives in {min} to {max} business days.",
+      "pickup": "Pick it up for free at:",
+      "hours": {
+        "mon_fri": "Monday to Friday",
+        "sat": "Saturdays",
+        "sun": "Sundays"
+      }
+    }
+  },
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has moved.",
@@ -208,7 +238,8 @@
     "passwordMismatch": "The passwords do not match.",
     "nameLength": "Use up to 80 characters.",
     "phone": "Enter a valid phone number.",
-    "invalid": "Check this value."
+    "invalid": "Check this value.",
+    "quantity": "Enter a quantity between 1 and 99."
   },
   "Errors": {
     "invalid_credentials": "Wrong email or password.",

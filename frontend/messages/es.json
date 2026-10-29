@@ -93,6 +93,36 @@
     "next": "Siguiente",
     "page": "Página {page}"
   },
+  "Product": {
+    "sku": "SKU: {sku}",
+    "outOfStock": "sin stock",
+    "description": "Descripción",
+    "specs": "Especificaciones",
+    "yes": "Sí",
+    "no": "No",
+    "shipping": {
+      "title": "Calculá el envío",
+      "method": "Forma de entrega",
+      "methods": {
+        "shipping": "Envío a domicilio",
+        "pickup": "Retiro en el local"
+      },
+      "province": "Provincia",
+      "provincePlaceholder": "Elegí una provincia",
+      "quantity": "Cantidad",
+      "submit": "Calcular",
+      "submitting": "Calculando…",
+      "cost": "Envío: {cost}",
+      "free": "Envío gratis",
+      "eta": "Llega en {min} a {max} días hábiles.",
+      "pickup": "Retirás sin costo en:",
+      "hours": {
+        "mon_fri": "Lunes a viernes",
+        "sat": "Sábados",
+        "sun": "Domingos"
+      }
+    }
+  },
   "NotFound": {
     "title": "Página no encontrada",
     "description": "La página que buscás no existe o se movió.",
@@ -208,7 +238,8 @@
     "passwordMismatch": "Las contraseñas no coinciden.",
     "nameLength": "Usá hasta 80 caracteres.",
     "phone": "Ingresá un teléfono válido.",
-    "invalid": "Revisá este valor."
+    "invalid": "Revisá este valor.",
+    "quantity": "Ingresá una cantidad entre 1 y 99."
   },
   "Errors": {
     "invalid_credentials": "Email o contraseña incorrectos.",

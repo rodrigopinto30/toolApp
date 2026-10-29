@@ -26,7 +26,9 @@ test.describe("security", () => {
         "cross-origin-opener-policy": "same-origin",
       });
       expect(headers).not.toHaveProperty("x-powered-by");
-      const scripts = (await response.text()).match(/<script\b[^>]*>/g) ?? [];
+      const scripts = ((await response.text()).match(/<script\b[^>]*>/g) ?? []).filter(
+        (script) => !script.includes('type="application/ld+json"'),
+      );
       expect(scripts.length).toBeGreaterThan(0);
       for (const script of scripts) {
         expect(script).toContain(`nonce="${nonce}"`);

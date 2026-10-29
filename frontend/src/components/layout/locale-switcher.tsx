@@ -31,7 +31,7 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" disabled={isPending} aria-label={t("label")}>
           <LanguagesIcon aria-hidden="true" />

@@ -13,6 +13,12 @@ const eslintConfig = defineConfig([
       "react/no-danger": "error",
     },
   },
+  {
+    files: ["src/components/seo/json-ld.tsx"],
+    rules: {
+      "react/no-danger": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

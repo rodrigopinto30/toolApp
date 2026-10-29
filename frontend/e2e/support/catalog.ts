@@ -1,6 +1,15 @@
 import { expect, type APIRequestContext } from "@playwright/test";
 
-import type { CategoryNode, ProductFacets, ProductPage, ProductSummary } from "../../src/features/catalog/types";
+import type {
+  CategoryNode,
+  ProductDetail,
+  ProductFacets,
+  ProductPage,
+  ProductSummary,
+  Province,
+  ShippingQuoteRequest,
+  ShippingQuoteResult,
+} from "../../src/features/catalog/types";
 import type { Currency } from "../../src/lib/currency";
 import type { Locale } from "./i18n";
 
@@ -40,4 +49,27 @@ export async function largestCategory(request: APIRequestContext): Promise<Categ
     tree.map(async (category) => (await searchProducts(request, { category: category.slug })).total),
   );
   return tree[totals.indexOf(Math.max(...totals))];
+}
+
+export function productDetail(request: APIRequestContext, slug: string, currency = "ARS") {
+  return json<ProductDetail>(request, `/api/v1/products/${slug}`, { locale: "es", currency });
+}
+
+export function provinces(request: APIRequestContext) {
+  return json<Province[]>(request, "/api/v1/provinces", { locale: "es" });
+}
+
+export async function shippingQuote(request: APIRequestContext, body: ShippingQuoteRequest): Promise<ShippingQuoteResult> {
+  const response = await request.post("/api/v1/shipping/quote?locale=es", { data: body });
+  expect(response.status(), "shipping quote").toBe(200);
+  return response.json();
+}
+
+export async function productWithPriceVariants(request: APIRequestContext): Promise<ProductDetail> {
+  const { items } = await searchProducts(request, { size: "48" });
+  const card = items.find((item) => item.price_varies);
+  if (!card) {
+    throw new Error("The seed needs a product whose variants have different prices");
+  }
+  return productDetail(request, card.slug);
 }

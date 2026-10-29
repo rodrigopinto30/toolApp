@@ -13,6 +13,8 @@ export type StockStatus = Schemas["StockStatus"];
 export type Brand = Schemas["BrandRead"];
 export type Attribute = Schemas["AttributeRead"];
 export type Province = Schemas["ProvinceRead"];
+export type ShippingQuoteRequest = Schemas["ShippingQuoteRequest"];
+export type ShippingQuoteResult = Schemas["ShippingQuoteRead"];
 
 export type FilterQuery = NonNullable<
   operations["product_facets_api_v1_products_facets_get"]["parameters"]["query"]
