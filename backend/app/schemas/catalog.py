@@ -91,6 +91,7 @@ class ProductCard(BaseModel):
     brand: BrandRef | None
     image: ImageRead | None
     price_from: Money
+    price_varies: bool
     compare_at: Money | None
     stock_status: StockStatus
     rating_avg: Decimal
@@ -105,7 +106,7 @@ class ProductDetail(ProductCard):
     variants: list[VariantRead]
 
 
-class ProductSearchParams(BaseModel):
+class ProductFilterParams(BaseModel):
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
     q: str | None = Field(None, min_length=2, max_length=100)
@@ -115,9 +116,6 @@ class ProductSearchParams(BaseModel):
     min_price: Decimal | None = Field(None, ge=0, max_digits=14, decimal_places=2)
     max_price: Decimal | None = Field(None, ge=0, max_digits=14, decimal_places=2)
     in_stock: bool = False
-    sort: ProductSort | None = None
-    page: int = Field(1, ge=1, le=1000)
-    size: int = Field(24, ge=1, le=48)
     currency: Currency = Currency.ARS
     locale: Locale = Locale.ES
 
@@ -126,3 +124,39 @@ class ProductSearchParams(BaseModel):
         if self.min_price is not None and self.max_price is not None and self.min_price > self.max_price:
             raise ValueError("min_price must be less than or equal to max_price")
         return self
+
+
+class ProductSearchParams(ProductFilterParams):
+    sort: ProductSort | None = None
+    page: int = Field(1, ge=1, le=1000)
+    size: int = Field(24, ge=1, le=48)
+
+
+class FacetValue(BaseModel):
+    slug: str
+    label: str
+    count: int
+
+
+class AttributeFacet(BaseModel):
+    code: str
+    name: str
+    values: list[FacetValue]
+
+
+class PriceRange(BaseModel):
+    min: Money
+    max: Money
+
+
+class ProductFacets(BaseModel):
+    brands: list[FacetValue]
+    attributes: list[AttributeFacet]
+    price: PriceRange | None
+
+
+class ProductFacetCounts(BaseModel):
+    brands: dict[str, int]
+    attribute_values: dict[str, dict[str, int]]
+    price_min_usd: Decimal | None
+    price_max_usd: Decimal | None

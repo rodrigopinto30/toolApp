@@ -1,9 +1,18 @@
 from collections.abc import Sequence
+from dataclasses import replace
+from decimal import Decimal
+from typing import Any
 
-from sqlalchemy import and_, func, or_, select, true
+from sqlalchemy import Select, Subquery, and_, func, or_, select, true
 from sqlalchemy.orm import aliased, selectinload
 
 from app.db.repositories.base import SqlAlchemyRepository
+from app.db.repositories.product_filter import (
+    AttributeSelection,
+    ProductFilter,
+    ProductQueryColumns,
+    variant_attribute_conditions,
+)
 from app.models import (
     Attribute,
     AttributeValue,
@@ -13,8 +22,9 @@ from app.models import (
     Product,
     ProductTranslation,
     ProductVariant,
+    variant_attribute_values,
 )
-from app.db.repositories.product_filter import ProductFilter, ProductQueryColumns
+from app.schemas.catalog import ProductFacetCounts
 
 
 class CategoryRepository(SqlAlchemyRepository[Category]):
@@ -69,6 +79,92 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         limit: int,
         featured_only: bool = False,
     ) -> tuple[Sequence[Product], int]:
+        statement, _ = self._listing(product_filter, locale, featured_only=featured_only)
+
+        total = await self.session.scalar(
+            select(func.count()).select_from(statement.order_by(None).subquery())
+        )
+        page = await self.session.scalars(
+            statement.options(*_PRODUCT_OPTIONS, selectinload(Product.variants))
+            .offset(offset)
+            .limit(limit)
+        )
+        return page.all(), total or 0
+
+    async def facet_counts(
+        self, product_filter: ProductFilter, *, locale: Locale
+    ) -> ProductFacetCounts:
+        price_min, price_max = await self._price_range(
+            replace(product_filter, min_price_usd=None, max_price_usd=None), locale
+        )
+        return ProductFacetCounts(
+            brands=await self._brand_counts(replace(product_filter, brand_slugs=()), locale),
+            attribute_values=await self._attribute_value_counts(product_filter, locale),
+            price_min_usd=price_min,
+            price_max_usd=price_max,
+        )
+
+    async def _price_range(
+        self, product_filter: ProductFilter, locale: Locale
+    ) -> tuple[Decimal | None, Decimal | None]:
+        matching = self._matching(product_filter, locale)
+        statement = select(func.min(matching.c.price_from), func.max(matching.c.price_from))
+        price_min, price_max = (await self.session.execute(statement)).one()
+        return price_min, price_max
+
+    async def _brand_counts(self, product_filter: ProductFilter, locale: Locale) -> dict[str, int]:
+        matching = self._matching(product_filter, locale)
+        statement = (
+            select(Brand.slug, func.count())
+            .select_from(matching)
+            .join(Product, Product.id == matching.c.id)
+            .join(Brand, Brand.id == Product.brand_id)
+            .group_by(Brand.slug)
+        )
+        return {slug: count for slug, count in await self.session.execute(statement)}
+
+    async def _attribute_value_counts(
+        self, product_filter: ProductFilter, locale: Locale
+    ) -> dict[str, dict[str, int]]:
+        selected = [code for code, _ in product_filter.attributes]
+        matching = self._matching(replace(product_filter, attributes=()), locale)
+        groups: list[tuple[str | None, AttributeSelection]] = [(None, product_filter.attributes)]
+        for code in selected:
+            others = tuple(item for item in product_filter.attributes if item[0] != code)
+            groups.append((code, others))
+        counts: dict[str, dict[str, int]] = {}
+        for code, required in groups:
+            variant = aliased(ProductVariant)
+            statement = (
+                select(Attribute.code, AttributeValue.slug, func.count(variant.product_id.distinct()))
+                .select_from(variant)
+                .join(matching, matching.c.id == variant.product_id)
+                .join(variant_attribute_values, variant_attribute_values.c.variant_id == variant.id)
+                .join(AttributeValue, AttributeValue.id == variant_attribute_values.c.attribute_value_id)
+                .join(Attribute, Attribute.id == AttributeValue.attribute_id)
+                .where(
+                    variant.is_active.is_(true()),
+                    Attribute.is_filterable.is_(true()),
+                    Attribute.code == code if code else Attribute.code.not_in(selected),
+                    *variant_attribute_conditions(variant, required),
+                )
+                .group_by(Attribute.code, AttributeValue.slug)
+            )
+            for attribute_code, slug, count in await self.session.execute(statement):
+                counts.setdefault(attribute_code, {})[slug] = count
+        return counts
+
+    def _matching(self, product_filter: ProductFilter, locale: Locale) -> Subquery:
+        statement, columns = self._listing(product_filter, locale)
+        return (
+            statement.with_only_columns(Product.id, columns.price_from, maintain_column_froms=True)
+            .order_by(None)
+            .subquery()
+        )
+
+    def _listing(
+        self, product_filter: ProductFilter, locale: Locale, *, featured_only: bool = False
+    ) -> tuple[Select[Any], ProductQueryColumns]:
         prices = (
             select(
                 ProductVariant.product_id,
@@ -97,20 +193,8 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         )
         if featured_only:
             statement = statement.where(Product.is_featured.is_(true()))
-        statement = product_filter.apply(
-            statement,
-            ProductQueryColumns(translation, prices.c.price_from, prices.c.max_stock),
-        )
-
-        total = await self.session.scalar(
-            select(func.count()).select_from(statement.order_by(None).subquery())
-        )
-        page = await self.session.scalars(
-            statement.options(*_PRODUCT_OPTIONS, selectinload(Product.variants))
-            .offset(offset)
-            .limit(limit)
-        )
-        return page.all(), total or 0
+        columns = ProductQueryColumns(translation, prices.c.price_from, prices.c.max_stock)
+        return product_filter.apply(statement, columns), columns
 
     async def get_visible_by_slug(self, slug: str) -> Product | None:
         statement = (
