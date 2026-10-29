@@ -1,24 +1,29 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 
-import { test as setup } from "@playwright/test";
+import { test as setup, type PlaywrightWorkerArgs } from "@playwright/test";
 
 import { loginUser, registerUser } from "../support/api";
-import { AUTH_DIR, BUYER_COUNT, BUYERS_FILE, buyerStatePath, type Buyer } from "../support/buyers";
+import { AUTH_DIR, BUYER_COUNT, BUYERS_FILE, statePath, type Buyer, type Shoppers } from "../support/buyers";
 import { BASE_URL } from "../support/stack";
 import { newUser } from "../support/users";
 
-setup("register the buyers and open their sessions", async ({ playwright }) => {
+async function openSession(playwright: PlaywrightWorkerArgs["playwright"], prefix: string, name: string): Promise<Buyer> {
+  const user = newUser(prefix);
+  const request = await playwright.request.newContext({ baseURL: BASE_URL });
+  await registerUser(request, user);
+  await loginUser(request, user);
+  const storageState = statePath(name);
+  await request.storageState({ path: storageState });
+  await request.dispose();
+  return { email: user.email, password: user.password, storageState };
+}
+
+setup("register the shoppers and open their sessions", async ({ playwright }) => {
   mkdirSync(AUTH_DIR, { recursive: true });
   const buyers: Buyer[] = [];
   for (let index = 0; index < BUYER_COUNT; index++) {
-    const user = newUser("buyer-");
-    const request = await playwright.request.newContext({ baseURL: BASE_URL });
-    await registerUser(request, user);
-    await loginUser(request, user);
-    const storageState = buyerStatePath(index);
-    await request.storageState({ path: storageState });
-    await request.dispose();
-    buyers.push({ email: user.email, password: user.password, storageState });
+    buyers.push(await openSession(playwright, "buyer-", `buyer-${index}`));
   }
-  writeFileSync(BUYERS_FILE, JSON.stringify(buyers));
+  const shoppers: Shoppers = { buyers, unverified: await openSession(playwright, "unverified-", "unverified") };
+  writeFileSync(BUYERS_FILE, JSON.stringify(shoppers));
 });

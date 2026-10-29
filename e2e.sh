@@ -38,6 +38,11 @@ SQL
 
 delete_e2e_users() {
   run_sql <<'SQL'
+DELETE p FROM payments p JOIN orders o ON o.id = p.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
+DELETE h FROM order_status_history h JOIN orders o ON o.id = h.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
+DELETE i FROM order_items i JOIN orders o ON o.id = i.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
+DELETE r FROM coupon_redemptions r JOIN users u ON u.id = r.user_id WHERE u.email LIKE 'e2e+%@example.com';
+DELETE o FROM orders o JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE a FROM addresses a JOIN users u ON u.id = a.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE b FROM billing_profiles b JOIN users u ON u.id = b.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE FROM users WHERE email LIKE 'e2e+%@example.com';

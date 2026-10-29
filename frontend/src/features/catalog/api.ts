@@ -69,6 +69,10 @@ export async function getProduct(slug: string, locale: Locale, currency: Currenc
   }
 }
 
+export function getPickupPoints() {
+  return unwrap(serverApi().GET("/api/v1/pickup-points", SHIPPING));
+}
+
 export function getProvinces(locale: Locale) {
   return unwrap(serverApi().GET("/api/v1/provinces", { params: { query: { locale } }, ...SHIPPING }));
 }

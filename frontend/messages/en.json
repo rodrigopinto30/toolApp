@@ -176,6 +176,77 @@
       "outOfStock": "This variant is out of stock."
     }
   },
+  "Checkout": {
+    "metaTitle": "Checkout",
+    "title": "Complete your purchase",
+    "loading": "Preparing the checkout",
+    "verify": "You need to confirm your email to buy.",
+    "emptyCart": "Your cart is empty.",
+    "cartIssues": "Some products in your cart need attention.",
+    "backToCart": "Back to the cart",
+    "placed": "Done! Taking you to your order…",
+    "delivery": {
+      "title": "Delivery",
+      "method": "How you get it",
+      "methods": {
+        "shipping": "Home delivery",
+        "pickup": "Store pickup"
+      },
+      "address": "Shipping address",
+      "addAddress": "Add an address",
+      "pickupPoint": "Pickup point",
+      "noPickupPoints": "There are no pickup points available."
+    },
+    "billing": {
+      "title": "Billing",
+      "profile": "Billing details",
+      "finalConsumer": "Final consumer",
+      "finalConsumerHint": "Invoice without tax details.",
+      "addProfile": "Add billing details"
+    },
+    "coupon": {
+      "title": "Discount coupon",
+      "label": "Code",
+      "apply": "Apply",
+      "applying": "Applying…",
+      "applied": "Coupon {code} applied.",
+      "remove": "Remove the coupon",
+      "needsDelivery": "Choose the delivery to apply a coupon."
+    },
+    "payment": {
+      "title": "Payment",
+      "number": "Card number",
+      "expiry": "Expiry (MM/YY)",
+      "cvc": "Security code",
+      "holder": "Name as it appears on the card",
+      "testCards": "Payments are simulated. Use one of these cards with any future expiry and code:",
+      "cards": {
+        "approved": "approved",
+        "rejected": "rejected",
+        "slow": "stays pending (the payment is slow)"
+      },
+      "submit": "Pay {total}",
+      "submitNoTotal": "Pay",
+      "submitting": "Processing the payment…"
+    },
+    "summary": {
+      "title": "Your order",
+      "chooseDelivery": "Choose how you get your purchase to see the total.",
+      "updating": "Updating the total…",
+      "subtotal": "Subtotal",
+      "discount": "Discount ({code})",
+      "shipping": "Shipping",
+      "free": "Free",
+      "total": "Total",
+      "eta": "Arrives in {min} to {max} business days.",
+      "pickupAt": "Pick it up at {name}."
+    },
+    "outcome": {
+      "rejected": "Your card was rejected and we cancelled order {number}. The products are still in your cart: try another card.",
+      "totalChanged": "The total changed since you saw it. Check it and confirm again.",
+      "cart": "Your cart changed while you were paying."
+    }
+  },
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has moved.",
@@ -283,6 +354,43 @@
       "saved": "Your password changed and your other sessions were closed."
     }
   },
+  "AddressForm": {
+    "label": "Address name",
+    "labelHint": "For example: Home, Work.",
+    "recipient": "Recipient",
+    "phone": "Phone",
+    "street": "Street",
+    "number": "Number",
+    "floorApt": "Floor and apartment",
+    "optional": "Optional.",
+    "city": "City",
+    "province": "Province",
+    "provincePlaceholder": "Choose a province",
+    "postalCode": "Postal code",
+    "notes": "Delivery instructions",
+    "isDefault": "Use as my main address",
+    "submit": "Save the address",
+    "submitting": "Saving…",
+    "cancel": "Cancel"
+  },
+  "BillingForm": {
+    "taxIdType": "Document type",
+    "taxId": "Number",
+    "taxIdHint": "With or without dashes.",
+    "taxCondition": "VAT condition",
+    "conditions": {
+      "consumidor_final": "Final consumer",
+      "monotributo": "Monotributo",
+      "responsable_inscripto": "VAT registered",
+      "exento": "Exempt"
+    },
+    "legalName": "Name or company name",
+    "fiscalAddress": "Tax address",
+    "isDefault": "Use as my main details",
+    "submit": "Save the details",
+    "submitting": "Saving…",
+    "cancel": "Cancel"
+  },
   "Validation": {
     "required": "Fill in this field.",
     "email": "Enter a valid email.",
@@ -292,7 +400,16 @@
     "nameLength": "Use up to 80 characters.",
     "phone": "Enter a valid phone number.",
     "invalid": "Check this value.",
-    "quantity": "Enter a quantity between 1 and 99."
+    "quantity": "Enter a quantity between 1 and 99.",
+    "tooLong": "The text is too long.",
+    "postalCode": "Use 4 to 10 letters or numbers.",
+    "cuit": "The CUIT is not valid.",
+    "dni": "A DNI has 7 or 8 digits.",
+    "dniCondition": "A DNI can only be used for a final consumer.",
+    "cardNumber": "The card number is not valid.",
+    "cardExpiry": "Use the MM/YY format.",
+    "cardExpired": "The card has expired.",
+    "cardCvc": "The code has 3 or 4 digits."
   },
   "Errors": {
     "invalid_credentials": "Wrong email or password.",
@@ -310,6 +427,24 @@
     "insufficient_stock_unknown": "Not enough stock.",
     "cart_limit": "The cart holds up to 50 different products.",
     "not_found": "We could not find it, or it is no longer available.",
+    "cart_empty": "Your cart is empty.",
+    "cart_has_issues": "Some products in your cart need attention.",
+    "coupon_not_found": "That coupon does not exist.",
+    "coupon_not_started": "That coupon is not valid yet.",
+    "coupon_expired": "That coupon has expired.",
+    "coupon_exhausted": "That coupon has no uses left.",
+    "coupon_limit_reached": "You already used that coupon.",
+    "coupon_min_subtotal": "The coupon needs a minimum purchase of {amount}.",
+    "coupon_min_subtotal_unknown": "Your purchase is below the coupon minimum.",
+    "shipping_unavailable": "We do not ship to that address for now.",
+    "total_changed": "The total changed. Check it and confirm again.",
+    "payment_rejected": "The card was rejected.",
+    "payment_unavailable": "Payments are not available right now. Try again in a minute.",
+    "email_not_verified": "Confirm your email to buy.",
+    "exchange_rate_unavailable": "Prices in pesos are not available right now.",
+    "limit_reached": "You reached the maximum allowed.",
+    "unknown_province": "Choose a province from the list.",
+    "invalid_tax_id": "The document is not valid for that condition.",
     "unexpected": "An unexpected error happened.",
     "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }
