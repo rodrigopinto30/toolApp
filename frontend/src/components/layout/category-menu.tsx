@@ -21,7 +21,7 @@ export function CategoryMenu({ categories }: { categories: CategoryLink[] }) {
   const t = useTranslations("CategoryMenu");
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm">
           <MenuIcon aria-hidden="true" />

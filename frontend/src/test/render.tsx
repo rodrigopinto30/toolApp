@@ -27,9 +27,11 @@ export function renderWithUrl(
 ) {
   return render(
     <NextIntlClientProvider locale="es" messages={messages} timeZone={TIME_ZONE}>
-      <NuqsTestingAdapter searchParams={searchParams} onUrlUpdate={onUrlUpdate} hasMemory>
-        {ui}
-      </NuqsTestingAdapter>
+      <QueryClientProvider client={makeQueryClient()}>
+        <NuqsTestingAdapter searchParams={searchParams} onUrlUpdate={onUrlUpdate} hasMemory>
+          {ui}
+        </NuqsTestingAdapter>
+      </QueryClientProvider>
     </NextIntlClientProvider>,
   );
 }

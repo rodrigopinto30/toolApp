@@ -16,3 +16,4 @@ export const LAYOUT_NAMESPACES = [
 ] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;
 export const SHOP_NAMESPACES = ["Listing"] as const;
+export const PRODUCT_NAMESPACES = ["Catalog", "Product", "Validation", "Errors"] as const;

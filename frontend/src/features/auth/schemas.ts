@@ -7,7 +7,8 @@ export type ValidationKey =
   | "passwordIsEmail"
   | "passwordMismatch"
   | "nameLength"
-  | "phone";
+  | "phone"
+  | "quantity";
 
 export type Translate = (key: ValidationKey) => string;
 

@@ -37,7 +37,7 @@ export function CurrencySwitcher({ value }: { value: Currency }) {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" disabled={isPending} aria-label={t("label")}>
           {value}
