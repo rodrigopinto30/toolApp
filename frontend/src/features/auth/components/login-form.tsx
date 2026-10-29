@@ -7,8 +7,8 @@ import { useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
 import { loginSchema, type LoginValues } from "@/features/auth/schemas";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import { useLogin } from "@/features/session/hooks";
@@ -59,9 +59,9 @@ export function LoginForm({ next }: { next: string }) {
         error={errors.password?.message}
         registration={form.register("password")}
       />
-      <Button type="submit" disabled={login.isPending || cooldown.active}>
-        {login.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton pending={login.isPending} pendingLabel={t("submitting")} disabled={cooldown.active}>
+        {t("submit")}
+      </SubmitButton>
       <div className="flex flex-wrap justify-between gap-2 text-sm">
         <Link href="/forgot-password" className="underline underline-offset-4">
           {t("forgot")}

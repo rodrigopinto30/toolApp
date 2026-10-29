@@ -6,8 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
 import { registerSchema, type RegisterValues } from "@/features/auth/schemas";
 import { invalidFields, useErrorMessage } from "@/features/errors/use-error-message";
 import { useRegister } from "@/features/session/hooks";
@@ -91,9 +91,9 @@ export function RegisterForm() {
         error={errors.password?.message}
         registration={form.register("password")}
       />
-      <Button type="submit" disabled={register.isPending || cooldown.active}>
-        {register.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton pending={register.isPending} pendingLabel={t("submitting")} disabled={cooldown.active}>
+        {t("submit")}
+      </SubmitButton>
       <p className="text-sm">
         {t("hasAccount")}{" "}
         <Link href="/login" className="underline underline-offset-4">

@@ -181,6 +181,32 @@ services:
       resources:
         limits: { cpus: "0.50", memory: 192M }
 
+  e2e:
+    profiles: [e2e]
+    build:
+      context: ./frontend/e2e
+    image: toolapp-e2e:latest
+    network_mode: service:nginx
+    environment:
+      HOME: /tmp
+      NODE_EXTRA_CA_CERTS: /ca/dev-ca.crt
+      STACK_MODE: ${STACK_MODE:-dev}
+    volumes:
+      - ./frontend:/app:ro
+      - ./frontend/e2e:/app/e2e
+      - /app/e2e/node_modules
+      - ./nginx/ca/dev-ca.crt:/ca/dev-ca.crt:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    init: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits: { cpus: "2.00", memory: 2G }
+
 networks:
   edge: {}
   internal:

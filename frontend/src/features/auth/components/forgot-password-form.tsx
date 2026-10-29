@@ -6,8 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
 import { forgotPasswordSchema, type ForgotPasswordValues } from "@/features/auth/schemas";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import { useForgotPassword } from "@/features/session/hooks";
@@ -56,9 +56,9 @@ export function ForgotPasswordForm() {
         error={errors.email?.message}
         registration={form.register("email")}
       />
-      <Button type="submit" disabled={forgot.isPending || cooldown.active}>
-        {forgot.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton pending={forgot.isPending} pendingLabel={t("submitting")} disabled={cooldown.active}>
+        {t("submit")}
+      </SubmitButton>
       <Link href="/login" className="text-sm underline underline-offset-4">
         {t("back")}
       </Link>

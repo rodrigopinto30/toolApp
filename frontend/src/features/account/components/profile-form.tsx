@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
 import { useUpdateProfile } from "@/features/account/hooks";
 import { profileSchema, type ProfileValues } from "@/features/account/schemas";
 import { invalidFields, useErrorMessage } from "@/features/errors/use-error-message";
@@ -76,9 +76,14 @@ export function ProfileForm({ me }: { me: components["schemas"]["MeRead"] }) {
         error={errors.phone?.message}
         registration={form.register("phone")}
       />
-      <Button type="submit" disabled={update.isPending || !isDirty} className="justify-self-start">
-        {update.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton
+        pending={update.isPending}
+        pendingLabel={t("submitting")}
+        disabled={!isDirty}
+        className="justify-self-start"
+      >
+        {t("submit")}
+      </SubmitButton>
     </form>
   );
 }

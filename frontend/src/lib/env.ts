@@ -1,5 +1,6 @@
 import "server-only";
-import { z } from "zod";
+
+import { z } from "@/lib/zod";
 
 const serverEnvSchema = z.object({
   INTERNAL_API_ORIGIN: z
