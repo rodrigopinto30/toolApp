@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.responses import JSONResponse
 
@@ -8,15 +10,37 @@ from app.core.exceptions import error_response, get_request_id
 from app.models import Locale
 from app.schemas.checkout import CheckoutPreviewRead, CheckoutPreviewRequest, CheckoutRequest
 from app.schemas.orders import OrderRead
-from app.services.checkout import CheckoutOutcome
+from app.services.checkout import CheckoutOutcome, CheckoutResult
 
 router = APIRouter(prefix="/checkout", tags=["checkout"])
 
-OUTCOME_STATUS = {
+CHECKOUT_STATUS = {
     CheckoutOutcome.PAID: status.HTTP_201_CREATED,
     CheckoutOutcome.PENDING: status.HTTP_202_ACCEPTED,
     CheckoutOutcome.EXISTING: status.HTTP_200_OK,
 }
+PAYMENT_RESPONSES: dict[int | str, dict[str, object]] = {
+    202: {"model": OrderRead, "description": "Payment still pending: the order waits for a retry"},
+    402: {"description": "Payment rejected: the order was cancelled"},
+}
+
+
+def payment_response(
+    result: CheckoutResult,
+    request: Request,
+    response: Response,
+    statuses: Mapping[CheckoutOutcome, int],
+) -> OrderRead | JSONResponse:
+    if result.outcome == CheckoutOutcome.REJECTED:
+        return error_response(
+            get_request_id(request),
+            status.HTTP_402_PAYMENT_REQUIRED,
+            "payment_rejected",
+            "The payment was rejected.",
+            details={"order_number": result.order.number},
+        )
+    response.status_code = statuses[result.outcome]
+    return result.order
 
 
 @router.post("/preview")
@@ -35,8 +59,7 @@ async def preview_checkout(
     response_model=OrderRead,
     responses={
         200: {"model": OrderRead, "description": "The order already placed with this key"},
-        202: {"model": OrderRead, "description": "Order created, payment still pending"},
-        402: {"description": "Payment rejected: the order was cancelled"},
+        **PAYMENT_RESPONSES,
     },
     dependencies=[Depends(user_rate_limit("checkout", limit=10, window=600))],
 )
@@ -50,13 +73,4 @@ async def place_order(
     locale: LocaleQuery = Locale.ES,
 ) -> OrderRead | JSONResponse:
     result = await checkout.checkout(user, body, idempotency_key, locale)
-    if result.outcome == CheckoutOutcome.REJECTED:
-        return error_response(
-            get_request_id(request),
-            status.HTTP_402_PAYMENT_REQUIRED,
-            "payment_rejected",
-            "The payment was rejected.",
-            details={"order_number": result.order.number},
-        )
-    response.status_code = OUTCOME_STATUS[result.outcome]
-    return result.order
+    return payment_response(result, request, response, CHECKOUT_STATUS)

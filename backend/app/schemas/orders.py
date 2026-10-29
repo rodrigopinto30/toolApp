@@ -1,12 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.models import Currency, DeliveryMethod, OrderStatus, PaymentStatus, TaxCondition, TaxIdType
 from app.schemas.account import ProvinceRef
-from app.schemas.checkout import AppliedCoupon
-from app.schemas.common import Money, ReadModel
+from app.schemas.checkout import AppliedCoupon, CardPayment
+from app.schemas.common import Money, ReadModel, RequestModel
 from app.schemas.pricing import PickupPointRead, ZoneRead
 
 
@@ -92,3 +92,20 @@ class OrderRead(BaseModel):
     created_at: datetime
     paid_at: datetime | None
     cancelled_at: datetime | None
+
+
+class OrderSummary(BaseModel):
+    number: str
+    status: OrderStatus
+    total: Money
+    item_count: int
+    created_at: datetime
+
+
+class OrderListParams(BaseModel):
+    page: int = Field(1, ge=1, le=1000)
+    size: int = Field(10, ge=1, le=50)
+
+
+class OrderPaymentRequest(RequestModel):
+    payment: CardPayment

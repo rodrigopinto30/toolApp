@@ -94,8 +94,12 @@ class PaymentGateway:
         return result
 
     async def refund(self, provider_ref: str) -> None:
-        async with asyncio.timeout(self.timeout_seconds):
-            await self.provider.refund(provider_ref)
+        try:
+            async with asyncio.timeout(self.timeout_seconds):
+                await self.provider.refund(provider_ref)
+        except (TimeoutError, GatewayError) as exc:
+            logger.warning("refund_unavailable", provider=self.name, error=type(exc).__name__)
+            raise PaymentUnavailable from exc
 
 
 def create_payment_gateway(settings: Settings) -> PaymentGateway:

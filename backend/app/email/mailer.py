@@ -62,6 +62,13 @@ class Mailer:
         link = self._link(locale, "/cart")
         self._send("payment_rejected", user, locale, link, values={"number": order.number})
 
+    def order_cancelled(self, user: User, order: OrderRead, refunded: bool, locale: Locale) -> None:
+        link = self._link(locale, f"/account/orders/{order.number}")
+        total = format_money(order.total.amount, order.total.currency, locale)
+        details = [ORDER_LABELS[locale]["refunded"].format(amount=total)] if refunded else []
+        values = {"number": order.number}
+        self._send("order_cancelled", user, locale, link, values=values, details=details)
+
 
 def order_summary(order: OrderRead, locale: Locale) -> list[str]:
     labels = ORDER_LABELS[locale]

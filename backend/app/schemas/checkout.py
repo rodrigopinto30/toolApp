@@ -106,8 +106,13 @@ class CardPayment(RequestModel):
         )
 
 
+class AcceptedTotal(RequestModel):
+    amount: Decimal
+    currency: Currency
+
+
 class CheckoutRequest(CheckoutPreviewRequest):
-    expected_total: Money
+    expected_total: AcceptedTotal
     payment: CardPayment
 
     @model_validator(mode="after")

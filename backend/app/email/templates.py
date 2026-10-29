@@ -122,6 +122,18 @@ TEMPLATES: dict[str, dict[Locale, Template]] = {
             link_label="Go to the cart",
         ),
     },
+    "order_cancelled": {
+        Locale.ES: Template(
+            subject="Cancelamos tu pedido {number}",
+            lines=("Hola {first_name},", "Tu pedido {number} fue cancelado."),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} was cancelled",
+            lines=("Hi {first_name},", "Your order {number} was cancelled."),
+            link_label="View order",
+        ),
+    },
     "password_changed": {
         Locale.ES: Template(
             subject="Tu contraseña cambió",
@@ -153,6 +165,7 @@ ORDER_LABELS: dict[Locale, dict[str, str]] = {
         "total": "Total",
         "ship_to": "Envío a {address} ({days} días hábiles)",
         "pickup_at": "Retiro en {name}, {address}",
+        "refunded": "Te reintegramos {amount} en el mismo medio de pago.",
     },
     Locale.EN: {
         "subtotal": "Subtotal",
@@ -161,6 +174,7 @@ ORDER_LABELS: dict[Locale, dict[str, str]] = {
         "total": "Total",
         "ship_to": "Shipping to {address} ({days} business days)",
         "pickup_at": "Pickup at {name}, {address}",
+        "refunded": "We refunded {amount} to the same payment method.",
     },
 }
 
