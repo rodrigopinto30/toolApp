@@ -1,6 +1,5 @@
-import { z } from "zod";
-
 import { anyPassword, name, newPassword, phone, type Translate } from "@/features/auth/schemas";
+import { z } from "@/lib/zod";
 
 export const profileSchema = (t: Translate) =>
   z.object({ first_name: name(t), last_name: name(t), phone: phone(t) });

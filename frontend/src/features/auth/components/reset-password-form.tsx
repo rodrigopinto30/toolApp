@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
 import { Button } from "@/components/ui/button";
 import { clearFragment, useFragmentToken } from "@/features/auth/fragment-token";
@@ -73,9 +74,9 @@ export function ResetPasswordForm() {
         error={errors.confirm?.message}
         registration={form.register("confirm")}
       />
-      <Button type="submit" disabled={reset.isPending || token === null}>
-        {reset.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton pending={reset.isPending} pendingLabel={t("submitting")} disabled={token === null}>
+        {t("submit")}
+      </SubmitButton>
       {reset.isError && (
         <Link href="/forgot-password" className="text-sm underline underline-offset-4">
           {t("requestNew")}

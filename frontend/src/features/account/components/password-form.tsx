@@ -6,8 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm, useFormState } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
 import { useChangePassword } from "@/features/account/hooks";
 import { passwordChangeSchema, type PasswordChangeValues } from "@/features/account/schemas";
 import { useErrorMessage } from "@/features/errors/use-error-message";
@@ -78,9 +78,9 @@ export function PasswordForm() {
         error={errors.confirm?.message}
         registration={form.register("confirm")}
       />
-      <Button type="submit" disabled={change.isPending} className="justify-self-start">
-        {change.isPending ? t("submitting") : t("submit")}
-      </Button>
+      <SubmitButton pending={change.isPending} pendingLabel={t("submitting")} className="justify-self-start">
+        {t("submit")}
+      </SubmitButton>
     </form>
   );
 }

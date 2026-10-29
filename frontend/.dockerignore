@@ -6,3 +6,4 @@ coverage
 Dockerfile
 .dockerignore
 npm-debug.log*
+e2e
