@@ -1,11 +1,3 @@
-"""Test setup. Run through ./test.sh, which points MYSQL_DATABASE at "<database>_test".
-
-- Once per session: the test database is recreated and the migrations run
-  (upgrade -> downgrade -> upgrade, so downgrades are tested too).
-- Each test runs inside a transaction that is rolled back at the end; sessions use
-  SAVEPOINTs, so code that commits (the Unit of Work) works without leaking data.
-"""
-
 import re
 import uuid
 from collections.abc import AsyncIterator, Callable, Iterator
@@ -16,16 +8,27 @@ from alembic import command
 from alembic.config import Config
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient, Request
-from sqlalchemy import Connection, NullPool, text
+from sqlalchemy import Connection, NullPool, select, text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from app.cache.decorators import Cache
 from app.core.config import Settings, get_settings
-from app.core.container import get_cache, get_email_sender, get_key_prefix, get_session_factory
+from app.core.container import (
+    get_cache,
+    get_email_sender,
+    get_key_prefix,
+    get_payment_gateway,
+    get_session_factory,
+)
 from app.core.security import CSRF_COOKIE, CSRF_HEADER
 from app.email.sender import EmailMessage
 from app.main import create_app
+from app.models import Address, PickupPoint, User
+from app.payments.circuit_breaker import CircuitBreaker
+from app.payments.gateway import MockPaymentGateway, PaymentGateway
 from app.seed import run_seed
+from tests.factories import make_user
+from tests.shopping import PASSWORD, address_for, login
 
 
 @pytest.fixture(scope="session")
@@ -101,8 +104,6 @@ async def seeded(session: AsyncSession, settings: Settings) -> None:
 
 
 class Outbox:
-    """EmailSender that keeps the messages instead of sending them."""
-
     def __init__(self) -> None:
         self.messages: list[EmailMessage] = []
 
@@ -151,15 +152,12 @@ def raw_client_factory(
 
 @pytest.fixture
 async def raw_client(raw_client_factory: Callable[..., AsyncClient]) -> AsyncIterator[AsyncClient]:
-    """No automatic CSRF header: for tests of the CSRF protection itself."""
     async with raw_client_factory() as client:
         yield client
 
 
 @pytest.fixture
 async def client(raw_client_factory: Callable[..., AsyncClient]) -> AsyncIterator[AsyncClient]:
-    """Behaves like the frontend: sends the csrf cookie back in the X-CSRF-Token header."""
-
     async def add_csrf_header(request: Request) -> None:
         token = client.cookies.get(CSRF_COOKIE)
         if token and CSRF_HEADER not in request.headers:
@@ -168,3 +166,35 @@ async def client(raw_client_factory: Callable[..., AsyncClient]) -> AsyncIterato
     async with raw_client_factory(event_hooks={"request": [add_csrf_header]}) as client:
         await client.get("/api/v1/auth/csrf")
         yield client
+
+
+@pytest.fixture
+async def customer(client: AsyncClient, session: AsyncSession) -> User:
+    user = await make_user(session, password=PASSWORD, verified=True)
+    await login(client, user)
+    return user
+
+
+@pytest.fixture
+async def address(session: AsyncSession, customer: User) -> Address:
+    return await address_for(session, customer)
+
+
+@pytest.fixture
+async def pickup_point_id(session: AsyncSession) -> int:
+    return await session.scalar(select(PickupPoint.id))
+
+
+@pytest.fixture
+def payment_clock() -> list[float]:
+    return [0.0]
+
+
+@pytest.fixture
+def gateway(app: FastAPI, client: AsyncClient, payment_clock: list[float]) -> PaymentGateway:
+    breaker = CircuitBreaker(
+        failure_threshold=3, reset_seconds=30, clock=lambda: payment_clock[0]
+    )
+    gateway = PaymentGateway(MockPaymentGateway(slow_seconds=1), breaker, timeout_seconds=0.05)
+    app.dependency_overrides[get_payment_gateway] = lambda: gateway
+    return gateway

@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
 from app.auth.rate_limit import RateLimiter
 from app.core.config import Settings
 from app.core.exceptions import (
@@ -37,7 +39,7 @@ from app.models import (
     User,
 )
 from app.payments.cards import Card
-from app.payments.gateway import ChargeStatus, PaymentGateway, PaymentUnavailable
+from app.payments.gateway import ChargeResult, ChargeStatus, PaymentGateway, PaymentUnavailable
 from app.schemas.cart import CartLineIssue
 from app.schemas.checkout import (
     AppliedCoupon,
@@ -58,6 +60,7 @@ from app.services.orders import (
     OrderTotals,
     billing_snapshot,
     order_number,
+    order_read,
     read_order,
     release_order,
     shipping_snapshot,
@@ -69,7 +72,11 @@ from app.services.shipping import PickupShipping, ShippingStrategy, ZoneShipping
 
 COUPON_ATTEMPTS = 20
 COUPON_WINDOW_SECONDS = 900
+PAY_ATTEMPTS = 5
+PAY_WINDOW_SECONDS = 900
 STOCK_ISSUES = frozenset({CartLineIssue.OUT_OF_STOCK, CartLineIssue.INSUFFICIENT_STOCK})
+
+logger = structlog.get_logger(__name__)
 
 
 class CheckoutOutcome(StrEnum):
@@ -143,10 +150,7 @@ class CheckoutService:
         existing = await self._existing(user.id, key, locale)
         if existing is not None:
             return CheckoutResult(existing, CheckoutOutcome.EXISTING)
-        if not self.gateway.available():
-            raise ServiceUnavailableError(
-                "Payments are temporarily unavailable.", code="payment_unavailable"
-            )
+        self._ensure_gateway()
 
         async with self.uow:
             session = self.uow.session
@@ -169,9 +173,35 @@ class CheckoutService:
                 )
             order = await self._create_order(user.id, request, key, quote, locale)
             cart.items.clear()
-            order_id = order.id
+            payment_id, amount = await self._start_payment(order)
 
-        return await self._pay(user, order_id, request.payment.card(), locale)
+        card = request.payment.card()
+        return await self._charge(user, order.id, payment_id, amount, card, locale)
+
+    async def pay(
+        self, user: User, number: str, card: Card, key: str, locale: Locale
+    ) -> CheckoutResult:
+        await self.limiter.hit(
+            "order-pay", f"{user.id}:{number}", limit=PAY_ATTEMPTS, window=PAY_WINDOW_SECONDS
+        )
+        async with self.uow:
+            order = await OrderRepository(self.uow.session).owned(user.id, number, lock=True)
+            if order is None:
+                raise NotFoundError("Order not found.")
+            if any(payment_key(payment) == key for payment in order.payments):
+                read = await order_read(self.uow.session, order, locale)
+                return CheckoutResult(read, CheckoutOutcome.EXISTING)
+            self.states.ensure(order.status, OrderStatus.PAID)
+            self._ensure_gateway()
+            payment_id, amount = await self._start_payment(order, key)
+
+        return await self._charge(user, order.id, payment_id, amount, card, locale)
+
+    def _ensure_gateway(self) -> None:
+        if not self.gateway.available():
+            raise ServiceUnavailableError(
+                "Payments are temporarily unavailable.", code="payment_unavailable"
+            )
 
     async def _existing(self, user_id: int, key: str, locale: Locale) -> OrderRead | None:
         async with self.uow:
@@ -354,21 +384,28 @@ class CheckoutService:
         await self.uow.flush()
         return order
 
-    async def _pay(self, user: User, order_id: int, card: Card, locale: Locale) -> CheckoutResult:
-        async with self.uow:
-            order = await OrderRepository(self.uow.session).detail(order_id)
-            payment = Payment(
-                order_id=order.id,
-                provider=self.gateway.name,
-                status=PaymentStatus.PENDING,
-                amount=order.total,
-                currency=order.currency,
-            )
-            self.uow.session.add(payment)
-            await self.uow.flush()
-            payment_id = payment.id
-            amount = Money(amount=order.total, currency=order.currency)
+    async def _start_payment(self, order: Order, key: str | None = None) -> tuple[int, Money]:
+        payment = Payment(
+            order_id=order.id,
+            provider=self.gateway.name,
+            status=PaymentStatus.PENDING,
+            amount=order.total,
+            currency=order.currency,
+            raw_response={"idempotency_key": key} if key else None,
+        )
+        self.uow.session.add(payment)
+        await self.uow.flush()
+        return payment.id, Money(amount=order.total, currency=order.currency)
 
+    async def _charge(
+        self,
+        user: User,
+        order_id: int,
+        payment_id: int,
+        amount: Money,
+        card: Card,
+        locale: Locale,
+    ) -> CheckoutResult:
         try:
             result = await self.gateway.charge(amount, card)
         except PaymentUnavailable:
@@ -383,10 +420,14 @@ class CheckoutService:
             order = await OrderRepository(session).detail(order_id, lock=True)
             payment = next(payment for payment in order.payments if payment.id == payment_id)
             payment.provider_ref = result.provider_ref
-            payment.raw_response = result.sanitized()
-            if approved:
+            payment.raw_response = {**(payment.raw_response or {}), **result.sanitized()}
+            if order.status != OrderStatus.PENDING_PAYMENT:
+                await self._settle_late(payment, result)
+                outcome = CheckoutOutcome.EXISTING
+            elif approved:
                 payment.status = PaymentStatus.APPROVED
                 self.states.transition(order, OrderStatus.PAID, actor_id=user.id)
+                outcome = CheckoutOutcome.PAID
             else:
                 payment.status = PaymentStatus.REJECTED
                 self.states.transition(
@@ -395,14 +436,31 @@ class CheckoutService:
                 await release_order(session, order)
                 if cart is not None:
                     restore_cart(cart, order)
+                outcome = CheckoutOutcome.REJECTED
             await self.uow.flush()
-            read = await read_order(session, order_id, locale)
+            read = await order_read(session, order, locale)
 
-        if approved:
+        if outcome == CheckoutOutcome.PAID:
             self.mailer.order_confirmed(user, read, locale)
-            return CheckoutResult(read, CheckoutOutcome.PAID)
-        self.mailer.payment_rejected(user, read, locale)
-        return CheckoutResult(read, CheckoutOutcome.REJECTED)
+        elif outcome == CheckoutOutcome.REJECTED:
+            self.mailer.payment_rejected(user, read, locale)
+        return CheckoutResult(read, outcome)
+
+    async def _settle_late(self, payment: Payment, result: ChargeResult) -> None:
+        if result.status == ChargeStatus.REJECTED:
+            payment.status = PaymentStatus.REJECTED
+            return
+        try:
+            await self.gateway.refund(result.provider_ref)
+        except PaymentUnavailable:
+            payment.status = PaymentStatus.APPROVED
+            logger.warning("late_payment_not_refunded", payment_id=payment.id)
+            return
+        payment.status = PaymentStatus.REFUNDED
+
+
+def payment_key(payment: Payment) -> str | None:
+    return (payment.raw_response or {}).get("idempotency_key")
 
 
 def restore_cart(cart: Cart, order: Order) -> None:

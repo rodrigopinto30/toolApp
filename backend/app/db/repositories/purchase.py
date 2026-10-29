@@ -1,9 +1,12 @@
-from sqlalchemy import delete, func, select
+from collections.abc import Sequence
+
+from sqlalchemy import Select, and_, delete, func, select
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql import ColumnElement
 
 from app.db.repositories.base import SqlAlchemyRepository
-from app.models import Cart, CartItem, Coupon, CouponRedemption, Order
+from app.models import Cart, CartItem, Coupon, CouponRedemption, Order, OrderItem
 
 
 class CartRepository(SqlAlchemyRepository[Cart]):
@@ -68,16 +71,40 @@ class OrderRepository(SqlAlchemyRepository[Order]):
         return await self.session.scalar(statement)
 
     async def detail(self, order_id: int, *, lock: bool = False) -> Order:
-        statement = (
-            select(Order)
-            .where(Order.id == order_id)
-            .options(
-                selectinload(Order.items),
-                selectinload(Order.status_history),
-                selectinload(Order.payments),
-            )
-            .execution_options(populate_existing=True)
+        return (await self.session.scalars(_detail(Order.id == order_id, lock=lock))).one()
+
+    async def owned(self, user_id: int, number: str, *, lock: bool = False) -> Order | None:
+        condition = and_(Order.user_id == user_id, Order.number == number)
+        return await self.session.scalar(_detail(condition, lock=lock))
+
+    async def page_for(
+        self, user_id: int, *, offset: int, limit: int
+    ) -> tuple[Sequence[tuple[Order, int]], int]:
+        item_count = (
+            select(func.coalesce(func.sum(OrderItem.quantity), 0))
+            .where(OrderItem.order_id == Order.id)
+            .scalar_subquery()
         )
-        if lock:
-            statement = statement.with_for_update()
-        return (await self.session.scalars(statement)).one()
+        statement = (
+            select(Order, item_count)
+            .where(Order.user_id == user_id)
+            .order_by(Order.created_at.desc(), Order.id.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        rows = [(order, int(count)) for order, count in await self.session.execute(statement)]
+        return rows, await self.count(user_id=user_id)
+
+
+def _detail(condition: ColumnElement[bool], *, lock: bool) -> Select[tuple[Order]]:
+    statement = (
+        select(Order)
+        .where(condition)
+        .options(
+            selectinload(Order.items),
+            selectinload(Order.status_history),
+            selectinload(Order.payments),
+        )
+        .execution_options(populate_existing=True)
+    )
+    return statement.with_for_update() if lock else statement

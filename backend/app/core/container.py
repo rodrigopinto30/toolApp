@@ -18,6 +18,7 @@ from app.services.auth import AuthService
 from app.services.cart import CartService
 from app.services.catalog import CatalogService
 from app.services.checkout import CheckoutService
+from app.services.orders import OrderService
 from app.services.pricing import PricingService
 from app.services.shipping import ShippingService
 
@@ -190,3 +191,14 @@ def get_checkout_service(
 
 
 CheckoutServiceDep = Annotated[CheckoutService, Depends(get_checkout_service)]
+
+
+def get_order_service(
+    session_factory: SessionFactoryDep,
+    gateway: Annotated[PaymentGateway, Depends(get_payment_gateway)],
+    mailer: MailerDep,
+) -> OrderService:
+    return OrderService(SqlAlchemyUnitOfWork(session_factory), gateway, mailer)
+
+
+OrderServiceDep = Annotated[OrderService, Depends(get_order_service)]

@@ -1,3 +1,4 @@
+import math
 import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -6,10 +7,12 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ConflictError
+from app.core.exceptions import ConflictError, NotFoundError, ServiceUnavailableError
 from app.db.repositories.catalog import ProductRepository
 from app.db.repositories.purchase import CouponRepository, OrderRepository
 from app.db.types import utcnow
+from app.db.unit_of_work import SqlAlchemyUnitOfWork
+from app.email.mailer import Mailer
 from app.models import (
     Address,
     BillingProfile,
@@ -19,18 +22,23 @@ from app.models import (
     Order,
     OrderStatus,
     OrderStatusHistory,
+    PaymentStatus,
     PickupPoint,
     ShippingZone,
+    User,
 )
+from app.payments.gateway import PaymentGateway, PaymentUnavailable
 from app.schemas.checkout import AppliedCoupon
-from app.schemas.common import Money
+from app.schemas.common import Money, Page
 from app.schemas.orders import (
     OrderAddress,
     OrderBilling,
     OrderDelivery,
     OrderItemRead,
+    OrderListParams,
     OrderRead,
     OrderStatusChange,
+    OrderSummary,
     PaymentRead,
     ShippingSnapshot,
     ZoneSnapshot,
@@ -128,15 +136,18 @@ class OrderStateMachine:
     def can(self, current: OrderStatus, target: OrderStatus) -> bool:
         return target in ALLOWED_TRANSITIONS.get(current, frozenset())
 
+    def ensure(self, current: OrderStatus, target: OrderStatus) -> None:
+        if not self.can(current, target):
+            raise ConflictError(
+                f"An order in status {current} cannot change to {target}.",
+                code="invalid_transition",
+                details={"from": current, "to": target},
+            )
+
     def transition(
         self, order: Order, target: OrderStatus, *, actor_id: int | None, note: str | None = None
     ) -> None:
-        if not self.can(order.status, target):
-            raise ConflictError(
-                f"An order in status {order.status} cannot change to {target}.",
-                code="invalid_transition",
-                details={"from": order.status, "to": target},
-            )
+        self.ensure(order.status, target)
         order.status_history.append(
             OrderStatusHistory(
                 from_status=order.status, to_status=target, changed_by=actor_id, note=note
@@ -246,7 +257,10 @@ def present_order(
 
 
 async def read_order(session: AsyncSession, order_id: int, locale: Locale) -> OrderRead:
-    order = await OrderRepository(session).detail(order_id)
+    return await order_read(session, await OrderRepository(session).detail(order_id), locale)
+
+
+async def order_read(session: AsyncSession, order: Order, locale: Locale) -> OrderRead:
     coupon = await session.get(Coupon, order.coupon_id) if order.coupon_id else None
     point = await session.get(PickupPoint, order.pickup_point_id) if order.pickup_point_id else None
     return present_order(order, coupon, point, locale)
@@ -263,3 +277,75 @@ async def release_order(session: AsyncSession, order: Order) -> None:
         if coupon is not None:
             coupon.used_count = max(coupon.used_count - 1, 0)
         await coupons.remove_redemption(order.id)
+
+
+class OrderService:
+    def __init__(
+        self, uow: SqlAlchemyUnitOfWork, gateway: PaymentGateway, mailer: Mailer
+    ) -> None:
+        self.uow = uow
+        self.gateway = gateway
+        self.mailer = mailer
+        self.states = OrderStateMachine()
+
+    async def page(self, user_id: int, params: OrderListParams) -> Page[OrderSummary]:
+        async with self.uow:
+            rows, total = await OrderRepository(self.uow.session).page_for(
+                user_id, offset=(params.page - 1) * params.size, limit=params.size
+            )
+            items = [
+                OrderSummary(
+                    number=order.number,
+                    status=order.status,
+                    total=Money(
+                        amount=DISPLAY.round(order.total, order.currency), currency=order.currency
+                    ),
+                    item_count=item_count,
+                    created_at=order.created_at,
+                )
+                for order, item_count in rows
+            ]
+        return Page[OrderSummary](
+            items=items,
+            page=params.page,
+            size=params.size,
+            total=total,
+            pages=math.ceil(total / params.size),
+        )
+
+    async def detail(self, user_id: int, number: str, locale: Locale) -> OrderRead:
+        async with self.uow:
+            order = await self._owned(user_id, number)
+            return await order_read(self.uow.session, order, locale)
+
+    async def cancel(self, user: User, number: str, locale: Locale) -> OrderRead:
+        async with self.uow:
+            order = await self._owned(user.id, number, lock=True)
+            self.states.ensure(order.status, OrderStatus.CANCELLED)
+            refunded = await self._refund(order)
+            self.states.transition(
+                order, OrderStatus.CANCELLED, actor_id=user.id, note="cancelled_by_customer"
+            )
+            await release_order(self.uow.session, order)
+            await self.uow.flush()
+            read = await order_read(self.uow.session, order, locale)
+        self.mailer.order_cancelled(user, read, refunded, locale)
+        return read
+
+    async def _owned(self, user_id: int, number: str, *, lock: bool = False) -> Order:
+        order = await OrderRepository(self.uow.session).owned(user_id, number, lock=lock)
+        if order is None:
+            raise NotFoundError("Order not found.")
+        return order
+
+    async def _refund(self, order: Order) -> bool:
+        approved = [p for p in order.payments if p.status == PaymentStatus.APPROVED]
+        for payment in approved:
+            try:
+                await self.gateway.refund(payment.provider_ref or "")
+            except PaymentUnavailable as exc:
+                raise ServiceUnavailableError(
+                    "Refunds are temporarily unavailable.", code="payment_unavailable"
+                ) from exc
+            payment.status = PaymentStatus.REFUNDED
+        return bool(approved)
