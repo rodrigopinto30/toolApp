@@ -6,11 +6,12 @@ import { Fragment } from "react";
 
 import { JsonLd } from "@/components/seo/json-ld";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddToCart } from "@/features/cart/components/add-to-cart";
 import { getProduct, getProvinces } from "@/features/catalog/api";
 import { Breadcrumbs } from "@/features/catalog/components/breadcrumbs";
 import { ProductImage } from "@/features/catalog/components/product-image";
 import { Rating } from "@/features/catalog/components/rating";
-import { ShippingQuote } from "@/features/catalog/components/shipping-quote";
+import { ProductShippingQuote } from "@/features/catalog/components/shipping-quote";
 import { VariantSelector } from "@/features/catalog/components/variant-selector";
 import { VariantSummary } from "@/features/catalog/components/variant-summary";
 import { categoryPath, productPath } from "@/features/catalog/paths";
@@ -62,11 +63,10 @@ export default async function ProductPage({ params }: Props) {
   }
   const { product, locale } = loaded;
   setRequestLocale(locale);
-  const [t, tBreadcrumbs, provinces, currency] = await Promise.all([
+  const [t, tBreadcrumbs, provinces] = await Promise.all([
     getTranslations("Product"),
     getTranslations("Breadcrumbs"),
     getProvinces(locale),
-    getCurrency(),
   ]);
   const origin = serverEnv().PUBLIC_URL;
   const path = productPath(product.slug);
@@ -93,6 +93,7 @@ export default async function ProductPage({ params }: Props) {
             </header>
             <VariantSummary variants={product.variants} />
             {product.variants.length > 1 && <VariantSelector variants={product.variants} />}
+            <AddToCart variants={product.variants} />
             <Card>
               <CardHeader>
                 <CardTitle>
@@ -100,10 +101,9 @@ export default async function ProductPage({ params }: Props) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ShippingQuote
+                <ProductShippingQuote
                   variants={product.variants}
                   provinces={provinces.map(({ code, name }) => ({ code, name }))}
-                  currency={currency}
                 />
               </CardContent>
             </Card>

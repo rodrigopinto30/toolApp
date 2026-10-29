@@ -9,7 +9,7 @@ import { clearCookie, setCookie } from "@/test/cookies";
 import { server } from "@/test/msw/server";
 import { renderWithUrl } from "@/test/render";
 
-import { ShippingQuote } from "./shipping-quote";
+import { ProductShippingQuote } from "./shipping-quote";
 import { VariantSelector } from "./variant-selector";
 
 const ORIGIN = "https://localhost";
@@ -62,7 +62,7 @@ function renderQuote() {
   renderWithUrl(
     <>
       <VariantSelector variants={VARIANTS} />
-      <ShippingQuote variants={VARIANTS} provinces={PROVINCES} currency="ARS" />
+      <ProductShippingQuote variants={VARIANTS} provinces={PROVINCES} />
     </>,
   );
   return userEvent.setup();

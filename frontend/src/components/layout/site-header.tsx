@@ -5,6 +5,7 @@ import { CurrencySwitcher } from "@/components/layout/currency-switcher";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { SearchBox } from "@/components/layout/search-box";
 import { UserMenu } from "@/components/layout/user-menu";
+import { CartLink } from "@/features/cart/components/cart-link";
 import { getCategoryTree } from "@/features/catalog/api";
 import { Link } from "@/i18n/navigation";
 import type { Currency } from "@/lib/currency";
@@ -37,6 +38,7 @@ export async function SiteHeader({ currency }: { currency: Currency }) {
         <div className="ml-auto flex items-center gap-1">
           <CurrencySwitcher value={currency} />
           <LocaleSwitcher />
+          <CartLink />
           <UserMenu />
         </div>
       </div>

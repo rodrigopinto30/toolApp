@@ -7,11 +7,11 @@ export function newPassword(): string {
   return `e2e-password-${randomUUID().slice(0, 8)}`;
 }
 
-export function newUser(): TestUser {
+export function newUser(prefix = ""): TestUser {
   return {
     firstName: "Ana",
     lastName: "Prueba",
-    email: `e2e+${randomUUID().slice(0, 12)}@example.com`,
+    email: `e2e+${prefix}${randomUUID().slice(0, 12)}@example.com`,
     password: newPassword(),
   };
 }

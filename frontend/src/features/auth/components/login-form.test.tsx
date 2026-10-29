@@ -1,8 +1,9 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 
 import { CSRF_COOKIE } from "@/lib/api/cookies";
+import { cartLine, cartOf, storedGuestItems, storeGuestCart } from "@/test/cart";
 import { clearCookie, setCookie } from "@/test/cookies";
 import { server } from "@/test/msw/server";
 import { renderWithProviders } from "@/test/render";
@@ -95,4 +96,26 @@ it("sends the normalized email and goes to the next page", async () => {
   await screen.findByRole("button", { name: "Ingresando…" }).catch(() => undefined);
   expect(body).toEqual({ email: "ana@example.com", password: "a-long-password" });
   expect(replace).toHaveBeenCalledWith("/es/products/drill");
+});
+
+it("merges the guest cart into the account before going to the next page", async () => {
+  storeGuestCart([{ variantId: 30, quantity: 2 }]);
+  let merged: unknown;
+  server.use(
+    http.post(`${ORIGIN}/api/v1/auth/login`, () =>
+      HttpResponse.json({ id: 1, email: "ana@example.com", first_name: "Ana" }),
+    ),
+    http.post(`${ORIGIN}/api/v1/me/cart/merge`, async ({ request }) => {
+      merged = await request.json();
+      expect(replace).not.toHaveBeenCalled();
+      return HttpResponse.json({ cart: cartOf([cartLine()]), adjustments: [] });
+    }),
+  );
+  renderWithProviders(<LoginForm next="/es/checkout" />);
+
+  await submit("ana@example.com", "a-long-password");
+
+  await waitFor(() => expect(replace).toHaveBeenCalledWith("/es/checkout"));
+  expect(merged).toEqual({ items: [{ variant_id: 30, quantity: 2 }] });
+  expect(storedGuestItems()).toEqual([]);
 });

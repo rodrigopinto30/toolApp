@@ -25,6 +25,10 @@
     "logout": "Cerrar sesión",
     "loading": "Cargando la cuenta"
   },
+  "CartLink": {
+    "label": "Carrito, {count, plural, =0 {vacío} one {# unidad} other {# unidades}}",
+    "loading": "Carrito"
+  },
   "CategoryMenu": {
     "label": "Categorías"
   },
@@ -121,6 +125,55 @@
         "sat": "Sábados",
         "sun": "Domingos"
       }
+    }
+  },
+  "Cart": {
+    "metaTitle": "Carrito",
+    "title": "Tu carrito",
+    "loading": "Cargando el carrito",
+    "lines": "Productos del carrito",
+    "empty": {
+      "title": "Tu carrito está vacío",
+      "body": "Explorá el catálogo y agregá lo que necesites.",
+      "cta": "Ir al inicio"
+    },
+    "quantity": "Cantidad",
+    "quantityOf": "Cantidad de {name}",
+    "decrease": "Restar una unidad",
+    "increase": "Sumar una unidad",
+    "unitPrice": "{price} c/u",
+    "remove": "Quitar {name}",
+    "issues": {
+      "unavailable": "Ya no está disponible. Quitalo para seguir.",
+      "out_of_stock": "Se quedó sin stock. Quitalo para seguir.",
+      "insufficient_stock": "Solo {available, plural, one {queda # unidad} other {quedan # unidades}}."
+    },
+    "useAvailable": "Dejar {available, plural, one {# unidad} other {# unidades}}",
+    "summary": {
+      "title": "Resumen",
+      "units": "{count, plural, one {# unidad} other {# unidades}}",
+      "subtotal": "Subtotal",
+      "note": "El envío y los descuentos se calculan al pagar.",
+      "issues": "Resolvé los productos marcados para poder pagar."
+    },
+    "checkout": "Ir a pagar",
+    "loginToCheckout": "Ingresá para pagar",
+    "shipping": "Estimá el envío",
+    "merged": {
+      "title": "Sumamos a tu cuenta los productos que habías elegido",
+      "insufficient_stock": "{name}: {applied, plural, =0 {no quedan unidades} one {quedó # unidad} other {quedaron # unidades}} de las {requested} que pediste.",
+      "unavailable": "Uno de los productos ya no está disponible.",
+      "cart_limit": "Un producto no entró porque el carrito llegó al máximo de productos.",
+      "unknownProduct": "Un producto",
+      "dismiss": "Entendido"
+    },
+    "add": {
+      "label": "Comprar",
+      "submit": "Agregar al carrito",
+      "submitting": "Agregando…",
+      "added": "Agregado al carrito.",
+      "view": "Ver carrito",
+      "outOfStock": "Esta variante no tiene stock."
     }
   },
   "NotFound": {
@@ -253,6 +306,10 @@
     "network_error": "No hay conexión. Revisá tu red.",
     "timeout": "El servidor tardó demasiado. Probá de nuevo.",
     "validation_error": "Revisá los datos del formulario.",
+    "insufficient_stock": "No hay stock suficiente: {available, plural, one {queda # unidad} other {quedan # unidades}}.",
+    "insufficient_stock_unknown": "No hay stock suficiente.",
+    "cart_limit": "El carrito admite hasta 50 productos distintos.",
+    "not_found": "No lo encontramos o ya no está disponible.",
     "unexpected": "Ocurrió un error inesperado.",
     "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }

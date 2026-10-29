@@ -12,6 +12,7 @@ import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { LineItem } from "@/features/cart/types";
 import { useShippingQuote } from "@/features/catalog/hooks";
 import {
   DELIVERY_METHODS,
@@ -24,35 +25,50 @@ import { useSelectedVariant } from "@/features/catalog/use-selected-variant";
 import type { Variant } from "@/features/catalog/variants";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import type { Currency } from "@/lib/currency";
+import { useCurrency } from "@/lib/currency-context";
 import { formatMoney } from "@/lib/money";
 
 const OPENING_DAYS = ["mon_fri", "sat", "sun"] as const;
 
 export type ProvinceOption = { code: string; name: string };
+export type QuoteItems = (quantity: number) => LineItem[];
 
-function quoteRequest(values: ShippingQuoteValues, variantId: number, currency: Currency): ShippingQuoteRequest {
+function quoteRequest(values: ShippingQuoteValues, items: LineItem[], currency: Currency): ShippingQuoteRequest {
   return {
     delivery_method: values.method,
     province_code: values.method === "shipping" ? values.province : null,
-    items: [{ variant_id: variantId, quantity: values.quantity }],
+    items,
     currency,
   };
 }
 
+function sameItems(a: LineItem[], b: LineItem[]): boolean {
+  return (
+    a.length === b.length &&
+    a.every((item, index) => item.variant_id === b[index].variant_id && item.quantity === b[index].quantity)
+  );
+}
+
+export function ProductShippingQuote({ variants, provinces }: { variants: Variant[]; provinces: ProvinceOption[] }) {
+  const [variant] = useSelectedVariant(variants);
+  const items = (quantity: number) => [{ variant_id: variant.id, quantity }];
+  return <ShippingQuote items={items} provinces={provinces} withQuantity />;
+}
+
 export function ShippingQuote({
-  variants,
+  items,
   provinces,
-  currency,
+  withQuantity = false,
 }: {
-  variants: Variant[];
+  items: QuoteItems;
   provinces: ProvinceOption[];
-  currency: Currency;
+  withQuantity?: boolean;
 }) {
   const t = useTranslations("Product.shipping");
   const tv = useTranslations("Validation");
   const id = useId();
+  const currency = useCurrency();
   const errorMessage = useErrorMessage();
-  const [variant] = useSelectedVariant(variants);
   const quote = useShippingQuote();
   const { mutate, variables } = quote;
   const form = useForm<ShippingQuoteValues>({
@@ -65,15 +81,19 @@ export function ShippingQuote({
   const provinceErrorId = errors.province ? `${provinceId}-error` : undefined;
 
   useEffect(() => {
-    if (variables && (variables.items[0].variant_id !== variant.id || variables.currency !== currency)) {
-      mutate({ ...variables, items: [{ ...variables.items[0], variant_id: variant.id }], currency });
+    if (!variables) {
+      return;
     }
-  }, [variant.id, currency, variables, mutate]);
+    const next = items(variables.items[0]?.quantity ?? 1);
+    if (variables.currency !== currency || !sameItems(variables.items, next)) {
+      mutate({ ...variables, items: next, currency });
+    }
+  }, [items, currency, variables, mutate]);
 
-  const onSubmit = form.handleSubmit((values) => mutate(quoteRequest(values, variant.id, currency)));
+  const onSubmit = form.handleSubmit((values) => mutate(quoteRequest(values, items(values.quantity), currency)));
 
   return (
-    <form onSubmit={onSubmit} noValidate className="grid gap-4">
+    <form aria-label={t("title")} onSubmit={onSubmit} noValidate className="grid gap-4">
       <fieldset className="grid gap-2">
         <legend className="mb-2 text-sm font-medium">{t("method")}</legend>
         <div className="flex flex-wrap gap-2">
@@ -115,17 +135,19 @@ export function ShippingQuote({
           )}
         </div>
       )}
-      <TextField
-        id={`${id}-quantity`}
-        type="number"
-        inputMode="numeric"
-        min={1}
-        max={MAX_QUANTITY}
-        className="w-24"
-        label={t("quantity")}
-        error={errors.quantity?.message}
-        registration={form.register("quantity", { valueAsNumber: true })}
-      />
+      {withQuantity && (
+        <TextField
+          id={`${id}-quantity`}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={MAX_QUANTITY}
+          className="w-24"
+          label={t("quantity")}
+          error={errors.quantity?.message}
+          registration={form.register("quantity", { valueAsNumber: true })}
+        />
+      )}
       <SubmitButton pending={quote.isPending} pendingLabel={t("submitting")} variant="outline" className="justify-self-start">
         {t("submit")}
       </SubmitButton>
