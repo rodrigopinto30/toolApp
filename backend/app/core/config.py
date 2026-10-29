@@ -7,8 +7,6 @@ from sqlalchemy.engine import URL
 
 
 class Settings(BaseSettings):
-    """Settings read from environment variables (injected by docker compose)."""
-
     model_config = SettingsConfigDict(extra="ignore", frozen=True)
 
     app_env: Literal["development", "production"] = "production"
@@ -41,6 +39,10 @@ class Settings(BaseSettings):
     cache_ttl_catalog: int = 300
     cache_ttl_pricing: int = 600
     cache_ttl_shipping: int = 3600
+
+    payment_timeout_seconds: float = 5.0
+    payment_breaker_failures: int = 3
+    payment_breaker_reset_seconds: float = 30.0
 
     jwt_secret: SecretStr | None = None
     jwt_issuer: str = "toolapp"
@@ -78,8 +80,6 @@ class Settings(BaseSettings):
 
     @property
     def jwt_key(self) -> str:
-        """Optional in the settings because the migrations job does not get the secret;
-        create_app() refuses to start without it."""
         if self.jwt_secret is None:
             raise RuntimeError("JWT_SECRET is not set")
         return self.jwt_secret.get_secret_value()

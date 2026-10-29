@@ -19,6 +19,7 @@ from app.core.middleware import (
 )
 from app.db.session import create_engine, create_session_factory
 from app.email.sender import create_email_sender
+from app.payments.gateway import create_payment_gateway
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -35,6 +36,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.redis = create_redis(settings)
         app.state.cache = Cache(app.state.redis)
         app.state.email_sender = create_email_sender(settings)
+        app.state.payment_gateway = create_payment_gateway(settings)
         try:
             yield
         finally:

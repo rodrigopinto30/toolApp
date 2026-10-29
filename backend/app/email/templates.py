@@ -1,8 +1,10 @@
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from decimal import Decimal
 from html import escape
 
 from app.email.sender import EmailMessage
-from app.models import Locale
+from app.models import Currency, Locale
 
 
 @dataclass(frozen=True)
@@ -80,6 +82,46 @@ TEMPLATES: dict[str, dict[Locale, Template]] = {
             footer="If you did not request it, ignore this message: your password stays the same.",
         ),
     },
+    "order_confirmed": {
+        Locale.ES: Template(
+            subject="Confirmamos tu pedido {number}",
+            lines=(
+                "Hola {first_name},",
+                "Recibimos el pago de tu pedido {number}. Este es el detalle:",
+            ),
+            link_label="Ver pedido",
+            footer="Te avisamos por email cada vez que cambie su estado.",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} is confirmed",
+            lines=(
+                "Hi {first_name},",
+                "We received the payment for your order {number}. Here are the details:",
+            ),
+            link_label="View order",
+            footer="We will email you every time its status changes.",
+        ),
+    },
+    "payment_rejected": {
+        Locale.ES: Template(
+            subject="No pudimos cobrar tu pedido {number}",
+            lines=(
+                "Hola {first_name},",
+                "El pago de tu pedido {number} fue rechazado y el pedido se canceló. "
+                "Los productos volvieron a tu carrito, así que podés intentar con otra tarjeta.",
+            ),
+            link_label="Ir al carrito",
+        ),
+        Locale.EN: Template(
+            subject="We could not charge your order {number}",
+            lines=(
+                "Hi {first_name},",
+                "The payment for your order {number} was rejected and the order was cancelled. "
+                "The products are back in your cart, so you can try another card.",
+            ),
+            link_label="Go to the cart",
+        ),
+    },
     "password_changed": {
         Locale.ES: Template(
             subject="Tu contraseña cambió",
@@ -103,14 +145,54 @@ TEMPLATES: dict[str, dict[Locale, Template]] = {
 }
 
 
+ORDER_LABELS: dict[Locale, dict[str, str]] = {
+    Locale.ES: {
+        "subtotal": "Subtotal",
+        "discount": "Descuento",
+        "shipping": "Envío",
+        "total": "Total",
+        "ship_to": "Envío a {address} ({days} días hábiles)",
+        "pickup_at": "Retiro en {name}, {address}",
+    },
+    Locale.EN: {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "shipping": "Shipping",
+        "total": "Total",
+        "ship_to": "Shipping to {address} ({days} business days)",
+        "pickup_at": "Pickup at {name}, {address}",
+    },
+}
+
+
+def format_money(amount: Decimal, currency: Currency, locale: Locale) -> str:
+    decimals = 0 if currency == Currency.ARS and amount == amount.to_integral_value() else 2
+    formatted = f"{amount:,.{decimals}f}"
+    if locale == Locale.ES:
+        formatted = formatted.translate(str.maketrans(",.", ".,"))
+    return f"{currency} {formatted}"
+
+
 def render(
-    name: str, locale: Locale, *, to: str, first_name: str, link: str | None = None
+    name: str,
+    locale: Locale,
+    *,
+    to: str,
+    first_name: str,
+    link: str | None = None,
+    values: Mapping[str, str] | None = None,
+    details: Sequence[str] = (),
 ) -> EmailMessage:
     template = TEMPLATES[name][locale]
-    lines = [line.format(first_name=first_name) for line in template.lines]
+    fields = {"first_name": first_name, **(values or {})}
+    lines = [line.format(**fields) for line in template.lines]
 
     text_parts = [*lines]
     html_parts = [f"<p>{escape(line)}</p>" for line in lines]
+    if details:
+        text_parts.append("\n".join(details))
+        items = "".join(f"<li>{escape(line)}</li>" for line in details)
+        html_parts.append(f"<ul>{items}</ul>")
     if link and template.link_label:
         text_parts.append(link)
         html_parts.append(f'<p><a href="{escape(link)}">{escape(template.link_label)}</a></p>')
@@ -121,7 +203,7 @@ def render(
     return EmailMessage(
         template=name,
         to=to,
-        subject=template.subject,
+        subject=template.subject.format(**fields),
         text="\n\n".join(text_parts) + "\n",
         html="<!doctype html><html><body>" + "".join(html_parts) + "</body></html>",
     )

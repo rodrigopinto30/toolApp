@@ -90,9 +90,10 @@ class PricingService:
 
     async def rate_converter(self) -> PriceConverter:
         current = await self.current_rate()
-        converter = PriceConverter(
-            current.rate if current else None, ars_rounding_step=self.settings.ars_rounding_step
-        )
+        return self.fixed_converter(current.rate if current else None)
+
+    def fixed_converter(self, rate: Decimal | None) -> PriceConverter:
+        converter = PriceConverter(rate, ars_rounding_step=self.settings.ars_rounding_step)
         converter.require_rate()
         return converter
 
