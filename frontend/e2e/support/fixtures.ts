@@ -6,6 +6,7 @@ import { HomePage } from "../pages/home-page";
 import { LoginPage } from "../pages/login-page";
 import { RegisterPage } from "../pages/register-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
+import { SearchPage } from "../pages/search-page";
 import { VerifyEmailPage } from "../pages/verify-email-page";
 import { registerUser } from "./api";
 import { Mailbox } from "./mailbox";
@@ -24,6 +25,7 @@ type Fixtures = {
   forgotPasswordPage: ForgotPasswordPage;
   resetPasswordPage: ResetPasswordPage;
   accountPage: AccountPage;
+  searchPage: SearchPage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -76,6 +78,9 @@ export const test = base.extend<Fixtures>({
   },
   accountPage: async ({ page }, use) => {
     await use(new AccountPage(page));
+  },
+  searchPage: async ({ page }, use) => {
+    await use(new SearchPage(page));
   },
 });
 

@@ -15,3 +15,4 @@ export const LAYOUT_NAMESPACES = [
   "Error",
 ] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;
+export const SHOP_NAMESPACES = ["Listing"] as const;

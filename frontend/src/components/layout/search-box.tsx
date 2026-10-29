@@ -8,10 +8,9 @@ import { useRef, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SEARCH_PATH } from "@/features/catalog/paths";
 import { QUERY_MIN_LENGTH } from "@/features/catalog/search-params";
 import { usePathname, useRouter } from "@/i18n/navigation";
-
-const SEARCH_PATH = "/search";
 
 export function SearchBox({ className }: { className?: string }) {
   const t = useTranslations("SearchBox");

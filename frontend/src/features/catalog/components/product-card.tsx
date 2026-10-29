@@ -3,6 +3,7 @@ import { Price } from "@/features/catalog/components/price";
 import { ProductImage } from "@/features/catalog/components/product-image";
 import { Rating } from "@/features/catalog/components/rating";
 import { StockBadge } from "@/features/catalog/components/stock-badge";
+import { productPath } from "@/features/catalog/paths";
 import type { ProductSummary } from "@/features/catalog/types";
 
 const CARD_IMAGE_SIZES = "(min-width: 1024px) 15rem, (min-width: 640px) 33vw, 50vw";
@@ -15,7 +16,7 @@ export function ProductCard({ product }: { product: ProductSummary }) {
         {product.brand && <p className="text-xs text-muted-foreground">{product.brand.name}</p>}
         <h3 className="text-sm leading-snug font-medium">
           <HoverPrefetchLink
-            href={`/products/${product.slug}`}
+            href={productPath(product.slug)}
             className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:rounded-xl after:focus-visible:ring-2 after:focus-visible:ring-ring"
           >
             {product.name}
