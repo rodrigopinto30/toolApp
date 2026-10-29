@@ -25,13 +25,35 @@
     "logout": "Log out",
     "loading": "Loading the account"
   },
+  "CategoryMenu": {
+    "label": "Categories"
+  },
+  "SearchBox": {
+    "label": "Search products",
+    "placeholder": "Search tools…",
+    "submit": "Search"
+  },
   "Footer": {
     "tagline": "Tools for work, shipped anywhere in Argentina.",
     "rights": "© {year} ToolApp"
   },
   "Home": {
     "title": "Tools for work",
-    "subtitle": "Soon you will find the full catalog here, with prices in pesos or dollars and nationwide shipping."
+    "subtitle": "Drills, grinders, wrenches and everything you need to work, priced in pesos or dollars with nationwide shipping.",
+    "categories": "Categories",
+    "featured": "Featured"
+  },
+  "Catalog": {
+    "price": {
+      "from": "From {price}",
+      "before": "Previous price:"
+    },
+    "stock": {
+      "in_stock": "In stock",
+      "low_stock": "Last units",
+      "out_of_stock": "Out of stock"
+    },
+    "rating": "{average} out of 5, {count, plural, one {# review} other {# reviews}}"
   },
   "NotFound": {
     "title": "Page not found",

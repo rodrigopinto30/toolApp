@@ -9,6 +9,7 @@ const ORIGIN = "http://backend.test:8000";
 
 beforeAll(() => {
   process.env.INTERNAL_API_ORIGIN = ORIGIN;
+  process.env.PUBLIC_URL = "https://localhost:8443";
 });
 
 it("calls the internal API origin without forwarding user cookies", async () => {
@@ -36,6 +37,18 @@ it("turns API errors into ApiError", async () => {
   await expect(
     unwrap(serverApi().GET("/api/v1/products/{slug}", { params: { path: { slug: "nope" } } })),
   ).rejects.toMatchObject({ status: 404, code: "not_found", requestId: "r1" });
+});
+
+it("hands the cache options to Next's fetch together with the timeout", async () => {
+  server.use(http.get(`${ORIGIN}/api/v1/brands`, () => HttpResponse.json([])));
+  const fetchSpy = jest.spyOn(globalThis, "fetch");
+
+  await unwrap(serverApi().GET("/api/v1/brands", publicCache(["catalog"])));
+
+  const [, init] = fetchSpy.mock.calls[0];
+  expect(init?.next).toEqual({ revalidate: 60, tags: ["catalog"] });
+  expect(init?.signal).toBeDefined();
+  fetchSpy.mockRestore();
 });
 
 it("caches public calls for 60 seconds with tags", () => {

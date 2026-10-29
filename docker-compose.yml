@@ -54,10 +54,11 @@ services:
     image: toolapp-frontend:latest
     environment:
       INTERNAL_API_ORIGIN: http://backend:8000
+      PUBLIC_URL: ${PUBLIC_URL}
     read_only: true
     tmpfs:
       - /tmp
-      - /app/.next/cache:uid=1000,gid=1000
+      - /app/.next/cache:uid=1000,gid=1000,size=64m
     cap_drop: [ALL]
     networks: [edge]
     healthcheck:

@@ -8,6 +8,8 @@ export class SiteHeader {
   readonly loginLink: Locator;
   readonly currency: Locator;
   readonly language: Locator;
+  readonly categoryMenu: Locator;
+  readonly searchBox: Locator;
   private readonly page: Page;
   private readonly t: Messages;
 
@@ -19,6 +21,13 @@ export class SiteHeader {
     this.loginLink = banner.getByRole("link", { name: this.t.UserMenu.login, exact: true });
     this.currency = banner.getByRole("button", { name: this.t.CurrencySwitcher.label });
     this.language = banner.getByRole("button", { name: this.t.LocaleSwitcher.label });
+    this.categoryMenu = banner.getByRole("button", { name: this.t.CategoryMenu.label });
+    this.searchBox = banner.getByRole("searchbox", { name: this.t.SearchBox.label });
+  }
+
+  async search(query: string): Promise<void> {
+    await this.searchBox.fill(query);
+    await this.searchBox.press("Enter");
   }
 
   async chooseCurrency(currency: Currency): Promise<void> {

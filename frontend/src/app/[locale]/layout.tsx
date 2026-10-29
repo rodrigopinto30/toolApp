@@ -11,6 +11,7 @@ import { Providers } from "@/components/providers";
 import { clientMessages, LAYOUT_NAMESPACES } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
 import { getCurrency } from "@/lib/currency.server";
+import { serverEnv } from "@/lib/env";
 import { ACCESS_COOKIE } from "@/lib/session-cookies";
 
 import "../globals.css";
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
   }
   const t = await getTranslations({ locale, namespace: "Metadata" });
   return {
+    metadataBase: new URL(serverEnv().PUBLIC_URL),
     title: { default: t("title"), template: t("titleTemplate") },
     description: t("description"),
   };
