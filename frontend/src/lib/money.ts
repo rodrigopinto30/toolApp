@@ -1,5 +1,5 @@
+import type { Locale } from "@/i18n/locales";
 import type { components } from "@/lib/api/schema";
-import type { Locale } from "@/i18n/routing";
 
 export type Money = components["schemas"]["Money"];
 

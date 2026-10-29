@@ -2,13 +2,18 @@ import "server-only";
 
 import { z } from "@/lib/zod";
 
-const serverEnvSchema = z.object({
-  INTERNAL_API_ORIGIN: z
-    .url({ protocol: /^https?$/ })
+function origin(protocol: RegExp) {
+  return z
+    .url({ protocol })
     .refine((value) => URL.canParse(value) && new URL(value).pathname === "/" && !new URL(value).search, {
       message: "Must be an origin, without path or query",
     })
-    .transform((value) => new URL(value).origin),
+    .transform((value) => new URL(value).origin);
+}
+
+const serverEnvSchema = z.object({
+  INTERNAL_API_ORIGIN: origin(/^https?$/),
+  PUBLIC_URL: origin(/^https$/),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

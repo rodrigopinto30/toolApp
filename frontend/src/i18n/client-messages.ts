@@ -6,5 +6,12 @@ export async function clientMessages(namespaces: readonly string[]): Promise<Abs
   return Object.fromEntries(namespaces.map((namespace) => [namespace, messages[namespace as keyof typeof messages]]));
 }
 
-export const LAYOUT_NAMESPACES = ["LocaleSwitcher", "CurrencySwitcher", "UserMenu", "Error"] as const;
+export const LAYOUT_NAMESPACES = [
+  "LocaleSwitcher",
+  "CurrencySwitcher",
+  "UserMenu",
+  "CategoryMenu",
+  "SearchBox",
+  "Error",
+] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;

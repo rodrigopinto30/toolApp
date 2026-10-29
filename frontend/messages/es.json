@@ -25,13 +25,35 @@
     "logout": "Cerrar sesión",
     "loading": "Cargando la cuenta"
   },
+  "CategoryMenu": {
+    "label": "Categorías"
+  },
+  "SearchBox": {
+    "label": "Buscar productos",
+    "placeholder": "Buscar herramientas…",
+    "submit": "Buscar"
+  },
   "Footer": {
     "tagline": "Herramientas para trabajar, con envío a todo el país.",
     "rights": "© {year} ToolApp"
   },
   "Home": {
     "title": "Herramientas para trabajar",
-    "subtitle": "Muy pronto vas a encontrar acá el catálogo completo, con precios en pesos o dólares y envío a todo el país."
+    "subtitle": "Taladros, amoladoras, llaves y todo lo que necesitás para trabajar, con precios en pesos o dólares y envío a todo el país.",
+    "categories": "Categorías",
+    "featured": "Destacados"
+  },
+  "Catalog": {
+    "price": {
+      "from": "Desde {price}",
+      "before": "Precio anterior:"
+    },
+    "stock": {
+      "in_stock": "En stock",
+      "low_stock": "Últimas unidades",
+      "out_of_stock": "Sin stock"
+    },
+    "rating": "{average} de 5, {count, plural, one {# opinión} other {# opiniones}}"
   },
   "NotFound": {
     "title": "Página no encontrada",

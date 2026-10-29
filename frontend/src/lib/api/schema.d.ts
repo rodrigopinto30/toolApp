@@ -374,6 +374,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/products/facets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Product Facets */
+        get: operations["product_facets_api_v1_products_facets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/products/featured": {
         parameters: {
             query?: never;
@@ -564,6 +581,15 @@ export interface components {
             /** Is Default */
             is_default?: true | null;
         };
+        /** AttributeFacet */
+        AttributeFacet: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Values */
+            values: components["schemas"]["FacetValue"][];
+        };
         /** AttributeRead */
         AttributeRead: {
             /** Code */
@@ -683,6 +709,15 @@ export interface components {
              */
             updated_at: string;
         };
+        /** FacetValue */
+        FacetValue: {
+            /** Slug */
+            slug: string;
+            /** Label */
+            label: string;
+            /** Count */
+            count: number;
+        };
         /** ForgotPasswordRequest */
         ForgotPasswordRequest: {
             /** Email */
@@ -785,6 +820,11 @@ export interface components {
                 [key: string]: string;
             } | null;
         };
+        /** PriceRange */
+        PriceRange: {
+            min: components["schemas"]["Money"];
+            max: components["schemas"]["Money"];
+        };
         /** ProductCard */
         ProductCard: {
             /** Slug */
@@ -796,6 +836,8 @@ export interface components {
             brand: components["schemas"]["BrandRef"] | null;
             image: components["schemas"]["ImageRead"] | null;
             price_from: components["schemas"]["Money"];
+            /** Price Varies */
+            price_varies: boolean;
             compare_at: components["schemas"]["Money"] | null;
             stock_status: components["schemas"]["StockStatus"];
             /** Rating Avg */
@@ -814,6 +856,8 @@ export interface components {
             brand: components["schemas"]["BrandRef"] | null;
             image: components["schemas"]["ImageRead"] | null;
             price_from: components["schemas"]["Money"];
+            /** Price Varies */
+            price_varies: boolean;
             compare_at: components["schemas"]["Money"] | null;
             stock_status: components["schemas"]["StockStatus"];
             /** Rating Avg */
@@ -832,6 +876,14 @@ export interface components {
             images: components["schemas"]["ImageRead"][];
             /** Variants */
             variants: components["schemas"]["VariantRead"][];
+        };
+        /** ProductFacets */
+        ProductFacets: {
+            /** Brands */
+            brands: components["schemas"]["FacetValue"][];
+            /** Attributes */
+            attributes: components["schemas"]["AttributeFacet"][];
+            price: components["schemas"]["PriceRange"] | null;
         };
         /**
          * ProductSort
@@ -1755,9 +1807,48 @@ export interface operations {
                 min_price?: number | string | null;
                 max_price?: number | string | null;
                 in_stock?: boolean;
+                currency?: components["schemas"]["Currency"];
+                locale?: components["schemas"]["Locale"];
                 sort?: components["schemas"]["ProductSort"] | null;
                 page?: number;
                 size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ProductCard_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    product_facets_api_v1_products_facets_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                category?: string | null;
+                brand?: string[];
+                "attr[]"?: string[];
+                min_price?: number | string | null;
+                max_price?: number | string | null;
+                in_stock?: boolean;
                 currency?: components["schemas"]["Currency"];
                 locale?: components["schemas"]["Locale"];
             };
@@ -1773,7 +1864,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_ProductCard_"];
+                    "application/json": components["schemas"]["ProductFacets"];
                 };
             };
             /** @description Validation Error */

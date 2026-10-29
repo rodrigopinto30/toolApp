@@ -13,12 +13,15 @@ export function publicCache(tags: string[]) {
   return { next: { revalidate: PUBLIC_REVALIDATE_SECONDS, tags } };
 }
 
+type RequestWithCacheOptions = Request & { next?: NextFetchRequestConfig };
+
 let client: ReturnType<typeof createClient<paths>> | undefined;
 
 export function serverApi() {
   client ??= createClient<paths>({
     baseUrl: serverEnv().INTERNAL_API_ORIGIN,
-    fetch: (request) => fetch(request, { signal: AbortSignal.timeout(TIMEOUT_MS) }),
+    fetch: (request: RequestWithCacheOptions) =>
+      fetch(request, { next: request.next, signal: AbortSignal.timeout(TIMEOUT_MS) }),
   });
   return client;
 }
