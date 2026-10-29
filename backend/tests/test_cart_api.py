@@ -333,3 +333,75 @@ async def test_merge_validates_the_request(client: AsyncClient) -> None:
 
     for body in (too_many, over_limit, {}):
         assert (await client.post(f"{CART}/merge", json=body)).status_code == 422
+
+
+QUOTE = "/api/v1/cart/quote"
+
+
+async def _quote(client: AsyncClient, items: list[tuple[int, int]], **params: str) -> Response:
+    body = {"items": [{"variant_id": v, "quantity": q} for v, q in items]}
+    return await client.post(QUOTE, json=body, params=params or USD)
+
+
+@pytest.mark.usefixtures("user")
+async def test_guest_quote_matches_the_customer_cart(
+    client: AsyncClient, raw_client: AsyncClient, session: AsyncSession
+) -> None:
+    plugs, screwdrivers = [await _variant_id(session, sku) for sku in ("TRU-WP-6", "STA-SD6")]
+    await _put(client, plugs, 2)
+    await _put(client, screwdrivers, 1)
+    customer = (await client.get(CART, params={"currency": "ARS", "locale": "en"})).json()
+
+    items = [(plugs, 2), (screwdrivers, 1)]
+    response = await _quote(raw_client, items, currency="ARS", locale="en")
+
+    assert response.status_code == 200
+    assert response.json() == customer
+
+
+async def test_guest_quote_keeps_the_order_and_skips_unknown_variants(
+    raw_client: AsyncClient, session: AsyncSession
+) -> None:
+    plugs, screwdrivers = [await _variant_id(session, sku) for sku in ("TRU-WP-6", "STA-SD6")]
+
+    cart = (await _quote(raw_client, [(screwdrivers, 1), (999999, 1), (plugs, 2)])).json()
+
+    assert [line["sku"] for line in cart["items"]] == ["STA-SD6", "TRU-WP-6"]
+    assert (cart["item_count"], cart["subtotal"]) == (3, {"amount": "26.90", "currency": "USD"})
+
+
+async def test_guest_quote_reports_line_issues(
+    raw_client: AsyncClient, session: AsyncSession
+) -> None:
+    plugs, drill = [await _variant_id(session, sku) for sku in ("TRU-WP-6", "BOS-HD18-18V")]
+    variants = update(ProductVariant)
+    await session.execute(variants.where(ProductVariant.id == plugs).values(is_active=False))
+    await session.execute(variants.where(ProductVariant.id == drill).values(stock=4))
+
+    cart = (await _quote(raw_client, [(plugs, 1), (drill, 10)])).json()
+
+    assert [(line["issue"], line["available"]) for line in cart["items"]] == [
+        ("unavailable", None),
+        ("insufficient_stock", 4),
+    ]
+    assert (cart["has_issues"], cart["subtotal"]["amount"]) == (True, "0.00")
+
+
+@pytest.mark.parametrize(
+    "items",
+    [
+        [],
+        [{"variant_id": n, "quantity": 1} for n in range(1, 52)],
+        [{"variant_id": 1, "quantity": 1}, {"variant_id": 1, "quantity": 2}],
+        [{"variant_id": 1, "quantity": 100}],
+        [{"variant_id": 0, "quantity": 1}],
+        [{"variant_id": 1, "quantity": 1, "price": "1.00"}],
+    ],
+    ids=["empty", "over-limit", "duplicate", "quantity", "variant", "extra-field"],
+)
+async def test_guest_quote_validates_the_request(
+    raw_client: AsyncClient, items: list[dict[str, Any]]
+) -> None:
+    response = await raw_client.post(QUOTE, json={"items": items})
+
+    assert (response.status_code, response.json()["code"]) == (422, "validation_error")

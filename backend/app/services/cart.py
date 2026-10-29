@@ -17,6 +17,7 @@ from app.schemas.cart import (
     CartLineIssue,
     CartMergeRead,
     CartMergeRequest,
+    CartQuoteRequest,
     CartRead,
 )
 from app.schemas.common import MAX_LINES, Money
@@ -140,6 +141,18 @@ class CartService:
             cart = await CartRepository(self.uow.session).for_user(user_id)
             return await self._read(cart, converter, currency, locale)
 
+    async def quote(self, request: CartQuoteRequest, currency: Currency, locale: Locale) -> CartRead:
+        converter = await self.pricing.converter(currency)
+        async with self.uow:
+            variant_ids = [item.variant_id for item in request.items]
+            variants = await load_variants(self.uow.session, variant_ids)
+            entries = [
+                CartEntry(variants[item.variant_id], item.quantity)
+                for item in request.items
+                if item.variant_id in variants
+            ]
+            return self._presenter(converter, currency, locale).cart(entries)
+
     async def set_quantity(
         self, user_id: int, variant_id: int, quantity: int, currency: Currency, locale: Locale
     ) -> CartRead:
@@ -224,7 +237,11 @@ class CartService:
         self, cart: Cart | None, converter: PriceConverter, currency: Currency, locale: Locale
     ) -> CartRead:
         entries = await cart_entries(self.uow.session, cart)
-        presenter = CartPresenter(
+        return self._presenter(converter, currency, locale).cart(entries)
+
+    def _presenter(
+        self, converter: PriceConverter, currency: Currency, locale: Locale
+    ) -> CartPresenter:
+        return CartPresenter(
             OrderCalculator(converter, currency), locale, self.settings.low_stock_threshold
         )
-        return presenter.cart(entries)
