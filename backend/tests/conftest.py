@@ -1,6 +1,6 @@
 import re
 import uuid
-from collections.abc import AsyncIterator, Callable, Iterator
+from collections.abc import AsyncIterator, Callable, Iterator, Sequence
 from typing import Any
 
 import pytest
@@ -16,6 +16,7 @@ from app.core.config import Settings, get_settings
 from app.core.container import (
     get_cache,
     get_email_sender,
+    get_frontend_revalidator,
     get_key_prefix,
     get_payment_gateway,
     get_session_factory,
@@ -23,7 +24,7 @@ from app.core.container import (
 from app.core.security import CSRF_COOKIE, CSRF_HEADER
 from app.email.sender import EmailMessage
 from app.main import create_app
-from app.models import Address, PickupPoint, User
+from app.models import Address, PickupPoint, User, UserRole
 from app.payments.circuit_breaker import CircuitBreaker
 from app.payments.gateway import MockPaymentGateway, PaymentGateway
 from app.seed import run_seed
@@ -124,6 +125,19 @@ def outbox() -> Outbox:
     return Outbox()
 
 
+class RevalidationLog:
+    def __init__(self) -> None:
+        self.tags: list[list[str]] = []
+
+    async def revalidate(self, tags: Sequence[str]) -> None:
+        self.tags.append(list(tags))
+
+
+@pytest.fixture
+def revalidations() -> RevalidationLog:
+    return RevalidationLog()
+
+
 @pytest.fixture
 def key_prefix() -> str:
     return f"test:{uuid.uuid4().hex}"
@@ -135,11 +149,13 @@ def raw_client_factory(
     session_factory: async_sessionmaker[AsyncSession],
     cache: Cache,
     outbox: Outbox,
+    revalidations: RevalidationLog,
     key_prefix: str,
 ) -> Iterator[Callable[..., AsyncClient]]:
     app.dependency_overrides[get_session_factory] = lambda: session_factory
     app.dependency_overrides[get_cache] = lambda: cache
     app.dependency_overrides[get_email_sender] = lambda: outbox
+    app.dependency_overrides[get_frontend_revalidator] = lambda: revalidations
     app.dependency_overrides[get_key_prefix] = lambda: key_prefix
 
     def factory(**kwargs: Any) -> AsyncClient:
@@ -171,6 +187,13 @@ async def client(raw_client_factory: Callable[..., AsyncClient]) -> AsyncIterato
 @pytest.fixture
 async def customer(client: AsyncClient, session: AsyncSession) -> User:
     user = await make_user(session, password=PASSWORD, verified=True)
+    await login(client, user)
+    return user
+
+
+@pytest.fixture
+async def admin(client: AsyncClient, session: AsyncSession) -> User:
+    user = await make_user(session, password=PASSWORD, role=UserRole.ADMIN, verified=True)
     await login(client, user)
     return user
 

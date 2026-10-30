@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Annotated, ClassVar, Literal, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, StringConstraints, model_validator
 
 from app.models import Locale, TaxCondition, TaxIdType, User, UserRole
-from app.schemas.common import ReadModel, RequestModel
+from app.schemas.common import PatchModel, ReadModel, RequestModel
 from app.schemas.validators import (
     AnyPassword,
     Name,
@@ -25,22 +25,6 @@ ProvinceCode = Annotated[str, StringConstraints(strip_whitespace=True, min_lengt
 Notes = Annotated[str, text(255)]
 LegalName = Annotated[str, text(160)]
 FiscalAddress = Annotated[str, text(255)]
-
-
-class PatchModel(RequestModel):
-    """PATCH body: omitted fields stay as they are; only `nullable` fields accept null."""
-
-    nullable: ClassVar[frozenset[str]] = frozenset()
-
-    @model_validator(mode="after")
-    def reject_nulls(self) -> Self:
-        for name in self.model_fields_set - self.nullable:
-            if getattr(self, name) is None:
-                raise ValueError(f"{name} cannot be null")
-        return self
-
-    def changes(self) -> dict[str, object]:
-        return self.model_dump(exclude_unset=True)
 
 
 class MeRead(BaseModel):

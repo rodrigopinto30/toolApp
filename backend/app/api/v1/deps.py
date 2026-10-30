@@ -10,7 +10,6 @@ from app.models import User, UserRole
 
 
 def client_ip(request: Request) -> str:
-    """nginx sets X-Real-IP to the peer address; X-Forwarded-For can be forged by clients."""
     if ip := request.headers.get("x-real-ip"):
         return ip
     return request.client.host if request.client else "unknown"
@@ -33,6 +32,10 @@ def require_role(role: UserRole) -> Callable[[User], Awaitable[User]]:
         return user
 
     return dependency
+
+
+require_admin = require_role(UserRole.ADMIN)
+AdminUser = Annotated[User, Depends(require_admin)]
 
 
 async def get_verified_user(user: CurrentUser) -> User:

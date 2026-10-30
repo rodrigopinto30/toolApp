@@ -92,6 +92,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       PUBLIC_URL: ${PUBLIC_URL}
       ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-900}
+      FRONTEND_INTERNAL_URL: http://frontend:3000
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET}
     volumes:
       - media:/app/media
     read_only: true

@@ -20,6 +20,7 @@ from app.core.middleware import (
 from app.db.session import create_engine, create_session_factory
 from app.email.sender import create_email_sender
 from app.payments.gateway import create_payment_gateway
+from app.services.revalidation import create_frontend_revalidator
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -37,9 +38,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.cache = Cache(app.state.redis)
         app.state.email_sender = create_email_sender(settings)
         app.state.payment_gateway = create_payment_gateway(settings)
+        app.state.frontend_revalidator = create_frontend_revalidator(settings)
         try:
             yield
         finally:
+            await app.state.frontend_revalidator.aclose()
             await app.state.redis.aclose()
             await app.state.engine.dispose()
 
