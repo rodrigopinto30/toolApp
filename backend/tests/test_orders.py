@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 
 from app.core.exceptions import ConflictError
-from app.models import Coupon, CouponType, Currency, Order, OrderStatus
+from app.models import Coupon, CouponType, Currency, DeliveryMethod, Order, OrderStatus
 from app.services.coupons import FixedDiscount, PercentDiscount, discount_for
 from app.services.orders import (
     OrderCalculator,
@@ -183,6 +183,30 @@ def test_forbidden_transitions(current: OrderStatus, target: OrderStatus) -> Non
 
     assert error.value.code == "invalid_transition"
     assert (order.status, order.status_history) == (current, [])
+
+
+@pytest.mark.parametrize(
+    ("status", "method", "targets"),
+    [
+        (OrderStatus.PENDING_PAYMENT, DeliveryMethod.SHIPPING, []),
+        (OrderStatus.PAID, DeliveryMethod.SHIPPING, [OrderStatus.PREPARING, OrderStatus.REFUNDED]),
+        (OrderStatus.PREPARING, DeliveryMethod.SHIPPING, [OrderStatus.REFUNDED, OrderStatus.SHIPPED]),
+        (
+            OrderStatus.PREPARING,
+            DeliveryMethod.PICKUP,
+            [OrderStatus.READY_FOR_PICKUP, OrderStatus.REFUNDED],
+        ),
+        (OrderStatus.SHIPPED, DeliveryMethod.SHIPPING, [OrderStatus.DELIVERED]),
+        (OrderStatus.READY_FOR_PICKUP, DeliveryMethod.PICKUP, [OrderStatus.DELIVERED]),
+        (OrderStatus.DELIVERED, DeliveryMethod.SHIPPING, []),
+        (OrderStatus.CANCELLED, DeliveryMethod.PICKUP, []),
+        (OrderStatus.REFUNDED, DeliveryMethod.SHIPPING, []),
+    ],
+)
+def test_admin_targets(
+    status: OrderStatus, method: DeliveryMethod, targets: list[OrderStatus]
+) -> None:
+    assert STATES.admin_targets(Order(status=status, delivery_method=method)) == targets
 
 
 def test_start_and_timestamps() -> None:

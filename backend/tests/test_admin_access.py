@@ -20,7 +20,7 @@ def admin_routes(app: FastAPI) -> Iterator[tuple[str, str]]:
 
 
 def test_the_admin_api_has_routes(app: FastAPI) -> None:
-    assert len(list(admin_routes(app))) >= 56
+    assert len(list(admin_routes(app))) >= 62
 
 
 async def test_a_visitor_gets_401_on_every_admin_route(app: FastAPI, client: AsyncClient) -> None:
@@ -37,6 +37,18 @@ async def test_a_customer_gets_403_on_every_admin_route(
         assert response.status_code == 403, (method, path)
 
 
-@pytest.mark.parametrize("path", ["/zones", "/coupons", "/exchange-rates", "/audit-logs", "/products", "/categories"])
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/zones",
+        "/coupons",
+        "/exchange-rates",
+        "/audit-logs",
+        "/products",
+        "/categories",
+        "/orders",
+        "/users",
+    ],
+)
 async def test_an_admin_gets_through(client: AsyncClient, admin: User, path: str) -> None:
     assert (await client.get(f"{ADMIN_PREFIX}{path}")).status_code == 200

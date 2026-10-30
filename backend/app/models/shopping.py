@@ -17,11 +17,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, CreatedAtMixin, TimestampMixin
 from app.db.types import BigIntPk, ExchangeRateValue, OrderAmount, UsdAmount, enum_check, str_enum
+from app.models.catalog import Locale
 
 
 class CouponType(StrEnum):
     PERCENT = "percent"
-    FIXED = "fixed"  # amount in USD
+    FIXED = "fixed"
 
 
 class OrderStatus(StrEnum):
@@ -53,8 +54,6 @@ class PaymentStatus(StrEnum):
 
 
 class Cart(TimestampMixin, Base):
-    """Server-side cart of a logged-in user (a guest cart lives in the browser)."""
-
     __tablename__ = "carts"
 
     id: Mapped[BigIntPk]
@@ -99,9 +98,9 @@ class Coupon(TimestampMixin, Base):
     )
 
     id: Mapped[BigIntPk]
-    code: Mapped[str] = mapped_column(String(40), unique=True)  # stored uppercase
+    code: Mapped[str] = mapped_column(String(40), unique=True)
     type: Mapped[CouponType] = mapped_column(str_enum(CouponType, length=16))
-    value: Mapped[Decimal] = mapped_column(UsdAmount)  # percent, or USD amount if fixed
+    value: Mapped[Decimal] = mapped_column(UsdAmount)
     min_subtotal_usd: Mapped[Decimal | None] = mapped_column(UsdAmount)
     starts_at: Mapped[datetime]
     ends_at: Mapped[datetime | None]
@@ -124,8 +123,6 @@ class CouponRedemption(TimestampMixin, Base):
 
 
 class Order(TimestampMixin, Base):
-    """Prices, exchange rate, address and billing data are frozen when the order is created."""
-
     __tablename__ = "orders"
     __table_args__ = (
         UniqueConstraint("user_id", "idempotency_key"),
@@ -134,6 +131,7 @@ class Order(TimestampMixin, Base):
         enum_check("status", OrderStatus),
         enum_check("currency", Currency),
         enum_check("delivery_method", DeliveryMethod),
+        enum_check("locale", Locale),
         CheckConstraint("exchange_rate > 0", name="exchange_rate_positive"),
         CheckConstraint(
             "subtotal >= 0 AND discount_total >= 0 AND shipping_total >= 0 AND total >= 0",
@@ -142,7 +140,7 @@ class Order(TimestampMixin, Base):
     )
 
     id: Mapped[BigIntPk]
-    number: Mapped[str] = mapped_column(String(20), unique=True)  # TA-2026-000123
+    number: Mapped[str] = mapped_column(String(20), unique=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
     status: Mapped[OrderStatus] = mapped_column(
         str_enum(OrderStatus),
@@ -150,6 +148,9 @@ class Order(TimestampMixin, Base):
         server_default=OrderStatus.PENDING_PAYMENT,
     )
     currency: Mapped[Currency] = mapped_column(str_enum(Currency, length=3))
+    locale: Mapped[Locale] = mapped_column(
+        str_enum(Locale, length=5), default=Locale.ES, server_default=Locale.ES
+    )
     exchange_rate: Mapped[Decimal] = mapped_column(ExchangeRateValue)
     subtotal: Mapped[Decimal] = mapped_column(OrderAmount)
     discount_total: Mapped[Decimal] = mapped_column(OrderAmount)
@@ -181,8 +182,6 @@ class Order(TimestampMixin, Base):
 
 
 class OrderItem(TimestampMixin, Base):
-    """Snapshot of the purchased variant, in the order currency."""
-
     __tablename__ = "order_items"
     __table_args__ = (
         CheckConstraint("quantity > 0", name="quantity_positive"),
@@ -230,7 +229,7 @@ class Payment(TimestampMixin, Base):
 
     id: Mapped[BigIntPk]
     order_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("orders.id"), index=True)
-    provider: Mapped[str] = mapped_column(String(20))  # "mock"
+    provider: Mapped[str] = mapped_column(String(20))
     provider_ref: Mapped[str | None] = mapped_column(String(100))
     status: Mapped[PaymentStatus] = mapped_column(
         str_enum(PaymentStatus, length=16),
@@ -239,4 +238,4 @@ class Payment(TimestampMixin, Base):
     )
     amount: Mapped[Decimal] = mapped_column(OrderAmount)
     currency: Mapped[Currency] = mapped_column(str_enum(Currency, length=3))
-    raw_response: Mapped[dict[str, Any] | None] = mapped_column(JSON)  # sanitized
+    raw_response: Mapped[dict[str, Any] | None] = mapped_column(JSON)

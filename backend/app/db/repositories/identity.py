@@ -1,11 +1,11 @@
 from collections.abc import Sequence
 
-from sqlalchemy import select, true, update
+from sqlalchemy import func, or_, select, true, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import ORMOption
 
 from app.db.repositories.base import SqlAlchemyRepository
-from app.models import Address, BillingProfile, User
+from app.models import Address, BillingProfile, User, UserRole
 
 
 class UserRepository(SqlAlchemyRepository[User]):
@@ -14,11 +14,42 @@ class UserRepository(SqlAlchemyRepository[User]):
     async def get_by_email(self, email: str) -> User | None:
         return await self.get_by(email=email)
 
+    async def lock_active_admins(self) -> Sequence[int]:
+        statement = (
+            select(User.id)
+            .where(User.role == UserRole.ADMIN, User.is_active.is_(true()))
+            .order_by(User.id)
+            .with_for_update()
+        )
+        return (await self.session.scalars(statement)).all()
+
+    async def search(
+        self,
+        *,
+        q: str | None,
+        role: UserRole | None,
+        is_active: bool | None,
+        offset: int,
+        limit: int,
+    ) -> tuple[Sequence[User], int]:
+        exact = ((User.role, role), (User.is_active, is_active))
+        conditions = [column == value for column, value in exact if value is not None]
+        if q is not None:
+            conditions.append(
+                or_(
+                    User.email.contains(q, autoescape=True),
+                    User.first_name.contains(q, autoescape=True),
+                    User.last_name.contains(q, autoescape=True),
+                )
+            )
+        total = await self.session.scalar(select(func.count()).select_from(User).where(*conditions))
+        statement = (
+            select(User).where(*conditions).order_by(User.id.desc()).offset(offset).limit(limit)
+        )
+        return (await self.session.scalars(statement)).all(), total or 0
+
 
 class OwnedRepository[ModelT: (Address, BillingProfile)](SqlAlchemyRepository[ModelT]):
-    """Resources that belong to a user: every query is scoped by user_id, so another
-    user's id behaves exactly like a missing one."""
-
     def _options(self) -> Sequence[ORMOption]:
         return ()
 

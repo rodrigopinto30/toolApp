@@ -134,6 +134,78 @@ TEMPLATES: dict[str, dict[Locale, Template]] = {
             link_label="View order",
         ),
     },
+    "order_preparing": {
+        Locale.ES: Template(
+            subject="Estamos preparando tu pedido {number}",
+            lines=(
+                "Hola {first_name},",
+                "Ya estamos preparando tu pedido {number}. Te avisamos cuando esté listo.",
+            ),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="We are preparing your order {number}",
+            lines=(
+                "Hi {first_name},",
+                "We are preparing your order {number}. We will let you know when it is ready.",
+            ),
+            link_label="View order",
+        ),
+    },
+    "order_shipped": {
+        Locale.ES: Template(
+            subject="Tu pedido {number} está en camino",
+            lines=("Hola {first_name},", "Tu pedido {number} ya salió y está en camino."),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} is on its way",
+            lines=("Hi {first_name},", "Your order {number} has left and is on its way."),
+            link_label="View order",
+        ),
+    },
+    "order_ready_for_pickup": {
+        Locale.ES: Template(
+            subject="Tu pedido {number} está listo para retirar",
+            lines=("Hola {first_name},", "Ya podés retirar tu pedido {number}."),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} is ready for pickup",
+            lines=("Hi {first_name},", "You can now pick up your order {number}."),
+            link_label="View order",
+        ),
+    },
+    "order_delivered": {
+        Locale.ES: Template(
+            subject="Entregamos tu pedido {number}",
+            lines=(
+                "Hola {first_name},",
+                "Tu pedido {number} ya fue entregado. ¡Gracias por tu compra!",
+            ),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} was delivered",
+            lines=(
+                "Hi {first_name},",
+                "Your order {number} has been delivered. Thanks for your purchase!",
+            ),
+            link_label="View order",
+        ),
+    },
+    "order_refunded": {
+        Locale.ES: Template(
+            subject="Reintegramos tu pedido {number}",
+            lines=("Hola {first_name},", "Tu pedido {number} fue anulado."),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} was refunded",
+            lines=("Hi {first_name},", "Your order {number} was cancelled."),
+            link_label="View order",
+        ),
+    },
     "password_changed": {
         Locale.ES: Template(
             subject="Tu contraseña cambió",

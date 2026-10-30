@@ -7,7 +7,10 @@ from app.api.v1.deps import AdminUser, client_ip
 from app.core.container import (
     ChangePublisherDep,
     ImageStorageDep,
+    MailerDep,
+    PaymentGatewayDep,
     SessionFactoryDep,
+    SessionStoreDep,
     SettingsDep,
 )
 from app.core.exceptions import get_request_id
@@ -23,6 +26,7 @@ from app.services.admin.catalog import (
 )
 from app.services.admin.coupons import CouponAdmin
 from app.services.admin.media import ImageAdmin
+from app.services.admin.orders import OrderAdmin
 from app.services.admin.pricing import (
     ExchangeRateAdmin,
     PickupPointAdmin,
@@ -30,6 +34,7 @@ from app.services.admin.pricing import (
     ZoneAdmin,
 )
 from app.services.admin.products import ProductAdmin, VariantAdmin
+from app.services.admin.users import UserAdmin
 from app.services.audit import AuditTrail
 from app.services.revalidation import ChangePublisher
 
@@ -92,6 +97,25 @@ def get_attribute_value_admin(
     return AttributeValueAdmin(SqlAlchemyUnitOfWork(session_factory), audit, changes, attribute_id)
 
 
+def get_order_admin(
+    session_factory: SessionFactoryDep,
+    audit: AuditTrailDep,
+    changes: ChangePublisherDep,
+    gateway: PaymentGatewayDep,
+    mailer: MailerDep,
+) -> OrderAdmin:
+    return OrderAdmin(SqlAlchemyUnitOfWork(session_factory), audit, changes, gateway, mailer)
+
+
+def get_user_admin(
+    session_factory: SessionFactoryDep,
+    audit: AuditTrailDep,
+    changes: ChangePublisherDep,
+    sessions: SessionStoreDep,
+) -> UserAdmin:
+    return UserAdmin(SqlAlchemyUnitOfWork(session_factory), audit, changes, sessions)
+
+
 ExchangeRateAdminDep = Annotated[ExchangeRateAdmin, Depends(admin_service(ExchangeRateAdmin))]
 ZoneAdminDep = Annotated[ZoneAdmin, Depends(admin_service(ZoneAdmin))]
 ProvinceAdminDep = Annotated[ProvinceAdmin, Depends(admin_service(ProvinceAdmin))]
@@ -105,3 +129,5 @@ AttributeValueAdminDep = Annotated[AttributeValueAdmin, Depends(get_attribute_va
 ProductAdminDep = Annotated[ProductAdmin, Depends(admin_service(ProductAdmin))]
 VariantAdminDep = Annotated[VariantAdmin, Depends(admin_service(VariantAdmin))]
 ImageAdminDep = Annotated[ImageAdmin, Depends(media_service(ImageAdmin))]
+OrderAdminDep = Annotated[OrderAdmin, Depends(get_order_admin)]
+UserAdminDep = Annotated[UserAdmin, Depends(get_user_admin)]

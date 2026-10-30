@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Path, Query, Request, Response, status
+from fastapi import APIRouter, Query, Request, Response, status
 from fastapi.responses import JSONResponse
 
 from app.api.v1.checkout import PAYMENT_RESPONSES, payment_response
 from app.api.v1.deps import CurrentUser, VerifiedUser
-from app.api.v1.params import IdempotencyKey, LocaleQuery
+from app.api.v1.params import IdempotencyKey, LocaleQuery, OrderNumber
 from app.core.container import CheckoutServiceDep, OrderServiceDep
 from app.models import Locale
 from app.schemas.common import Page
@@ -13,8 +13,6 @@ from app.schemas.orders import OrderListParams, OrderPaymentRequest, OrderRead, 
 from app.services.checkout import CheckoutOutcome
 
 router = APIRouter(prefix="/me/orders", tags=["orders"])
-
-OrderNumber = Annotated[str, Path(min_length=1, max_length=20)]
 
 PAY_STATUS = {
     CheckoutOutcome.PAID: status.HTTP_200_OK,

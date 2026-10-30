@@ -4,9 +4,11 @@ from urllib.parse import urlencode
 from app.core.config import Settings
 from app.email.sender import EmailMessage
 from app.email.templates import ORDER_LABELS, format_money, render
-from app.models import Locale, User
+from app.models import Locale, OrderStatus, User
 from app.schemas.common import Money
 from app.schemas.orders import OrderRead
+
+DELIVERY_STEPS = frozenset({OrderStatus.SHIPPED, OrderStatus.READY_FOR_PICKUP})
 
 
 class Mailer:
@@ -64,10 +66,15 @@ class Mailer:
 
     def order_cancelled(self, user: User, order: OrderRead, refunded: bool, locale: Locale) -> None:
         link = self._link(locale, f"/account/orders/{order.number}")
-        total = format_money(order.total.amount, order.total.currency, locale)
-        details = [ORDER_LABELS[locale]["refunded"].format(amount=total)] if refunded else []
+        details = [refund_line(order, locale)] if refunded else []
         values = {"number": order.number}
         self._send("order_cancelled", user, locale, link, values=values, details=details)
+
+    def order_status_changed(self, user: User, order: OrderRead, locale: Locale) -> None:
+        link = self._link(locale, f"/account/orders/{order.number}")
+        values = {"number": order.number}
+        details = status_details(order, locale)
+        self._send(f"order_{order.status}", user, locale, link, values=values, details=details)
 
 
 def order_summary(order: OrderRead, locale: Locale) -> list[str]:
@@ -87,13 +94,32 @@ def order_summary(order: OrderRead, locale: Locale) -> list[str]:
         lines.append(f"{labels['discount']}: -{money(order.discount_total)}")
     lines.append(f"{labels['shipping']}: {money(order.shipping_total)}")
     lines.append(f"{labels['total']}: {money(order.total)}")
+    if line := delivery_line(order, locale):
+        lines.append(line)
+    return lines
+
+
+def delivery_line(order: OrderRead, locale: Locale) -> str | None:
+    labels = ORDER_LABELS[locale]
     delivery = order.delivery
     if delivery.address and delivery.zone:
         address = delivery.address
         street = f"{address.street} {address.number}, {address.city}, {address.province.name}"
         days = f"{delivery.zone.eta_min_days}-{delivery.zone.eta_max_days}"
-        lines.append(labels["ship_to"].format(address=street, days=days))
-    elif delivery.pickup_point:
+        return labels["ship_to"].format(address=street, days=days)
+    if delivery.pickup_point:
         point = delivery.pickup_point
-        lines.append(labels["pickup_at"].format(name=point.name, address=point.address))
-    return lines
+        return labels["pickup_at"].format(name=point.name, address=point.address)
+    return None
+
+
+def refund_line(order: OrderRead, locale: Locale) -> str:
+    total = format_money(order.total.amount, order.total.currency, locale)
+    return ORDER_LABELS[locale]["refunded"].format(amount=total)
+
+
+def status_details(order: OrderRead, locale: Locale) -> list[str]:
+    if order.status == OrderStatus.REFUNDED:
+        return [refund_line(order, locale)]
+    line = delivery_line(order, locale) if order.status in DELIVERY_STEPS else None
+    return [line] if line else []
