@@ -86,7 +86,7 @@ export function DeliverySection({
               <AddressForm
                 provinces={provinces}
                 defaultValues={{ is_default: saved.length === 0 }}
-                onCreated={(address) => {
+                onSaved={(address) => {
                   onAddressChange(address.id);
                   setAdding(false);
                 }}

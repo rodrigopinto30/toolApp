@@ -14,7 +14,7 @@ import { TextField } from "@/components/form/text-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useCreateBillingProfile } from "@/features/account/hooks";
+import { useSaveBillingProfile } from "@/features/account/hooks";
 import {
   billingProfileSchema,
   TAX_CONDITIONS,
@@ -30,33 +30,47 @@ export type BillingProfile = components["schemas"]["BillingProfileRead"];
 const FIELDS = ["tax_id_type", "tax_id", "tax_condition", "legal_name", "fiscal_address"] as const;
 
 export function BillingProfileForm({
-  onCreated,
+  profile,
+  defaultValues,
+  onSaved,
   onCancel,
 }: {
-  onCreated: (profile: BillingProfile) => void;
+  profile?: BillingProfile;
+  defaultValues?: Partial<BillingProfileValues>;
+  onSaved: (profile: BillingProfile) => void;
   onCancel?: () => void;
 }) {
   const t = useTranslations("BillingForm");
   const tv = useTranslations("Validation");
   const id = useId();
   const errorMessage = useErrorMessage();
-  const create = useCreateBillingProfile();
+  const save = useSaveBillingProfile(profile?.id);
   const form = useForm<BillingProfileValues, unknown, BillingProfileInput>({
     resolver: zodResolver(billingProfileSchema((key) => tv(key))),
-    defaultValues: {
-      tax_id_type: "CUIT",
-      tax_id: "",
-      tax_condition: "monotributo",
-      legal_name: "",
-      fiscal_address: "",
-      is_default: false,
-    },
+    defaultValues: profile
+      ? {
+          tax_id_type: profile.tax_id_type,
+          tax_id: profile.tax_id,
+          tax_condition: profile.tax_condition,
+          legal_name: profile.legal_name,
+          fiscal_address: profile.fiscal_address,
+          is_default: false,
+        }
+      : {
+          tax_id_type: "CUIT",
+          tax_id: "",
+          tax_condition: "monotributo",
+          legal_name: "",
+          fiscal_address: "",
+          is_default: false,
+          ...defaultValues,
+        },
   });
   const { errors } = useFormState({ control: form.control });
 
   const onSubmit = form.handleSubmit((values) =>
-    create.mutate(values, {
-      onSuccess: (profile) => onCreated(profile),
+    save.mutate(values, {
+      onSuccess: (saved) => onSaved(saved),
       onError: (error) =>
         invalidFields(error)
           .filter((name): name is (typeof FIELDS)[number] => FIELDS.some((known) => known === name))
@@ -66,7 +80,7 @@ export function BillingProfileForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
-      <FormAlert message={create.error ? errorMessage(create.error) : undefined} />
+      <FormAlert message={save.error ? errorMessage(save.error) : undefined} />
       <fieldset className="grid gap-2">
         <legend className="mb-2 text-sm font-medium">{t("taxIdType")}</legend>
         <div className="flex flex-wrap gap-2">
@@ -112,22 +126,24 @@ export function BillingProfileForm({
           registration={form.register("fiscal_address")}
         />
       </div>
-      <Controller
-        control={form.control}
-        name="is_default"
-        render={({ field }) => (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id={`${id}-is_default`}
-              checked={field.value}
-              onCheckedChange={(checked) => field.onChange(checked === true)}
-            />
-            <Label htmlFor={`${id}-is_default`}>{t("isDefault")}</Label>
-          </div>
-        )}
-      />
+      {!profile?.is_default && (
+        <Controller
+          control={form.control}
+          name="is_default"
+          render={({ field }) => (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id={`${id}-is_default`}
+                checked={field.value}
+                onCheckedChange={(checked) => field.onChange(checked === true)}
+              />
+              <Label htmlFor={`${id}-is_default`}>{t("isDefault")}</Label>
+            </div>
+          )}
+        />
+      )}
       <div className="flex flex-wrap gap-2">
-        <SubmitButton pending={create.isPending} pendingLabel={t("submitting")}>
+        <SubmitButton pending={save.isPending} pendingLabel={t("submitting")}>
           {t("submit")}
         </SubmitButton>
         {onCancel && (

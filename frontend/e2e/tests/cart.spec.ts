@@ -120,6 +120,7 @@ test("a guest logs in, the carts merge and the purchase completes", async ({
   await test.step("the merged cart is bought with shipping, a coupon and billing details", async () => {
     const checkoutPage = new CheckoutPage(page);
     await cartPage.remove(limited.product_name);
+    await expect(cartPage.line(limited.product_name)).toBeHidden();
     await cartPage.setQuantity(plenty.product_name, 8);
     await expect(cartPage.summary).toContainText("8 unidades");
     await page.getByRole("link", { name: t.Cart.checkout }).click();

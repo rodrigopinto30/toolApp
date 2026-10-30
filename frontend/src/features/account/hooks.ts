@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type QueryKey } from "@tanstack/react-query";
 
 import { sessionKeys } from "@/features/session/hooks";
 import { useSession } from "@/features/session/session-provider";
@@ -29,6 +29,21 @@ export const accountKeys = {
   billingProfiles: ["me", "billing-profiles"] as const,
 };
 
+function useBookMutation<Variables, Result>(
+  queryKey: QueryKey,
+  mutationFn: (variables: Variables) => Promise<Result>,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+  });
+}
+
+function withoutUnsetDefault<Body extends { is_default?: boolean }>({ is_default, ...body }: Body) {
+  return is_default ? { ...body, is_default: true as const } : body;
+}
+
 export function useAddresses() {
   const { hasSession } = useSession();
   return useQuery({
@@ -38,12 +53,34 @@ export function useAddresses() {
   });
 }
 
-export function useCreateAddress() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (body: Schemas["AddressCreate"]) => unwrap(api.POST("/api/v1/me/addresses", { body })),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: accountKeys.addresses }),
-  });
+export function useSaveAddress(id?: number) {
+  return useBookMutation(accountKeys.addresses, (body: Schemas["AddressCreate"]) =>
+    id === undefined
+      ? unwrap(api.POST("/api/v1/me/addresses", { body }))
+      : unwrap(
+          api.PATCH("/api/v1/me/addresses/{address_id}", {
+            params: { path: { address_id: id } },
+            body: withoutUnsetDefault(body),
+          }),
+        ),
+  );
+}
+
+export function useSetDefaultAddress() {
+  return useBookMutation(accountKeys.addresses, (id: number) =>
+    unwrap(
+      api.PATCH("/api/v1/me/addresses/{address_id}", {
+        params: { path: { address_id: id } },
+        body: { is_default: true },
+      }),
+    ),
+  );
+}
+
+export function useDeleteAddress() {
+  return useBookMutation(accountKeys.addresses, (id: number) =>
+    unwrap(api.DELETE("/api/v1/me/addresses/{address_id}", { params: { path: { address_id: id } } })),
+  );
 }
 
 export function useBillingProfiles() {
@@ -55,11 +92,32 @@ export function useBillingProfiles() {
   });
 }
 
-export function useCreateBillingProfile() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (body: Schemas["BillingProfileCreate"]) =>
-      unwrap(api.POST("/api/v1/me/billing-profiles", { body })),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: accountKeys.billingProfiles }),
-  });
+export function useSaveBillingProfile(id?: number) {
+  return useBookMutation(accountKeys.billingProfiles, (body: Schemas["BillingProfileCreate"]) =>
+    id === undefined
+      ? unwrap(api.POST("/api/v1/me/billing-profiles", { body }))
+      : unwrap(
+          api.PATCH("/api/v1/me/billing-profiles/{profile_id}", {
+            params: { path: { profile_id: id } },
+            body: withoutUnsetDefault(body),
+          }),
+        ),
+  );
+}
+
+export function useSetDefaultBillingProfile() {
+  return useBookMutation(accountKeys.billingProfiles, (id: number) =>
+    unwrap(
+      api.PATCH("/api/v1/me/billing-profiles/{profile_id}", {
+        params: { path: { profile_id: id } },
+        body: { is_default: true },
+      }),
+    ),
+  );
+}
+
+export function useDeleteBillingProfile() {
+  return useBookMutation(accountKeys.billingProfiles, (id: number) =>
+    unwrap(api.DELETE("/api/v1/me/billing-profiles/{profile_id}", { params: { path: { profile_id: id } } })),
+  );
 }

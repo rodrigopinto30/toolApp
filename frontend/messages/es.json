@@ -412,7 +412,9 @@
     "nav": {
       "label": "Secciones de la cuenta",
       "profile": "Mis datos",
-      "orders": "Mis pedidos"
+      "orders": "Mis pedidos",
+      "addresses": "Direcciones",
+      "billing": "Facturación"
     },
     "verification": {
       "pending": "Todavía no confirmaste tu email. Lo vas a necesitar para comprar.",
@@ -440,6 +442,41 @@
       "submit": "Cambiar contraseña",
       "submitting": "Cambiando…",
       "saved": "Tu contraseña cambió y cerramos las demás sesiones."
+    },
+    "book": {
+      "default": "Principal",
+      "edit": "Editar",
+      "editItem": "Editar {name}",
+      "makeDefault": "Usar como principal",
+      "makeDefaultItem": "Usar {name} como principal",
+      "delete": "Eliminar",
+      "deleteItem": "Eliminar {name}",
+      "confirmDelete": "Sí, eliminar",
+      "deleting": "Eliminando…",
+      "keep": "No, conservar",
+      "close": "Cerrar"
+    },
+    "addresses": {
+      "metaTitle": "Mis direcciones",
+      "title": "Mis direcciones",
+      "add": "Agregar dirección",
+      "addTitle": "Nueva dirección",
+      "editTitle": "Editar dirección",
+      "empty": "Todavía no guardaste ninguna dirección.",
+      "loading": "Cargando tus direcciones…",
+      "deleteTitle": "¿Eliminar {name}?",
+      "deleteDescription": "Los pedidos que ya hiciste conservan su dirección."
+    },
+    "billing": {
+      "metaTitle": "Mis datos de facturación",
+      "title": "Mis datos de facturación",
+      "add": "Agregar datos",
+      "addTitle": "Nuevos datos de facturación",
+      "editTitle": "Editar datos de facturación",
+      "empty": "Todavía no guardaste datos de facturación.",
+      "loading": "Cargando tus datos de facturación…",
+      "deleteTitle": "¿Eliminar los datos de {name}?",
+      "deleteDescription": "Los pedidos que ya hiciste conservan sus datos."
     }
   },
   "AddressForm": {
