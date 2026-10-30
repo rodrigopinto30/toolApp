@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ORDERS_PATH } from "@/features/orders/paths";
 import { useLogout, useMe } from "@/features/session/hooks";
 import { useSession } from "@/features/session/session-provider";
 import { Link } from "@/i18n/navigation";
@@ -53,6 +54,9 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/account">{t("account")}</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={ORDERS_PATH}>{t("orders")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled={logout.isPending} onSelect={() => logout.mutate()}>
           {t("logout")}

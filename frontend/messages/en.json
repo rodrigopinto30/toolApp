@@ -22,6 +22,7 @@
     "label": "Account menu",
     "login": "Log in",
     "account": "My account",
+    "orders": "My orders",
     "logout": "Log out",
     "loading": "Loading the account"
   },
@@ -91,8 +92,10 @@
       "price_desc": "Highest price",
       "name": "Name"
     },
-    "empty": "No products match these filters.",
-    "pagination": "Pagination",
+    "empty": "No products match these filters."
+  },
+  "Pagination": {
+    "label": "Pagination",
     "previous": "Previous",
     "next": "Next",
     "page": "Page {page}"
@@ -247,6 +250,86 @@
       "cart": "Your cart changed while you were paying."
     }
   },
+  "Orders": {
+    "metaTitle": "My orders",
+    "title": "My orders",
+    "loading": "Loading your orders",
+    "empty": {
+      "title": "You have not placed any orders yet",
+      "cta": "Go to the store"
+    },
+    "row": "Order {number} from {date}",
+    "units": "{count, plural, one {# unit} other {# units}}",
+    "status": {
+      "pending_payment": "Payment pending",
+      "paid": "Paid",
+      "preparing": "Being prepared",
+      "shipped": "Shipped",
+      "ready_for_pickup": "Ready for pickup",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "detail": {
+      "metaTitle": "Order {number}",
+      "title": "Order {number}",
+      "date": "Placed on {date}",
+      "back": "Back to my orders",
+      "loading": "Loading the order",
+      "notFound": "We could not find that order.",
+      "items": "Products",
+      "totals": "Totals"
+    },
+    "placed": {
+      "paid": "Thank you for your purchase! We confirmed your order and emailed you the details.",
+      "pending_payment": "We received your order, but the payment is still pending. You can retry it below or cancel the order."
+    },
+    "delivery": {
+      "title": "Delivery",
+      "shipping": "Home delivery",
+      "pickup": "Store pickup",
+      "eta": "Arrives in {min} to {max} business days."
+    },
+    "billing": {
+      "title": "Billing",
+      "finalConsumer": "Final consumer"
+    },
+    "history": {
+      "title": "Tracking",
+      "notes": {
+        "payment_rejected": "The card was rejected.",
+        "cancelled_by_customer": "You cancelled it."
+      }
+    },
+    "payments": {
+      "title": "Payments",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "refunded": "Refunded"
+      },
+      "card": "{brand} ending in {last4}"
+    },
+    "cancel": {
+      "open": "Cancel the order",
+      "title": "Cancel order {number}?",
+      "description": "We will release the products and the coupon, if you used one.",
+      "refund": "We will refund {total} to the same payment method.",
+      "confirm": "Yes, cancel",
+      "confirming": "Cancelling…",
+      "keep": "No, keep the order"
+    },
+    "pay": {
+      "title": "Retry the payment",
+      "submit": "Pay {total}",
+      "submitting": "Processing the payment…",
+      "pending": "The payment is still pending. Try again in a few minutes.",
+      "paid": "We received the payment. Thank you for your purchase!",
+      "rejected": "The card was rejected and we cancelled the order. The products are back in your cart.",
+      "cart": "Go to the cart"
+    }
+  },
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has moved.",
@@ -326,6 +409,11 @@
     "title": "My account",
     "loading": "Loading your account…",
     "logout": "Log out",
+    "nav": {
+      "label": "Account sections",
+      "profile": "My details",
+      "orders": "My orders"
+    },
     "verification": {
       "pending": "You have not confirmed your email yet. You will need it to buy.",
       "resend": "Resend the link",
@@ -445,6 +533,7 @@
     "limit_reached": "You reached the maximum allowed.",
     "unknown_province": "Choose a province from the list.",
     "invalid_tax_id": "The document is not valid for that condition.",
+    "invalid_transition": "The order changed status and that is no longer possible.",
     "unexpected": "An unexpected error happened.",
     "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }

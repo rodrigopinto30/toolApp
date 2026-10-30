@@ -1,12 +1,12 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Pagination } from "@/components/layout/pagination";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAttributes, getBrands, getFacets, searchProducts } from "@/features/catalog/api";
 import { ListingFilters } from "@/features/catalog/components/listing-filters";
 import { ListingProvider, ListingResults } from "@/features/catalog/components/listing-provider";
 import { MobileFilters } from "@/features/catalog/components/mobile-filters";
-import { Pagination } from "@/features/catalog/components/pagination";
 import { ProductGrid, ProductGridSkeleton } from "@/features/catalog/components/product-grid";
 import { SortSelect } from "@/features/catalog/components/sort-select";
 import { filterGroups } from "@/features/catalog/filters";
@@ -77,7 +77,11 @@ export async function ProductListing({
               </div>
             )}
           </ListingResults>
-          <Pagination page={results.page} pages={results.pages} path={path} state={state} />
+          <Pagination
+            page={results.page}
+            pages={results.pages}
+            href={(page) => serializeCatalogSearchParams(path, { ...state, page })}
+          />
         </div>
       </div>
     </ListingProvider>

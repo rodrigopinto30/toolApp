@@ -28,3 +28,12 @@ export const CHECKOUT_NAMESPACES = [
   "Validation",
   "Errors",
 ] as const;
+export const ORDERS_NAMESPACES = [
+  "Orders",
+  "Pagination",
+  "Checkout",
+  "BillingForm",
+  "Product",
+  "Validation",
+  "Errors",
+] as const;

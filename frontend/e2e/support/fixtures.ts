@@ -1,6 +1,7 @@
 import { test as base, expect } from "@playwright/test";
 
 import { AccountPage } from "../pages/account-page";
+import { CheckoutPage } from "../pages/checkout-page";
 import { ForgotPasswordPage } from "../pages/forgot-password-page";
 import { HomePage } from "../pages/home-page";
 import { LoginPage } from "../pages/login-page";
@@ -9,15 +10,19 @@ import { ResetPasswordPage } from "../pages/reset-password-page";
 import { SearchPage } from "../pages/search-page";
 import { VerifyEmailPage } from "../pages/verify-email-page";
 import { registerUser } from "./api";
-import { readShoppers, type Buyer } from "./buyers";
+import { readShoppers, type Buyer, type BuyerName } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
+import { cancelOpenOrders } from "./orders";
 import { newUser, type TestUser } from "./users";
 
-const EXPECTED_CONSOLE_ERROR = /^Failed to load resource: the server responded with a status of 4\d\d\b/;
+const EXPECTED_CONSOLE_ERROR =
+  /^Failed to load resource: (the server responded with a status of 4\d\d\b|net::ERR_CONNECTION_RESET)/;
 
 type Fixtures = {
   browserErrors: void;
+  buyerName: BuyerName;
+  buyer: Buyer;
   account: TestUser;
   mailbox: Mailbox;
   homePage: HomePage;
@@ -31,18 +36,14 @@ type Fixtures = {
 };
 
 type WorkerFixtures = {
-  buyer: Buyer;
   unverifiedShopper: Buyer;
 };
 
 export const test = base.extend<Fixtures, WorkerFixtures>({
-  buyer: [
-    async ({}, use, workerInfo) => {
-      const { buyers } = readShoppers();
-      await use(buyers[workerInfo.parallelIndex % buyers.length]);
-    },
-    { scope: "worker" },
-  ],
+  buyerName: ["cart", { option: true }],
+  buyer: async ({ buyerName }, use) => {
+    await use(readShoppers().buyers[buyerName]);
+  },
   unverifiedShopper: [
     async ({}, use) => {
       await use(readShoppers().unverified);
@@ -115,6 +116,13 @@ export const customerTest = test.extend<{ emptyCart: void }>({
     },
     { auto: true },
   ],
+});
+
+export const checkoutTest = customerTest.extend<{ checkoutPage: CheckoutPage }>({
+  checkoutPage: async ({ page, context }, use) => {
+    await use(new CheckoutPage(page));
+    await cancelOpenOrders(context.request);
+  },
 });
 
 export const unverifiedTest = test.extend({

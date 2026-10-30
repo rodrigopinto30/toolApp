@@ -1,8 +1,5 @@
 import { AppPage } from "./app-page";
-
-export type CardNumber = "4242 4242 4242 4242" | "4000 0000 0000 0002" | "4000 0000 0009 0003";
-export const APPROVED_CARD: CardNumber = "4242 4242 4242 4242";
-export const REJECTED_CARD: CardNumber = "4000 0000 0000 0002";
+import { APPROVED_CARD, fillCard, type CardNumber } from "./card-form";
 
 export type NewAddress = {
   label: string;
@@ -62,11 +59,7 @@ export class CheckoutPage extends AppPage {
   }
 
   async fillCard(number: CardNumber): Promise<void> {
-    const card = this.t.Checkout.payment;
-    await this.payment.getByLabel(card.number, { exact: true }).fill(number);
-    await this.payment.getByLabel(card.expiry, { exact: true }).fill("12/30");
-    await this.payment.getByLabel(card.cvc, { exact: true }).fill("123");
-    await this.payment.getByLabel(card.holder, { exact: true }).fill("Ana Prueba");
+    await fillCard(this.payment, this.t, number);
   }
 
   async pay(number: CardNumber = APPROVED_CARD): Promise<void> {
@@ -75,6 +68,6 @@ export class CheckoutPage extends AppPage {
   }
 
   orderUrl(): RegExp {
-    return new RegExp(`/${this.locale}/account/orders/(TA-\\d{4}-\\d{6})\\?placed=1$`);
+    return new RegExp(`/${this.locale}/account/orders/TA-\\d{4}-\\d{6}(\\?placed=1)?$`);
   }
 }

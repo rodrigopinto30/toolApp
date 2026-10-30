@@ -7,18 +7,14 @@ import { ChoiceChip } from "@/components/form/choice-chip";
 import { RadioCard } from "@/components/form/radio-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AddressForm, type Address } from "@/features/account/components/address-form";
+import { addressLine } from "@/features/account/address-line";
+import { AddressForm } from "@/features/account/components/address-form";
 import { useAddresses } from "@/features/account/hooks";
 import { PickupPointDetails, type PickupPoint } from "@/features/catalog/components/pickup-point-details";
 import type { ProvinceOption } from "@/features/catalog/components/shipping-quote";
 import type { DeliveryMethod } from "@/features/checkout/types";
 
 const METHODS = ["shipping", "pickup"] as const satisfies readonly DeliveryMethod[];
-
-export function addressLine(address: Address): string {
-  const floor = address.floor_apt ? `, ${address.floor_apt}` : "";
-  return `${address.street} ${address.number}${floor}, ${address.city}, ${address.province.name} (${address.postal_code})`;
-}
 
 export function DeliverySection({
   method,
