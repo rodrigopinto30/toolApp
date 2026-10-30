@@ -5,6 +5,7 @@ from typing import Any
 
 from sqlalchemy import Select, Subquery, and_, exists, func, or_, select, true, update
 from sqlalchemy.orm import aliased, selectinload
+from sqlalchemy.sql import ColumnElement
 
 from app.db.repositories.base import SqlAlchemyRepository
 from app.db.repositories.product_filter import (
@@ -98,6 +99,10 @@ def _visible(statement: Select[Any]) -> Select[Any]:
     )
 
 
+def _has_active_variant() -> ColumnElement[bool]:
+    return Product.variants.any(ProductVariant.is_active.is_(true()))
+
+
 def _delivered_to(user_id: int) -> Select[tuple[int]]:
     return (
         select(ProductVariant.product_id)
@@ -176,6 +181,15 @@ class ProductRepository(SqlAlchemyRepository[Product]):
             .order_by(Favorite.created_at.desc(), Product.id.desc())
         )
         return await self._page(statement, offset, limit)
+
+    async def favorite_slugs(self, user_id: int) -> Sequence[str]:
+        statement = (
+            _visible(select(Product.slug))
+            .join(Favorite, Favorite.product_id == Product.id)
+            .where(Favorite.user_id == user_id, _has_active_variant())
+            .order_by(Favorite.created_at.desc(), Product.id.desc())
+        )
+        return (await self.session.scalars(statement)).all()
 
     async def reviewable(
         self, user_id: int, *, locale: Locale, offset: int, limit: int
@@ -310,10 +324,7 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         return product_filter.apply(statement, columns), columns
 
     async def visible_id(self, slug: str) -> int | None:
-        statement = _visible(select(Product.id)).where(
-            Product.slug == slug,
-            Product.variants.any(ProductVariant.is_active.is_(true())),
-        )
+        statement = _visible(select(Product.id)).where(Product.slug == slug, _has_active_variant())
         return await self.session.scalar(statement)
 
     async def get_visible_by_slug(self, slug: str) -> Product | None:

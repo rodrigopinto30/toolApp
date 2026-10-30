@@ -3,13 +3,14 @@ from httpx import AsyncClient
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Favorite, Product, User
+from app.models import Favorite, Product, ProductVariant, User
 from tests.factories import make_user
 from tests.shopping import PASSWORD, count, login, product_of
 
 pytestmark = pytest.mark.usefixtures("seeded", "gateway")
 
 FAVORITES = "/api/v1/me/favorites"
+SLUGS = f"{FAVORITES}/slugs"
 SKU = "STA-SD6"
 OTHER_SKU = "BOS-HD18-18V"
 
@@ -153,7 +154,64 @@ async def test_favorites_belong_to_their_customer(
     assert owners.all() == [customer.id]
 
 
+@pytest.mark.usefixtures("customer")
+async def test_slugs_list_the_favorites_newest_first(
+    client: AsyncClient, session: AsyncSession
+) -> None:
+    assert (await client.get(SLUGS)).json() == []
+    first = await product_of(session, SKU)
+    second = await product_of(session, OTHER_SKU)
+    await client.put(f"{FAVORITES}/{first.slug}")
+    await client.put(f"{FAVORITES}/{second.slug}")
+
+    response = await client.get(SLUGS)
+
+    assert response.status_code == 200
+    assert response.json() == [second.slug, first.slug]
+
+
+@pytest.mark.usefixtures("customer")
+async def test_slugs_leave_out_a_hidden_product(
+    client: AsyncClient, session: AsyncSession
+) -> None:
+    product = await product_of(session, SKU)
+    await client.put(f"{FAVORITES}/{product.slug}")
+
+    await set_active(session, product, False)
+    assert (await client.get(SLUGS)).json() == []
+
+    await set_active(session, product, True)
+    assert (await client.get(SLUGS)).json() == [product.slug]
+
+
+@pytest.mark.usefixtures("customer")
+async def test_slugs_leave_out_a_product_without_active_variants(
+    client: AsyncClient, session: AsyncSession
+) -> None:
+    product = await product_of(session, SKU)
+    await client.put(f"{FAVORITES}/{product.slug}")
+
+    await session.execute(
+        update(ProductVariant)
+        .where(ProductVariant.product_id == product.id)
+        .values(is_active=False)
+    )
+
+    assert (await client.get(SLUGS)).json() == []
+
+
+async def test_slugs_belong_to_their_customer(
+    client: AsyncClient, session: AsyncSession, customer: User
+) -> None:
+    product = await product_of(session, SKU)
+    await client.put(f"{FAVORITES}/{product.slug}")
+    await login(client, await make_user(session, password=PASSWORD, verified=True))
+
+    assert (await client.get(SLUGS)).json() == []
+
+
 async def test_a_visitor_gets_401(client: AsyncClient) -> None:
     assert (await client.get(FAVORITES)).status_code == 401
+    assert (await client.get(SLUGS)).status_code == 401
     assert (await client.put(f"{FAVORITES}/any-product")).status_code == 401
     assert (await client.delete(f"{FAVORITES}/any-product")).status_code == 401
