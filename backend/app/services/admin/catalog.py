@@ -14,6 +14,7 @@ from app.schemas.admin.catalog import (
     AdminCategoryRead,
 )
 from app.services.admin.base import AdminResource, taken
+from app.services.admin.media import PictureResource
 from app.services.audit import AuditTrail
 from app.services.revalidation import ChangePublisher
 
@@ -46,13 +47,15 @@ def check_category_parent(
         )
 
 
-class CategoryAdmin(AdminResource[Category, AdminCategoryRead]):
+class CategoryAdmin(PictureResource[Category, AdminCategoryRead]):
     model = Category
     read = AdminCategoryRead
     entity = "category"
-    fields = ("parent_id", "slug", "name", "description", "position", "is_active")
+    fields = ("parent_id", "slug", "name", "description", "position", "is_active", "image_path")
     ordering = (Category.parent_id, Category.position, Category.id)
     namespaces = ("catalog",)
+    column = "image_path"
+    folder = "categories"
 
     def conflict(self) -> AppError:
         return taken("slug")
@@ -84,13 +87,15 @@ class CategoryAdmin(AdminResource[Category, AdminCategoryRead]):
         await super()._remove(entity)
 
 
-class BrandAdmin(AdminResource[Brand, AdminBrandRead]):
+class BrandAdmin(PictureResource[Brand, AdminBrandRead]):
     model = Brand
     read = AdminBrandRead
     entity = "brand"
-    fields = ("slug", "name", "is_active")
+    fields = ("slug", "name", "is_active", "logo_path")
     ordering = (Brand.name, Brand.id)
     namespaces = ("catalog",)
+    column = "logo_path"
+    folder = "brands"
 
     def conflict(self) -> AppError:
         return taken("slug")

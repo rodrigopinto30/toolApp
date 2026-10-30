@@ -67,7 +67,9 @@ class AdminResource[ModelT: Base, ReadT: ReadModel]:
             return self._present(entity)
 
     async def create(self, body: BaseModel, **extra: Any) -> ReadT:
-        values = {**body.model_dump(), **extra, **self.scope}
+        return await self._insert({**body.model_dump(), **extra, **self.scope})
+
+    async def _insert(self, values: dict[str, Any]) -> ReadT:
         async with self.uow:
             await self.validate(values, None)
             entity = self.uow.repository(self.model).add(await self._build(values))
@@ -100,6 +102,7 @@ class AdminResource[ModelT: Base, ReadT: ReadModel]:
                 raise self._in_use() from exc
             self.audit.record(self.uow.session, "delete", self.entity, key, changes)
         await self.changes.publish(*self.namespaces)
+        await self._after_delete(entity)
 
     def _in_use(self) -> ConflictError:
         return ConflictError("It is in use and cannot be deleted.", code="in_use")
@@ -119,6 +122,9 @@ class AdminResource[ModelT: Base, ReadT: ReadModel]:
 
     async def _remove(self, entity: ModelT) -> None:
         await self.uow.repository(self.model).delete(entity)
+
+    async def _after_delete(self, entity: ModelT) -> None:
+        return None
 
     async def _load(self, key: int | str) -> ModelT:
         entity = await self.uow.repository(self.model).get_locked(

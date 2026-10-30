@@ -20,7 +20,7 @@ def admin_routes(app: FastAPI) -> Iterator[tuple[str, str]]:
 
 
 def test_the_admin_api_has_routes(app: FastAPI) -> None:
-    assert len(list(admin_routes(app))) >= 49
+    assert len(list(admin_routes(app))) >= 56
 
 
 async def test_a_visitor_gets_401_on_every_admin_route(app: FastAPI, client: AsyncClient) -> None:

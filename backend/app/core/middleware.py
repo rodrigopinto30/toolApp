@@ -1,5 +1,3 @@
-"""Pure ASGI middlewares (no BaseHTTPMiddleware: it breaks contextvars and streaming)."""
-
 import asyncio
 import re
 import secrets
@@ -25,9 +23,6 @@ def _request_id(scope: Scope) -> str | None:
 
 
 class RequestContextMiddleware:
-    """Sets the request id (nginx's X-Request-ID or a new one), binds it to every log line,
-    returns it in the response and writes the access log."""
-
     def __init__(self, app: ASGIApp, *, quiet_paths: frozenset[str] = frozenset()) -> None:
         self.app = app
         self.quiet_paths = quiet_paths
@@ -69,9 +64,6 @@ class RequestContextMiddleware:
 
 
 class CacheControlMiddleware:
-    """API responses are private by default: `Cache-Control: no-store` unless the endpoint
-    sets its own Cache-Control (the public catalog will)."""
-
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
 
@@ -91,8 +83,6 @@ class CacheControlMiddleware:
 
 
 class TimeoutMiddleware:
-    """Cancels requests that take longer than `timeout` seconds and answers 504."""
-
     def __init__(self, app: ASGIApp, *, timeout: float) -> None:
         self.app = app
         self.timeout = timeout
@@ -125,19 +115,32 @@ class TimeoutMiddleware:
 
 
 class BodySizeLimitMiddleware:
-    """Rejects bodies larger than `max_bytes` with 413, by Content-Length or while streaming."""
-
-    def __init__(self, app: ASGIApp, *, max_bytes: int) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        max_bytes: int,
+        upload_max_bytes: int | None = None,
+        upload_paths: re.Pattern[str] | None = None,
+    ) -> None:
         self.app = app
         self.max_bytes = max_bytes
+        self.upload_max_bytes = upload_max_bytes or max_bytes
+        self.upload_paths = upload_paths
+
+    def _limit(self, path: str) -> int:
+        if self.upload_paths is not None and self.upload_paths.fullmatch(path):
+            return self.upload_max_bytes
+        return self.max_bytes
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
 
+        limit = self._limit(scope["path"])
         content_length = Headers(scope=scope).get("content-length")
-        if content_length and content_length.isdigit() and int(content_length) > self.max_bytes:
+        if content_length and content_length.isdigit() and int(content_length) > limit:
             response = error_response(
                 _request_id(scope), 413, "payload_too_large", "Request body too large."
             )
@@ -151,7 +154,7 @@ class BodySizeLimitMiddleware:
             message = await receive()
             if message["type"] == "http.request":
                 received += len(message.get("body", b""))
-                if received > self.max_bytes:
+                if received > limit:
                     raise HTTPException(status_code=413)
             return message
 
@@ -159,10 +162,6 @@ class BodySizeLimitMiddleware:
 
 
 class CsrfMiddleware:
-    """Double-submit CSRF check for unsafe methods: the X-CSRF-Token header must equal the
-    csrf cookie when the request carries a session cookie, and always under
-    `always_protected_prefix` (login CSRF). A cross-origin Origin header is rejected."""
-
     SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
     SESSION_COOKIES = (ACCESS_COOKIE, REFRESH_COOKIE)
 

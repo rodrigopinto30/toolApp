@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     request_timeout_seconds: float = 25.0
     max_body_bytes: int = 1_048_576
+    max_image_bytes: int = 5_242_880
+    media_root: str = "/app/media"
 
     ars_rounding_step: int = 1
     low_stock_threshold: int = 5

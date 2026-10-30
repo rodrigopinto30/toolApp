@@ -21,7 +21,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, TimestampMixin
 from app.db.types import BigIntPk, UsdAmount, enum_check, str_enum
 
-# Short labels are stored as {"es": "...", "en": "..."} in a JSON column.
 I18nLabel = dict[str, str]
 
 
@@ -36,7 +35,7 @@ class Category(TimestampMixin, Base):
     id: Mapped[BigIntPk]
     parent_id: Mapped[int | None] = mapped_column(
         BigInteger, ForeignKey("categories.id"), index=True
-    )  # tree of up to 3 levels (enforced by the service)
+    )
     slug: Mapped[str] = mapped_column(String(120), unique=True)
     name: Mapped[I18nLabel] = mapped_column(JSON)
     description: Mapped[I18nLabel | None] = mapped_column(JSON)
@@ -73,10 +72,8 @@ class Product(TimestampMixin, Base):
     slug: Mapped[str] = mapped_column(String(160), unique=True)
     brand_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("brands.id"), index=True)
     category_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("categories.id"))
-    # Products are archived (is_active = false), never deleted once an order references them.
     is_active: Mapped[bool] = mapped_column(default=True, server_default=true())
     is_featured: Mapped[bool] = mapped_column(default=False, server_default="0")
-    # Denormalized when a review is approved.
     rating_avg: Mapped[Decimal] = mapped_column(
         Numeric(3, 2), default=Decimal("0.00"), server_default="0.00"
     )
@@ -115,14 +112,12 @@ class ProductTranslation(TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(200))
     short_description: Mapped[str] = mapped_column(String(500))
     description: Mapped[str] = mapped_column(Text)
-    specs: Mapped[dict[str, Any] | None] = mapped_column(JSON)  # technical key/value pairs
+    specs: Mapped[dict[str, Any] | None] = mapped_column(JSON)
 
     product: Mapped["Product"] = relationship(back_populates="translations", lazy="raise")
 
 
 class Attribute(TimestampMixin, Base):
-    """Global attributes (voltage, size...), so they double as listing filters."""
-
     __tablename__ = "attributes"
 
     id: Mapped[BigIntPk]
@@ -141,7 +136,7 @@ class AttributeValue(TimestampMixin, Base):
 
     id: Mapped[BigIntPk]
     attribute_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("attributes.id"))
-    slug: Mapped[str] = mapped_column(String(60))  # used in filters: attr[]=voltage:18v
+    slug: Mapped[str] = mapped_column(String(60))
     value: Mapped[I18nLabel] = mapped_column(JSON)
     position: Mapped[int] = mapped_column(default=0, server_default="0")
 
@@ -182,11 +177,10 @@ class ProductVariant(TimestampMixin, Base):
     product_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("products.id"), index=True)
     sku: Mapped[str] = mapped_column(String(64), unique=True)
     price_usd: Mapped[Decimal] = mapped_column(UsdAmount)
-    compare_at_price_usd: Mapped[Decimal | None] = mapped_column(UsdAmount)  # strikethrough
+    compare_at_price_usd: Mapped[Decimal | None] = mapped_column(UsdAmount)
     stock: Mapped[int] = mapped_column(default=0, server_default="0")
     is_active: Mapped[bool] = mapped_column(default=True, server_default=true())
     position: Mapped[int] = mapped_column(default=0, server_default="0")
-    # Optimistic locking: an UPDATE with a stale version raises StaleDataError.
     version: Mapped[int] = mapped_column(server_default="1")
 
     __mapper_args__ = {"version_id_col": version}
@@ -207,8 +201,10 @@ class ProductImage(TimestampMixin, Base):
     variant_id: Mapped[int | None] = mapped_column(
         BigInteger, ForeignKey("product_variants.id", ondelete="SET NULL"), index=True
     )
-    path: Mapped[str] = mapped_column(String(255))  # relative to the "media" volume
+    path: Mapped[str] = mapped_column(String(255))
     alt: Mapped[I18nLabel | None] = mapped_column(JSON)
     position: Mapped[int] = mapped_column(default=0, server_default="0")
+    width: Mapped[int | None]
+    height: Mapped[int | None]
 
     product: Mapped["Product"] = relationship(back_populates="images", lazy="raise")

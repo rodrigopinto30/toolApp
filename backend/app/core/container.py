@@ -12,6 +12,7 @@ from app.core.config import Settings
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
 from app.email.mailer import Mailer
 from app.email.sender import EmailMessage, EmailSender, deliver
+from app.media.storage import ImageStorage
 from app.payments.gateway import PaymentGateway
 from app.services.account import AccountService
 from app.services.auth import AuthService
@@ -72,6 +73,13 @@ def get_change_publisher(
 
 
 ChangePublisherDep = Annotated[ChangePublisher, Depends(get_change_publisher)]
+
+
+def get_image_storage(request: Request) -> ImageStorage:
+    return request.app.state.image_storage
+
+
+ImageStorageDep = Annotated[ImageStorage, Depends(get_image_storage)]
 
 
 def get_pricing_service(

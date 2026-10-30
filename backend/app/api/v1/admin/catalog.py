@@ -6,6 +6,7 @@ from app.api.v1.admin.deps import (
     BrandAdminDep,
     CategoryAdminDep,
     EntityId,
+    ImageBytes,
     PageParams,
 )
 from app.schemas.admin.catalog import (
@@ -56,6 +57,20 @@ async def delete_category(category_id: EntityId, categories: CategoryAdminDep) -
     await categories.delete(category_id)
 
 
+@router.post("/categories/{category_id}/image")
+async def upload_category_image(
+    category_id: EntityId, data: ImageBytes, categories: CategoryAdminDep
+) -> AdminCategoryRead:
+    return await categories.set_picture(category_id, data)
+
+
+@router.delete("/categories/{category_id}/image")
+async def delete_category_image(
+    category_id: EntityId, categories: CategoryAdminDep
+) -> AdminCategoryRead:
+    return await categories.clear_picture(category_id)
+
+
 @router.get("/brands")
 async def list_brands(params: PageParams, brands: BrandAdminDep) -> Page[AdminBrandRead]:
     return await brands.page(params)
@@ -81,6 +96,18 @@ async def update_brand(
 @router.delete("/brands/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_brand(brand_id: EntityId, brands: BrandAdminDep) -> None:
     await brands.delete(brand_id)
+
+
+@router.post("/brands/{brand_id}/logo")
+async def upload_brand_logo(
+    brand_id: EntityId, data: ImageBytes, brands: BrandAdminDep
+) -> AdminBrandRead:
+    return await brands.set_picture(brand_id, data)
+
+
+@router.delete("/brands/{brand_id}/logo")
+async def delete_brand_logo(brand_id: EntityId, brands: BrandAdminDep) -> AdminBrandRead:
+    return await brands.clear_picture(brand_id)
 
 
 @router.get("/attributes")

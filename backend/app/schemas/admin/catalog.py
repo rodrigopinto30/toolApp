@@ -2,7 +2,7 @@ from typing import Annotated, ClassVar
 
 from pydantic import Field, StringConstraints
 
-from app.schemas.admin.common import I18nDescription, I18nText, Position, slug
+from app.schemas.admin.common import I18nDescription, I18nText, MediaUrl, Position, slug
 from app.schemas.common import PatchModel, ReadModel, RequestModel
 from app.schemas.validators import text
 
@@ -48,6 +48,7 @@ class AdminCategoryRead(ReadModel):
     slug: str
     name: I18nText
     description: I18nDescription | None
+    image_url: MediaUrl = Field(validation_alias="image_path")
     position: int
     is_active: bool
 
@@ -68,6 +69,7 @@ class AdminBrandRead(ReadModel):
     id: int
     slug: str
     name: str
+    logo_url: MediaUrl = Field(validation_alias="logo_path")
     is_active: bool
 
 

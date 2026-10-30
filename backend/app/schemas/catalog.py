@@ -66,6 +66,8 @@ class AttributeRead(BaseModel):
 class ImageRead(BaseModel):
     url: str
     alt: str
+    width: int | None = None
+    height: int | None = None
 
 
 class VariantAttribute(BaseModel):
