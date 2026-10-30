@@ -90,6 +90,7 @@ async def place_order(
     card: dict[str, str] = CARD,
     key: str | None = None,
     total: dict[str, str] | None = None,
+    locale: str = "es",
 ) -> Response:
     if total is None:
         preview = await client.post(f"{CHECKOUT}/preview", json=body)
@@ -97,4 +98,6 @@ async def place_order(
         total = preview.json()["total"]
     headers = {"Idempotency-Key": key or uuid.uuid4().hex}
     payload = body | {"expected_total": total, "payment": card}
-    return await client.post(CHECKOUT, json=payload, headers=headers)
+    return await client.post(
+        CHECKOUT, json=payload, headers=headers, params={"locale": locale}
+    )

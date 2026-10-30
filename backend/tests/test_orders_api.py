@@ -193,6 +193,20 @@ async def test_cancel_a_paid_order_refunds_it(
     assert "Te reintegramos USD 39,80 en el mismo medio de pago." in email.text
 
 
+@pytest.mark.usefixtures("customer")
+async def test_the_cancel_email_uses_the_language_of_the_order(
+    client: AsyncClient, session: AsyncSession, pickup_point_id: int, outbox: Outbox
+) -> None:
+    await add_to_cart(client, session, "STA-SD6", 1)
+    response = await place_order(client, pickup_body(pickup_point_id), locale="en")
+    number = response.json()["number"]
+
+    await client.post(f"{ORDERS}/{number}/cancel", params={"locale": "es"})
+
+    [email] = outbox.sent("order_cancelled")
+    assert email.subject == f"Your order {number} was cancelled"
+
+
 @pytest.mark.parametrize("status", [OrderStatus.PREPARING, OrderStatus.CANCELLED])
 @pytest.mark.usefixtures("customer")
 async def test_cancel_is_only_allowed_before_preparing(

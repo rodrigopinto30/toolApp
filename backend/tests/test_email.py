@@ -5,11 +5,16 @@ from app.email.mailer import Mailer
 from app.email.sender import EmailMessage, LogEmailSender
 from app.email.templates import TEMPLATES, render
 from app.models import Locale, User
+from app.services.orders import ADMIN_TARGETS
 
 
 def test_every_template_exists_in_every_locale() -> None:
     for name, translations in TEMPLATES.items():
         assert set(translations) == set(Locale), name
+
+
+def test_every_admin_status_has_an_email() -> None:
+    assert {f"order_{status}" for status in ADMIN_TARGETS} <= set(TEMPLATES)
 
 
 def test_render_escapes_html() -> None:

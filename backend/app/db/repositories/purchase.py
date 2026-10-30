@@ -1,12 +1,22 @@
 from collections.abc import Sequence
+from datetime import datetime
 
-from sqlalchemy import Select, and_, delete, func, select
+from sqlalchemy import ScalarSelect, Select, and_, delete, func, select
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import ColumnElement
 
 from app.db.repositories.base import SqlAlchemyRepository
-from app.models import Cart, CartItem, Coupon, CouponRedemption, Order, OrderItem
+from app.models import (
+    Cart,
+    CartItem,
+    Coupon,
+    CouponRedemption,
+    Order,
+    OrderItem,
+    OrderStatus,
+    User,
+)
 
 
 class CartRepository(SqlAlchemyRepository[Cart]):
@@ -77,16 +87,14 @@ class OrderRepository(SqlAlchemyRepository[Order]):
         condition = and_(Order.user_id == user_id, Order.number == number)
         return await self.session.scalar(_detail(condition, lock=lock))
 
+    async def by_number(self, number: str, *, lock: bool = False) -> Order | None:
+        return await self.session.scalar(_detail(Order.number == number, lock=lock))
+
     async def page_for(
         self, user_id: int, *, offset: int, limit: int
     ) -> tuple[Sequence[tuple[Order, int]], int]:
-        item_count = (
-            select(func.coalesce(func.sum(OrderItem.quantity), 0))
-            .where(OrderItem.order_id == Order.id)
-            .scalar_subquery()
-        )
         statement = (
-            select(Order, item_count)
+            select(Order, _item_count())
             .where(Order.user_id == user_id)
             .order_by(Order.created_at.desc(), Order.id.desc())
             .offset(offset)
@@ -94,6 +102,54 @@ class OrderRepository(SqlAlchemyRepository[Order]):
         )
         rows = [(order, int(count)) for order, count in await self.session.execute(statement)]
         return rows, await self.count(user_id=user_id)
+
+    async def search(
+        self,
+        *,
+        status: OrderStatus | None,
+        number: str | None,
+        email: str | None,
+        date_from: datetime | None,
+        date_to: datetime | None,
+        offset: int,
+        limit: int,
+    ) -> tuple[Sequence[tuple[Order, int, User]], int]:
+        conditions: list[ColumnElement[bool]] = []
+        if status is not None:
+            conditions.append(Order.status == status)
+        if number is not None:
+            conditions.append(Order.number.contains(number, autoescape=True))
+        if email is not None:
+            conditions.append(User.email.contains(email, autoescape=True))
+        if date_from is not None:
+            conditions.append(Order.created_at >= date_from)
+        if date_to is not None:
+            conditions.append(Order.created_at <= date_to)
+
+        statement = (
+            select(Order, _item_count(), User)
+            .join(User, User.id == Order.user_id)
+            .where(*conditions)
+            .order_by(Order.created_at.desc(), Order.id.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        rows = [(order, int(count), user) for order, count, user in await self.session.execute(statement)]
+        total = await self.session.scalar(
+            select(func.count())
+            .select_from(Order)
+            .join(User, User.id == Order.user_id)
+            .where(*conditions)
+        )
+        return rows, total or 0
+
+
+def _item_count() -> ScalarSelect[int]:
+    return (
+        select(func.coalesce(func.sum(OrderItem.quantity), 0))
+        .where(OrderItem.order_id == Order.id)
+        .scalar_subquery()
+    )
 
 
 def _detail(condition: ColumnElement[bool], *, lock: bool) -> Select[tuple[Order]]:

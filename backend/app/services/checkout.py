@@ -55,6 +55,7 @@ from app.services.cart import CartEntry, CartPresenter, cart_entries, variant_la
 from app.services.catalog import product_translation
 from app.services.coupons import CouponContext, CouponPolicy, discount_for
 from app.services.orders import (
+    PAYMENT_REJECTED,
     OrderCalculator,
     OrderStateMachine,
     OrderTotals,
@@ -345,6 +346,7 @@ class CheckoutService:
             number=temporary_order_number(),
             user_id=user_id,
             currency=request.currency,
+            locale=locale,
             exchange_rate=quote.calculator.converter.require_rate(),
             subtotal=totals.subtotal,
             discount_total=totals.discount_total,
@@ -431,7 +433,7 @@ class CheckoutService:
             else:
                 payment.status = PaymentStatus.REJECTED
                 self.states.transition(
-                    order, OrderStatus.CANCELLED, actor_id=user.id, note="payment_rejected"
+                    order, OrderStatus.CANCELLED, actor_id=user.id, note=PAYMENT_REJECTED
                 )
                 await release_order(session, order)
                 if cart is not None:
