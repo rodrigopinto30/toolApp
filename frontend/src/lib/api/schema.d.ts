@@ -596,6 +596,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/products/{slug}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Product Reviews */
+        get: operations["list_product_reviews_api_v1_products__slug__reviews_get"];
+        put?: never;
+        /** Create Review */
+        post: operations["create_review_api_v1_products__slug__reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Own Reviews */
+        get: operations["list_own_reviews_api_v1_me_reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/reviewable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Reviewable Products */
+        get: operations["list_reviewable_products_api_v1_me_reviewable_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Favorites */
+        get: operations["list_favorites_api_v1_me_favorites_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/favorites/slugs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Favorite Slugs */
+        get: operations["list_favorite_slugs_api_v1_me_favorites_slugs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/favorites/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Add Favorite */
+        put: operations["add_favorite_api_v1_me_favorites__slug__put"];
+        post?: never;
+        /** Remove Favorite */
+        delete: operations["remove_favorite_api_v1_me_favorites__slug__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/exchange-rate": {
         parameters: {
             query?: never;
@@ -658,6 +762,663 @@ export interface paths {
         put?: never;
         /** Quote Shipping */
         post: operations["quote_shipping_api_v1_shipping_quote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Categories */
+        get: operations["list_categories_api_v1_admin_categories_get"];
+        put?: never;
+        /** Create Category */
+        post: operations["create_category_api_v1_admin_categories_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories/{category_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Category */
+        get: operations["get_category_api_v1_admin_categories__category_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Category */
+        delete: operations["delete_category_api_v1_admin_categories__category_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Category */
+        patch: operations["update_category_api_v1_admin_categories__category_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/categories/{category_id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Category Image */
+        post: operations["upload_category_image_api_v1_admin_categories__category_id__image_post"];
+        /** Delete Category Image */
+        delete: operations["delete_category_image_api_v1_admin_categories__category_id__image_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/brands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Brands */
+        get: operations["list_brands_api_v1_admin_brands_get"];
+        put?: never;
+        /** Create Brand */
+        post: operations["create_brand_api_v1_admin_brands_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/brands/{brand_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Brand */
+        get: operations["get_brand_api_v1_admin_brands__brand_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Brand */
+        delete: operations["delete_brand_api_v1_admin_brands__brand_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Brand */
+        patch: operations["update_brand_api_v1_admin_brands__brand_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/brands/{brand_id}/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Brand Logo */
+        post: operations["upload_brand_logo_api_v1_admin_brands__brand_id__logo_post"];
+        /** Delete Brand Logo */
+        delete: operations["delete_brand_logo_api_v1_admin_brands__brand_id__logo_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/attributes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Attributes */
+        get: operations["list_attributes_api_v1_admin_attributes_get"];
+        put?: never;
+        /** Create Attribute */
+        post: operations["create_attribute_api_v1_admin_attributes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/attributes/{attribute_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Attribute */
+        get: operations["get_attribute_api_v1_admin_attributes__attribute_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Attribute */
+        delete: operations["delete_attribute_api_v1_admin_attributes__attribute_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Attribute */
+        patch: operations["update_attribute_api_v1_admin_attributes__attribute_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/attributes/{attribute_id}/values": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Attribute Values */
+        get: operations["list_attribute_values_api_v1_admin_attributes__attribute_id__values_get"];
+        put?: never;
+        /** Create Attribute Value */
+        post: operations["create_attribute_value_api_v1_admin_attributes__attribute_id__values_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/attributes/{attribute_id}/values/{value_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Attribute Value */
+        get: operations["get_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Attribute Value */
+        delete: operations["delete_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Attribute Value */
+        patch: operations["update_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Products */
+        get: operations["list_products_api_v1_admin_products_get"];
+        put?: never;
+        /** Create Product */
+        post: operations["create_product_api_v1_admin_products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/products/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Product */
+        get: operations["get_product_api_v1_admin_products__product_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Product */
+        patch: operations["update_product_api_v1_admin_products__product_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/products/{product_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive Product */
+        post: operations["archive_product_api_v1_admin_products__product_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/products/{product_id}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Variant */
+        post: operations["create_variant_api_v1_admin_products__product_id__variants_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/variants/{variant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Variant */
+        patch: operations["update_variant_api_v1_admin_variants__variant_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/variants/{variant_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive Variant */
+        post: operations["archive_variant_api_v1_admin_variants__variant_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/variants/{variant_id}/stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adjust Stock */
+        post: operations["adjust_stock_api_v1_admin_variants__variant_id__stock_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/products/{product_id}/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Product Image */
+        post: operations["upload_product_image_api_v1_admin_products__product_id__images_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/images/{image_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Product Image */
+        delete: operations["delete_product_image_api_v1_admin_images__image_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Product Image */
+        patch: operations["update_product_image_api_v1_admin_images__image_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/exchange-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Exchange Rates */
+        get: operations["list_exchange_rates_api_v1_admin_exchange_rates_get"];
+        put?: never;
+        /** Create Exchange Rate */
+        post: operations["create_exchange_rate_api_v1_admin_exchange_rates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/zones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Zones */
+        get: operations["list_zones_api_v1_admin_zones_get"];
+        put?: never;
+        /** Create Zone */
+        post: operations["create_zone_api_v1_admin_zones_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/zones/{zone_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Zone */
+        get: operations["get_zone_api_v1_admin_zones__zone_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Zone */
+        delete: operations["delete_zone_api_v1_admin_zones__zone_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Zone */
+        patch: operations["update_zone_api_v1_admin_zones__zone_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/provinces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Provinces */
+        get: operations["list_provinces_api_v1_admin_provinces_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/provinces/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Province */
+        patch: operations["update_province_api_v1_admin_provinces__code__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/pickup-points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Pickup Points */
+        get: operations["list_pickup_points_api_v1_admin_pickup_points_get"];
+        put?: never;
+        /** Create Pickup Point */
+        post: operations["create_pickup_point_api_v1_admin_pickup_points_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/pickup-points/{point_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Pickup Point */
+        get: operations["get_pickup_point_api_v1_admin_pickup_points__point_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Pickup Point */
+        delete: operations["delete_pickup_point_api_v1_admin_pickup_points__point_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Pickup Point */
+        patch: operations["update_pickup_point_api_v1_admin_pickup_points__point_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/coupons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Coupons */
+        get: operations["list_coupons_api_v1_admin_coupons_get"];
+        put?: never;
+        /** Create Coupon */
+        post: operations["create_coupon_api_v1_admin_coupons_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/coupons/{coupon_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Coupon */
+        get: operations["get_coupon_api_v1_admin_coupons__coupon_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Coupon */
+        delete: operations["delete_coupon_api_v1_admin_coupons__coupon_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Coupon */
+        patch: operations["update_coupon_api_v1_admin_coupons__coupon_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Orders */
+        get: operations["list_orders_api_v1_admin_orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Order */
+        get: operations["get_order_api_v1_admin_orders__number__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Order Status */
+        post: operations["change_order_status_api_v1_admin_orders__number__status_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Reviews */
+        get: operations["list_reviews_api_v1_admin_reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reviews/{review_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve Review */
+        post: operations["approve_review_api_v1_admin_reviews__review_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reviews/{review_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject Review */
+        post: operations["reject_review_api_v1_admin_reviews__review_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Users */
+        get: operations["list_users_api_v1_admin_users_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User */
+        get: operations["get_user_api_v1_admin_users__user_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update User */
+        patch: operations["update_user_api_v1_admin_users__user_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Audit Logs */
+        get: operations["list_audit_logs_api_v1_admin_audit_logs_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -758,11 +1519,409 @@ export interface components {
             /** Is Default */
             is_default?: true | null;
         };
+        /** AdminAttributeRead */
+        AdminAttributeRead: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            name: components["schemas"]["I18nText"];
+            /** Is Filterable */
+            is_filterable: boolean;
+            /** Values */
+            values: components["schemas"]["AdminAttributeValueRead"][];
+        };
+        /** AdminAttributeValueRead */
+        AdminAttributeValueRead: {
+            /** Id */
+            id: number;
+            /** Attribute Id */
+            attribute_id: number;
+            /** Slug */
+            slug: string;
+            value: components["schemas"]["I18nText"];
+            /** Position */
+            position: number;
+        };
+        /** AdminBrandRead */
+        AdminBrandRead: {
+            /** Id */
+            id: number;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Is Active */
+            is_active: boolean;
+        };
+        /** AdminCategoryRead */
+        AdminCategoryRead: {
+            /** Id */
+            id: number;
+            /** Parent Id */
+            parent_id: number | null;
+            /** Slug */
+            slug: string;
+            name: components["schemas"]["I18nText"];
+            description: components["schemas"]["I18nDescription"] | null;
+            /** Image Url */
+            image_url: string | null;
+            /** Position */
+            position: number;
+            /** Is Active */
+            is_active: boolean;
+        };
+        /** AdminCouponRead */
+        AdminCouponRead: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            type: components["schemas"]["CouponType"];
+            /** Value */
+            value: string;
+            /** Min Subtotal Usd */
+            min_subtotal_usd: string | null;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /** Ends At */
+            ends_at: string | null;
+            /** Max Uses */
+            max_uses: number | null;
+            /** Max Uses Per User */
+            max_uses_per_user: number | null;
+            /** Used Count */
+            used_count: number;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AdminExchangeRateRead */
+        AdminExchangeRateRead: {
+            /** Id */
+            id: number;
+            /** Rate */
+            rate: string;
+            /** Created By */
+            created_by: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AdminImageRead */
+        AdminImageRead: {
+            /** Id */
+            id: number;
+            /** Product Id */
+            product_id: number;
+            /** Variant Id */
+            variant_id: number | null;
+            /** Url */
+            url: string;
+            alt: components["schemas"]["I18nText"] | null;
+            /** Position */
+            position: number;
+            /** Width */
+            width: number | null;
+            /** Height */
+            height: number | null;
+        };
+        /** AdminOrderRead */
+        AdminOrderRead: {
+            /** Number */
+            number: string;
+            status: components["schemas"]["OrderStatus"];
+            currency: components["schemas"]["Currency"];
+            /** Exchange Rate */
+            exchange_rate: string;
+            /** Items */
+            items: components["schemas"]["OrderItemRead"][];
+            subtotal: components["schemas"]["Money"];
+            discount_total: components["schemas"]["Money"];
+            shipping_total: components["schemas"]["Money"];
+            total: components["schemas"]["Money"];
+            coupon: components["schemas"]["AppliedCoupon"] | null;
+            delivery: components["schemas"]["OrderDelivery"];
+            billing: components["schemas"]["OrderBilling"] | null;
+            /** Status History */
+            status_history: components["schemas"]["AdminStatusChange"][];
+            /** Payments */
+            payments: components["schemas"]["PaymentRead"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Paid At */
+            paid_at: string | null;
+            /** Cancelled At */
+            cancelled_at: string | null;
+            locale: components["schemas"]["Locale"];
+            customer: components["schemas"]["OrderCustomer"];
+            /** Next Statuses */
+            next_statuses: components["schemas"]["OrderStatus"][];
+        };
+        /** AdminOrderSummary */
+        AdminOrderSummary: {
+            /** Number */
+            number: string;
+            status: components["schemas"]["OrderStatus"];
+            total: components["schemas"]["Money"];
+            /** Item Count */
+            item_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            delivery_method: components["schemas"]["DeliveryMethod"];
+            customer: components["schemas"]["OrderCustomer"];
+        };
+        /** AdminPickupPointRead */
+        AdminPickupPointRead: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Address */
+            address: string;
+            /** Hours */
+            hours: {
+                [key: string]: string;
+            } | null;
+            /** Is Active */
+            is_active: boolean;
+        };
+        /** AdminProductRead */
+        AdminProductRead: {
+            /** Id */
+            id: number;
+            /** Slug */
+            slug: string;
+            /** Brand Id */
+            brand_id: number | null;
+            /** Category Id */
+            category_id: number;
+            /** Is Active */
+            is_active: boolean;
+            /** Is Featured */
+            is_featured: boolean;
+            /** Rating Avg */
+            rating_avg: string;
+            /** Rating Count */
+            rating_count: number;
+            translations: components["schemas"]["AdminProductTexts"];
+            /** Variants */
+            variants: components["schemas"]["AdminVariantRead"][];
+            /** Images */
+            images: components["schemas"]["AdminImageRead"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AdminProductSummary */
+        AdminProductSummary: {
+            /** Id */
+            id: number;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Brand Id */
+            brand_id: number | null;
+            /** Category Id */
+            category_id: number;
+            /** Is Active */
+            is_active: boolean;
+            /** Is Featured */
+            is_featured: boolean;
+            /** Variant Count */
+            variant_count: number;
+            /** Stock */
+            stock: number;
+            /** Price From Usd */
+            price_from_usd: string | null;
+        };
+        /** AdminProductText */
+        AdminProductText: {
+            /** Name */
+            name: string;
+            /** Short Description */
+            short_description: string;
+            /** Description */
+            description: string;
+            /** Specs */
+            specs: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** AdminProductTexts */
+        AdminProductTexts: {
+            es: components["schemas"]["AdminProductText"];
+            en: components["schemas"]["AdminProductText"];
+        };
+        /** AdminProvinceRead */
+        AdminProvinceRead: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Shipping Zone Id */
+            shipping_zone_id: number;
+        };
+        /** AdminReviewRead */
+        AdminReviewRead: {
+            /** Id */
+            id: number;
+            product: components["schemas"]["ReviewedProduct"];
+            author: components["schemas"]["ReviewAuthor"];
+            /** Rating */
+            rating: number;
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+            status: components["schemas"]["ReviewStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AdminStatusChange */
+        AdminStatusChange: {
+            from_status: components["schemas"]["OrderStatus"] | null;
+            to_status: components["schemas"]["OrderStatus"];
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Changed By */
+            changed_by: number | null;
+        };
+        /** AdminUserRead */
+        AdminUserRead: {
+            /** Id */
+            id: number;
+            /** Email */
+            email: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+            /** Phone */
+            phone: string | null;
+            role: components["schemas"]["UserRole"];
+            /** Is Active */
+            is_active: boolean;
+            /** Email Verified At */
+            email_verified_at: string | null;
+            /** Last Login At */
+            last_login_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AdminVariantRead */
+        AdminVariantRead: {
+            /** Id */
+            id: number;
+            /** Product Id */
+            product_id: number;
+            /** Sku */
+            sku: string;
+            /** Price Usd */
+            price_usd: string;
+            /** Compare At Price Usd */
+            compare_at_price_usd: string | null;
+            /** Stock */
+            stock: number;
+            /** Position */
+            position: number;
+            /** Is Active */
+            is_active: boolean;
+            /** Version */
+            version: number;
+            /** Attribute Value Ids */
+            attribute_value_ids: number[];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AdminZoneRead */
+        AdminZoneRead: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            name: components["schemas"]["I18nText"];
+            /** Cost Usd */
+            cost_usd: string;
+            /** Free Over Usd */
+            free_over_usd: string | null;
+            /** Eta Min Days */
+            eta_min_days: number;
+            /** Eta Max Days */
+            eta_max_days: number;
+            /** Is Active */
+            is_active: boolean;
+        };
         /** AppliedCoupon */
         AppliedCoupon: {
             /** Code */
             code: string;
             type: components["schemas"]["CouponType"];
+        };
+        /** AttributeCreate */
+        AttributeCreate: {
+            /** Code */
+            code: string;
+            name: components["schemas"]["I18nText"];
+            /**
+             * Is Filterable
+             * @default true
+             */
+            is_filterable: boolean;
         };
         /** AttributeFacet */
         AttributeFacet: {
@@ -782,12 +1941,74 @@ export interface components {
             /** Values */
             values: components["schemas"]["AttributeValueRead"][];
         };
+        /** AttributeUpdate */
+        AttributeUpdate: {
+            /** Code */
+            code?: string | null;
+            name?: components["schemas"]["I18nText"] | null;
+            /** Is Filterable */
+            is_filterable?: boolean | null;
+        };
+        /** AttributeValueCreate */
+        AttributeValueCreate: {
+            /** Slug */
+            slug: string;
+            value: components["schemas"]["I18nText"];
+            /**
+             * Position
+             * @default 0
+             */
+            position: number;
+        };
         /** AttributeValueRead */
         AttributeValueRead: {
             /** Slug */
             slug: string;
             /** Label */
             label: string;
+        };
+        /** AttributeValueUpdate */
+        AttributeValueUpdate: {
+            /** Slug */
+            slug?: string | null;
+            value?: components["schemas"]["I18nText"] | null;
+            /** Position */
+            position?: number | null;
+        };
+        /** AuditChange */
+        AuditChange: {
+            /** Before */
+            before: unknown;
+            /** After */
+            after: unknown;
+        };
+        /** AuditLogRead */
+        AuditLogRead: {
+            /** Id */
+            id: number;
+            /** Actor Id */
+            actor_id: number | null;
+            /** Actor Email */
+            actor_email: string | null;
+            /** Action */
+            action: string;
+            /** Entity */
+            entity: string;
+            /** Entity Id */
+            entity_id: string | null;
+            /** Changes */
+            changes: {
+                [key: string]: components["schemas"]["AuditChange"];
+            } | null;
+            /** Ip */
+            ip: string | null;
+            /** Request Id */
+            request_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** BillingProfileCreate */
         BillingProfileCreate: {
@@ -833,6 +2054,33 @@ export interface components {
             /** Is Default */
             is_default?: true | null;
         };
+        /** Body_upload_brand_logo_api_v1_admin_brands__brand_id__logo_post */
+        Body_upload_brand_logo_api_v1_admin_brands__brand_id__logo_post: {
+            /** File */
+            file: string;
+        };
+        /** Body_upload_category_image_api_v1_admin_categories__category_id__image_post */
+        Body_upload_category_image_api_v1_admin_categories__category_id__image_post: {
+            /** File */
+            file: string;
+        };
+        /** Body_upload_product_image_api_v1_admin_products__product_id__images_post */
+        Body_upload_product_image_api_v1_admin_products__product_id__images_post: {
+            /** File */
+            file: string;
+        };
+        /** BrandCreate */
+        BrandCreate: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
         /** BrandRead */
         BrandRead: {
             /** Slug */
@@ -848,6 +2096,15 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+        };
+        /** BrandUpdate */
+        BrandUpdate: {
+            /** Slug */
+            slug?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
         /** CardPayment */
         CardPayment: {
@@ -940,6 +2197,25 @@ export interface components {
             has_issues: boolean;
             currency: components["schemas"]["Currency"];
         };
+        /** CategoryCreate */
+        CategoryCreate: {
+            /** Slug */
+            slug: string;
+            name: components["schemas"]["I18nText"];
+            description?: components["schemas"]["I18nDescription"] | null;
+            /** Parent Id */
+            parent_id?: number | null;
+            /**
+             * Position
+             * @default 0
+             */
+            position: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
         /** CategoryNode */
         CategoryNode: {
             /** Slug */
@@ -962,6 +2238,19 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+        };
+        /** CategoryUpdate */
+        CategoryUpdate: {
+            /** Slug */
+            slug?: string | null;
+            name?: components["schemas"]["I18nText"] | null;
+            description?: components["schemas"]["I18nDescription"] | null;
+            /** Parent Id */
+            parent_id?: number | null;
+            /** Position */
+            position?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
         /** CheckoutDelivery */
         CheckoutDelivery: {
@@ -1021,11 +2310,57 @@ export interface components {
             expected_total: components["schemas"]["AcceptedTotal"];
             payment: components["schemas"]["CardPayment"];
         };
+        /** CouponCreate */
+        CouponCreate: {
+            /** Code */
+            code: string;
+            type: components["schemas"]["CouponType"];
+            /** Value */
+            value: number | string;
+            /** Min Subtotal Usd */
+            min_subtotal_usd?: number | string | null;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at?: string;
+            /** Ends At */
+            ends_at?: string | null;
+            /** Max Uses */
+            max_uses?: number | null;
+            /** Max Uses Per User */
+            max_uses_per_user?: number | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
         /**
          * CouponType
          * @enum {string}
          */
         CouponType: "percent" | "fixed";
+        /** CouponUpdate */
+        CouponUpdate: {
+            /** Code */
+            code?: string | null;
+            type?: components["schemas"]["CouponType"] | null;
+            /** Value */
+            value?: number | string | null;
+            /** Min Subtotal Usd */
+            min_subtotal_usd?: number | string | null;
+            /** Starts At */
+            starts_at?: string | null;
+            /** Ends At */
+            ends_at?: string | null;
+            /** Max Uses */
+            max_uses?: number | null;
+            /** Max Uses Per User */
+            max_uses_per_user?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
+        };
         /**
          * Currency
          * @enum {string}
@@ -1036,6 +2371,11 @@ export interface components {
          * @enum {string}
          */
         DeliveryMethod: "pickup" | "shipping";
+        /** ExchangeRateCreate */
+        ExchangeRateCreate: {
+            /** Rate */
+            rate: number | string;
+        };
         /** ExchangeRateRead */
         ExchangeRateRead: {
             /** Rate */
@@ -1067,12 +2407,38 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** I18nDescription */
+        I18nDescription: {
+            /** Es */
+            es: string;
+            /** En */
+            en: string;
+        };
+        /** I18nText */
+        I18nText: {
+            /** Es */
+            es: string;
+            /** En */
+            en: string;
+        };
         /** ImageRead */
         ImageRead: {
             /** Url */
             url: string;
             /** Alt */
             alt: string;
+            /** Width */
+            width?: number | null;
+            /** Height */
+            height?: number | null;
+        };
+        /** ImageUpdate */
+        ImageUpdate: {
+            alt?: components["schemas"]["I18nText"] | null;
+            /** Position */
+            position?: number | null;
+            /** Variant Id */
+            variant_id?: number | null;
         };
         /** LineItem */
         LineItem: {
@@ -1162,6 +2528,17 @@ export interface components {
             /** Fiscal Address */
             fiscal_address: string;
         };
+        /** OrderCustomer */
+        OrderCustomer: {
+            /** Id */
+            id: number;
+            /** Email */
+            email: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+        };
         /** OrderDelivery */
         OrderDelivery: {
             method: components["schemas"]["DeliveryMethod"];
@@ -1236,6 +2613,12 @@ export interface components {
              */
             created_at: string;
         };
+        /** OrderStatusUpdate */
+        OrderStatusUpdate: {
+            status: components["schemas"]["OrderStatus"];
+            /** Note */
+            note?: string | null;
+        };
         /** OrderSummary */
         OrderSummary: {
             /** Number */
@@ -1250,6 +2633,206 @@ export interface components {
              */
             created_at: string;
         };
+        /** OwnReviewRead */
+        OwnReviewRead: {
+            /** Id */
+            id: number;
+            product: components["schemas"]["ReviewProduct"];
+            /** Rating */
+            rating: number;
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+            status: components["schemas"]["ReviewStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** Page[AdminAttributeRead] */
+        Page_AdminAttributeRead_: {
+            /** Items */
+            items: components["schemas"]["AdminAttributeRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminAttributeValueRead] */
+        Page_AdminAttributeValueRead_: {
+            /** Items */
+            items: components["schemas"]["AdminAttributeValueRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminBrandRead] */
+        Page_AdminBrandRead_: {
+            /** Items */
+            items: components["schemas"]["AdminBrandRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminCategoryRead] */
+        Page_AdminCategoryRead_: {
+            /** Items */
+            items: components["schemas"]["AdminCategoryRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminCouponRead] */
+        Page_AdminCouponRead_: {
+            /** Items */
+            items: components["schemas"]["AdminCouponRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminExchangeRateRead] */
+        Page_AdminExchangeRateRead_: {
+            /** Items */
+            items: components["schemas"]["AdminExchangeRateRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminOrderSummary] */
+        Page_AdminOrderSummary_: {
+            /** Items */
+            items: components["schemas"]["AdminOrderSummary"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminPickupPointRead] */
+        Page_AdminPickupPointRead_: {
+            /** Items */
+            items: components["schemas"]["AdminPickupPointRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminProductSummary] */
+        Page_AdminProductSummary_: {
+            /** Items */
+            items: components["schemas"]["AdminProductSummary"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminProvinceRead] */
+        Page_AdminProvinceRead_: {
+            /** Items */
+            items: components["schemas"]["AdminProvinceRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminReviewRead] */
+        Page_AdminReviewRead_: {
+            /** Items */
+            items: components["schemas"]["AdminReviewRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminUserRead] */
+        Page_AdminUserRead_: {
+            /** Items */
+            items: components["schemas"]["AdminUserRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AdminZoneRead] */
+        Page_AdminZoneRead_: {
+            /** Items */
+            items: components["schemas"]["AdminZoneRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[AuditLogRead] */
+        Page_AuditLogRead_: {
+            /** Items */
+            items: components["schemas"]["AuditLogRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
         /** Page[OrderSummary] */
         Page_OrderSummary_: {
             /** Items */
@@ -1263,10 +2846,49 @@ export interface components {
             /** Pages */
             pages: number;
         };
+        /** Page[OwnReviewRead] */
+        Page_OwnReviewRead_: {
+            /** Items */
+            items: components["schemas"]["OwnReviewRead"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
         /** Page[ProductCard] */
         Page_ProductCard_: {
             /** Items */
             items: components["schemas"]["ProductCard"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[ReviewProduct] */
+        Page_ReviewProduct_: {
+            /** Items */
+            items: components["schemas"]["ReviewProduct"][];
+            /** Page */
+            page: number;
+            /** Size */
+            size: number;
+            /** Total */
+            total: number;
+            /** Pages */
+            pages: number;
+        };
+        /** Page[ReviewRead] */
+        Page_ReviewRead_: {
+            /** Items */
+            items: components["schemas"]["ReviewRead"][];
             /** Page */
             page: number;
             /** Size */
@@ -1304,6 +2926,22 @@ export interface components {
          * @enum {string}
          */
         PaymentStatus: "pending" | "approved" | "rejected" | "refunded";
+        /** PickupPointCreate */
+        PickupPointCreate: {
+            /** Name */
+            name: string;
+            /** Address */
+            address: string;
+            /** Hours */
+            hours?: {
+                [key: string]: string;
+            } | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
         /** PickupPointRead */
         PickupPointRead: {
             /** Id */
@@ -1316,6 +2954,19 @@ export interface components {
             hours: {
                 [key: string]: string;
             } | null;
+        };
+        /** PickupPointUpdate */
+        PickupPointUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Address */
+            address?: string | null;
+            /** Hours */
+            hours?: {
+                [key: string]: string;
+            } | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
         /** PriceRange */
         PriceRange: {
@@ -1341,6 +2992,21 @@ export interface components {
             rating_avg: string;
             /** Rating Count */
             rating_count: number;
+        };
+        /** ProductCreate */
+        ProductCreate: {
+            /** Slug */
+            slug: string;
+            /** Category Id */
+            category_id: number;
+            /** Brand Id */
+            brand_id?: number | null;
+            /**
+             * Is Featured
+             * @default false
+             */
+            is_featured: boolean;
+            translations: components["schemas"]["ProductTexts"];
         };
         /** ProductDetail */
         ProductDetail: {
@@ -1387,6 +3053,38 @@ export interface components {
          * @enum {string}
          */
         ProductSort: "relevance" | "newest" | "price_asc" | "price_desc" | "name";
+        /** ProductText */
+        ProductText: {
+            /** Name */
+            name: string;
+            /** Short Description */
+            short_description: string;
+            /** Description */
+            description: string;
+            /** Specs */
+            specs?: {
+                [key: string]: string;
+            } | null;
+        };
+        /** ProductTexts */
+        ProductTexts: {
+            es: components["schemas"]["ProductText"];
+            en: components["schemas"]["ProductText"];
+        };
+        /** ProductUpdate */
+        ProductUpdate: {
+            /** Slug */
+            slug?: string | null;
+            /** Category Id */
+            category_id?: number | null;
+            /** Brand Id */
+            brand_id?: number | null;
+            /** Is Featured */
+            is_featured?: boolean | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            translations?: components["schemas"]["ProductTexts"] | null;
+        };
         /** ProvinceRead */
         ProvinceRead: {
             /** Code */
@@ -1401,6 +3099,11 @@ export interface components {
             code: string;
             /** Name */
             name: string;
+        };
+        /** ProvinceZoneUpdate */
+        ProvinceZoneUpdate: {
+            /** Shipping Zone Id */
+            shipping_zone_id?: number | null;
         };
         /** RegisterRequest */
         RegisterRequest: {
@@ -1425,6 +3128,68 @@ export interface components {
             password: string;
             /** @default es */
             locale: components["schemas"]["Locale"];
+        };
+        /** ReviewAuthor */
+        ReviewAuthor: {
+            /** Id */
+            id: number;
+            /** Email */
+            email: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
+        };
+        /** ReviewCreate */
+        ReviewCreate: {
+            /** Rating */
+            rating: number;
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+        };
+        /** ReviewProduct */
+        ReviewProduct: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            image: components["schemas"]["ImageRead"] | null;
+        };
+        /** ReviewRead */
+        ReviewRead: {
+            /** Id */
+            id: number;
+            /** Rating */
+            rating: number;
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+            /** Author */
+            author: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * ReviewStatus
+         * @enum {string}
+         */
+        ReviewStatus: "pending" | "approved" | "rejected";
+        /** ReviewedProduct */
+        ReviewedProduct: {
+            /** Id */
+            id: number;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: {
+                [key: string]: string;
+            };
         };
         /** ShippingQuoteRead */
         ShippingQuoteRead: {
@@ -1451,6 +3216,13 @@ export interface components {
             /** @default ARS */
             currency: components["schemas"]["Currency"];
         };
+        /** StockAdjustment */
+        StockAdjustment: {
+            /** Delta */
+            delta: number;
+            /** Reason */
+            reason: string;
+        };
         /**
          * StockStatus
          * @enum {string}
@@ -1472,6 +3244,12 @@ export interface components {
          * @enum {string}
          */
         UserRole: "customer" | "admin";
+        /** UserUpdate */
+        UserUpdate: {
+            /** Is Active */
+            is_active?: boolean | null;
+            role?: components["schemas"]["UserRole"] | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1496,6 +3274,35 @@ export interface components {
             /** Value */
             value: string;
         };
+        /** VariantCreate */
+        VariantCreate: {
+            /** Sku */
+            sku: string;
+            /** Price Usd */
+            price_usd: number | string;
+            /** Compare At Price Usd */
+            compare_at_price_usd?: number | string | null;
+            /**
+             * Stock
+             * @default 0
+             */
+            stock: number;
+            /**
+             * Position
+             * @default 0
+             */
+            position: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /**
+             * Attribute Value Ids
+             * @default []
+             */
+            attribute_value_ids: number[];
+        };
         /** VariantRead */
         VariantRead: {
             /** Id */
@@ -1508,10 +3315,46 @@ export interface components {
             /** Attributes */
             attributes: components["schemas"]["VariantAttribute"][];
         };
+        /** VariantUpdate */
+        VariantUpdate: {
+            /** Version */
+            version: number;
+            /** Sku */
+            sku?: string | null;
+            /** Price Usd */
+            price_usd?: number | string | null;
+            /** Compare At Price Usd */
+            compare_at_price_usd?: number | string | null;
+            /** Position */
+            position?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Attribute Value Ids */
+            attribute_value_ids?: number[] | null;
+        };
         /** VerifyEmailRequest */
         VerifyEmailRequest: {
             /** Token */
             token: string;
+        };
+        /** ZoneCreate */
+        ZoneCreate: {
+            /** Code */
+            code: string;
+            name: components["schemas"]["I18nText"];
+            /** Cost Usd */
+            cost_usd: number | string;
+            /** Free Over Usd */
+            free_over_usd?: number | string | null;
+            /** Eta Min Days */
+            eta_min_days: number;
+            /** Eta Max Days */
+            eta_max_days: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
         };
         /** ZoneRead */
         ZoneRead: {
@@ -1523,6 +3366,22 @@ export interface components {
             eta_min_days: number;
             /** Eta Max Days */
             eta_max_days: number;
+        };
+        /** ZoneUpdate */
+        ZoneUpdate: {
+            /** Code */
+            code?: string | null;
+            name?: components["schemas"]["I18nText"] | null;
+            /** Cost Usd */
+            cost_usd?: number | string | null;
+            /** Free Over Usd */
+            free_over_usd?: number | string | null;
+            /** Eta Min Days */
+            eta_min_days?: number | null;
+            /** Eta Max Days */
+            eta_max_days?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
     };
     responses: never;
@@ -2855,6 +4714,255 @@ export interface operations {
             };
         };
     };
+    list_product_reviews_api_v1_products__slug__reviews_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ReviewRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_review_api_v1_products__slug__reviews_post: {
+        parameters: {
+            query?: {
+                locale?: components["schemas"]["Locale"];
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnReviewRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_own_reviews_api_v1_me_reviews_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                locale?: components["schemas"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OwnReviewRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_reviewable_products_api_v1_me_reviewable_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                locale?: components["schemas"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ReviewProduct_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_favorites_api_v1_me_favorites_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                currency?: components["schemas"]["Currency"];
+                locale?: components["schemas"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ProductCard_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_favorite_slugs_api_v1_me_favorites_slugs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+        };
+    };
+    add_favorite_api_v1_me_favorites__slug__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_favorite_api_v1_me_favorites__slug__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_exchange_rate_api_v1_exchange_rate_get: {
         parameters: {
             query?: never;
@@ -2948,6 +5056,2137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ShippingQuoteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_categories_api_v1_admin_categories_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminCategoryRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_category_api_v1_admin_categories_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_category_api_v1_admin_categories__category_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_category_api_v1_admin_categories__category_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_category_api_v1_admin_categories__category_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_category_image_api_v1_admin_categories__category_id__image_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_category_image_api_v1_admin_categories__category_id__image_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_category_image_api_v1_admin_categories__category_id__image_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_brands_api_v1_admin_brands_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminBrandRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_brand_api_v1_admin_brands_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBrandRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_brand_api_v1_admin_brands__brand_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBrandRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_brand_api_v1_admin_brands__brand_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_brand_api_v1_admin_brands__brand_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBrandRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_brand_logo_api_v1_admin_brands__brand_id__logo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_brand_logo_api_v1_admin_brands__brand_id__logo_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBrandRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_brand_logo_api_v1_admin_brands__brand_id__logo_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBrandRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_attributes_api_v1_admin_attributes_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminAttributeRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_attribute_api_v1_admin_attributes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttributeCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_attribute_api_v1_admin_attributes__attribute_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_attribute_api_v1_admin_attributes__attribute_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_attribute_api_v1_admin_attributes__attribute_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttributeUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_attribute_values_api_v1_admin_attributes__attribute_id__values_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminAttributeValueRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_attribute_value_api_v1_admin_attributes__attribute_id__values_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttributeValueCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeValueRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                value_id: number;
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeValueRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                value_id: number;
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_attribute_value_api_v1_admin_attributes__attribute_id__values__value_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                value_id: number;
+                attribute_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttributeValueUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAttributeValueRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_products_api_v1_admin_products_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                q?: string | null;
+                category_id?: number | null;
+                brand_id?: number | null;
+                is_active?: boolean | null;
+                locale?: components["schemas"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminProductSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_product_api_v1_admin_products_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProductRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_product_api_v1_admin_products__product_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProductRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_product_api_v1_admin_products__product_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProductRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_product_api_v1_admin_products__product_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProductRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_variant_api_v1_admin_products__product_id__variants_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VariantCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVariantRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_variant_api_v1_admin_variants__variant_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                variant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VariantUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVariantRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_variant_api_v1_admin_variants__variant_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                variant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVariantRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    adjust_stock_api_v1_admin_variants__variant_id__stock_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                variant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StockAdjustment"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVariantRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_product_image_api_v1_admin_products__product_id__images_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_product_image_api_v1_admin_products__product_id__images_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminImageRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_product_image_api_v1_admin_images__image_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                image_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_product_image_api_v1_admin_images__image_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                image_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImageUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminImageRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_exchange_rates_api_v1_admin_exchange_rates_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminExchangeRateRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_exchange_rate_api_v1_admin_exchange_rates_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExchangeRateCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminExchangeRateRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_zones_api_v1_admin_zones_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminZoneRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_zone_api_v1_admin_zones_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ZoneCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminZoneRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_zone_api_v1_admin_zones__zone_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                zone_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminZoneRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_zone_api_v1_admin_zones__zone_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                zone_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_zone_api_v1_admin_zones__zone_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                zone_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ZoneUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminZoneRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_provinces_api_v1_admin_provinces_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminProvinceRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_province_api_v1_admin_provinces__code__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProvinceZoneUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProvinceRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_pickup_points_api_v1_admin_pickup_points_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminPickupPointRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_pickup_point_api_v1_admin_pickup_points_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PickupPointCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPickupPointRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pickup_point_api_v1_admin_pickup_points__point_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                point_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPickupPointRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_pickup_point_api_v1_admin_pickup_points__point_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                point_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_pickup_point_api_v1_admin_pickup_points__point_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                point_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PickupPointUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPickupPointRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_coupons_api_v1_admin_coupons_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminCouponRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_coupon_api_v1_admin_coupons_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CouponCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCouponRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_coupon_api_v1_admin_coupons__coupon_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                coupon_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCouponRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_coupon_api_v1_admin_coupons__coupon_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                coupon_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_coupon_api_v1_admin_coupons__coupon_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                coupon_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CouponUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCouponRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_orders_api_v1_admin_orders_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                status?: components["schemas"]["OrderStatus"] | null;
+                number?: string | null;
+                email?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminOrderSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_order_api_v1_admin_orders__number__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrderRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_order_status_api_v1_admin_orders__number__status_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderStatusUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrderRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_reviews_api_v1_admin_reviews_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                status?: components["schemas"]["ReviewStatus"] | null;
+                product_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminReviewRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_review_api_v1_admin_reviews__review_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminReviewRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_review_api_v1_admin_reviews__review_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminReviewRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_users_api_v1_admin_users_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                q?: string | null;
+                role?: components["schemas"]["UserRole"] | null;
+                is_active?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminUserRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_user_api_v1_admin_users__user_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_user_api_v1_admin_users__user_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_audit_logs_api_v1_admin_audit_logs_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                actor_id?: number | null;
+                entity?: string | null;
+                entity_id?: string | null;
+                action?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AuditLogRead_"];
                 };
             };
             /** @description Validation Error */

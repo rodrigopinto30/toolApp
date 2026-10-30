@@ -9,6 +9,7 @@ export class OrderPage extends AppPage {
   readonly status = this.main.locator("header [data-slot=badge]");
   readonly notice = this.main.getByRole("status");
   readonly notFound = this.main.getByText(this.t.Orders.detail.notFound);
+  readonly loadError = this.main.getByRole("alert");
   readonly payments = this.main.getByRole("region", { name: this.t.Orders.payments.title });
   readonly retryForm = this.main.getByRole("form", { name: this.t.Orders.pay.title });
   readonly cancelButton = this.main.getByRole("button", { name: this.t.Orders.cancel.open });

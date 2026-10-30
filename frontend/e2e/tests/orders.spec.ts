@@ -20,6 +20,29 @@ async function placeOrder(checkoutPage: CheckoutPage, card?: Parameters<Checkout
   return new OrderPage(checkoutPage.page, OrderPage.numberIn(checkoutPage.page));
 }
 
+checkoutTest.describe("when the API fails", () => {
+  checkoutTest.use({ allowedConsoleError: /status of 500/ });
+
+  checkoutTest("a failed read shows an error and does not reload the page", async ({ page, context, checkoutPage }) => {
+    await fillServerCart(context.request);
+    const orderPage = await placeOrder(checkoutPage);
+    const number = OrderPage.numberIn(page);
+    await page.route(`**/api/v1/me/orders/${number}*`, (route) =>
+      route.fulfill({ status: 500, json: { code: "internal_error", message: "Failed.", request_id: "e2e" } }),
+    );
+    let documents = 0;
+    page.on("request", (request) => {
+      documents += request.resourceType() === "document" ? 1 : 0;
+    });
+
+    await orderPage.goto();
+
+    await expect(orderPage.loadError).toBeVisible();
+    await page.waitForTimeout(3_000);
+    expect(documents).toBe(1);
+  });
+});
+
 checkoutTest("a paid order is confirmed and listed", async ({ page, context, checkoutPage }) => {
   await fillServerCart(context.request);
 

@@ -20,6 +20,7 @@ const EXPECTED_CONSOLE_ERROR =
   /^Failed to load resource: (the server responded with a status of 4\d\d\b|net::ERR_CONNECTION_RESET)/;
 
 type Fixtures = {
+  allowedConsoleError: RegExp | null;
   browserErrors: void;
   buyerName: BuyerName;
   buyer: Buyer;
@@ -50,8 +51,9 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     },
     { scope: "worker" },
   ],
+  allowedConsoleError: [null, { option: true }],
   browserErrors: [
-    async ({ context }, use) => {
+    async ({ context, allowedConsoleError }, use) => {
       const errors: string[] = [];
       await context.addInitScript(() => {
         document.addEventListener("securitypolicyviolation", (event) => {
@@ -61,7 +63,8 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
         });
       });
       context.on("console", (message) => {
-        if (message.type() === "error" && !EXPECTED_CONSOLE_ERROR.test(message.text())) {
+        const expected = EXPECTED_CONSOLE_ERROR.test(message.text()) || allowedConsoleError?.test(message.text());
+        if (message.type() === "error" && !expected) {
           errors.push(message.text());
         }
       });
