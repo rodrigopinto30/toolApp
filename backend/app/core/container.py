@@ -20,6 +20,7 @@ from app.services.catalog import CatalogService
 from app.services.checkout import CheckoutService
 from app.services.orders import OrderService
 from app.services.pricing import PricingService
+from app.services.revalidation import ChangePublisher, FrontendRevalidator
 from app.services.shipping import ShippingService
 
 
@@ -57,6 +58,20 @@ def get_cache(request: Request) -> Cache:
 
 
 CacheDep = Annotated[Cache, Depends(get_cache)]
+
+
+def get_frontend_revalidator(request: Request) -> FrontendRevalidator:
+    return request.app.state.frontend_revalidator
+
+
+def get_change_publisher(
+    cache: CacheDep,
+    revalidator: Annotated[FrontendRevalidator, Depends(get_frontend_revalidator)],
+) -> ChangePublisher:
+    return ChangePublisher(cache, revalidator)
+
+
+ChangePublisherDep = Annotated[ChangePublisher, Depends(get_change_publisher)]
 
 
 def get_pricing_service(

@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     payment_breaker_failures: int = 3
     payment_breaker_reset_seconds: float = 30.0
 
+    frontend_internal_url: str = "http://frontend:3000"
+    revalidate_secret: SecretStr | None = None
+    revalidate_timeout_seconds: float = 2.0
+
     jwt_secret: SecretStr | None = None
     jwt_issuer: str = "toolapp"
     jwt_audience: str = "toolapp-api"

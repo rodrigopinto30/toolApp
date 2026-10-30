@@ -1,18 +1,15 @@
 from collections.abc import Iterator
-from typing import Annotated
 
 import pytest
-from fastapi import APIRouter, Depends, FastAPI
+from fastapi import APIRouter, FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.deps import VerifiedUser, require_role
+from app.api.v1.deps import AdminUser, VerifiedUser
 from app.models import User, UserRole
 from tests.factories import make_user
 
 PASSWORD = "a-long-password"
-
-AdminUser = Annotated[User, Depends(require_role(UserRole.ADMIN))]
 
 
 @pytest.fixture(scope="module")

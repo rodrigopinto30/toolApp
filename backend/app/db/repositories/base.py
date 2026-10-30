@@ -9,9 +9,6 @@ from app.db.base import Base
 
 
 class SqlAlchemyRepository[ModelT: Base]:
-    """Generic data access for one model. Aggregate repositories (ProductRepository...)
-    subclass it and add their own queries. It never commits: the Unit of Work does."""
-
     model: type[ModelT]
 
     def __init__(self, session: AsyncSession, model: type[ModelT] | None = None) -> None:
@@ -25,6 +22,15 @@ class SqlAlchemyRepository[ModelT: Base]:
     async def get_by(self, **filters: Any) -> ModelT | None:
         result = await self.session.scalars(select(self.model).filter_by(**filters).limit(1))
         return result.first()
+
+    async def get_locked(self, **filters: Any) -> ModelT | None:
+        statement = (
+            select(self.model)
+            .filter_by(**filters)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        )
+        return await self.session.scalar(statement)
 
     async def list(
         self,
