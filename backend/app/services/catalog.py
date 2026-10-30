@@ -122,7 +122,7 @@ class CatalogService:
         )
         page = await self._search_usd(product_filter, params.locale, params.page, params.size)
         return page.model_copy(
-            update={"items": [_card_in(card, converter, params.currency) for card in page.items]}
+            update={"items": [card_in(card, converter, params.currency) for card in page.items]}
         )
 
     async def facets(self, params: ProductFilterParams) -> ProductFacets:
@@ -160,12 +160,12 @@ class CatalogService:
         page = await self._search_usd(
             ProductFilter(), locale, 1, FEATURED_LIMIT, featured_only=True
         )
-        return [_card_in(card, converter, currency) for card in page.items]
+        return [card_in(card, converter, currency) for card in page.items]
 
     async def detail(self, slug: str, locale: Locale, currency: Currency) -> ProductDetail:
         converter = await self.pricing.converter(currency)
         detail = await self._detail_usd(slug, locale)
-        card = _card_in(detail, converter, currency)
+        card = card_in(detail, converter, currency)
         return detail.model_copy(
             update={
                 "price_from": card.price_from,
@@ -225,7 +225,7 @@ class CatalogService:
                 limit=size,
                 featured_only=featured_only,
             )
-            items = [self._card(product, locale) for product in products]
+            items = [self.card(product, locale) for product in products]
         return Page[ProductCard](
             items=items, page=page, size=size, total=total, pages=math.ceil(total / size)
         )
@@ -247,7 +247,7 @@ class CatalogService:
             variants = _active_variants(product) if product else []
             if product is None or not variants:
                 raise NotFoundError("Product not found.")
-            card = self._card(product, locale)
+            card = self.card(product, locale)
             translation = product_translation(product, locale)
             return ProductDetail(
                 **card.model_dump(),
@@ -258,7 +258,7 @@ class CatalogService:
                 variants=[self._variant(variant, locale) for variant in variants],
             )
 
-    def _card(self, product: Product, locale: Locale) -> ProductCard:
+    def card(self, product: Product, locale: Locale) -> ProductCard:
         translation = product_translation(product, locale)
         variants = _active_variants(product)
         cheapest = min(variants, key=lambda v: (v.price_usd, v.position))
@@ -303,7 +303,7 @@ def _usd(amount: Decimal | None) -> Money | None:
     return None if amount is None else Money(amount=amount, currency=Currency.USD)
 
 
-def _card_in[CardT: ProductCard](card: CardT, converter: PriceConverter, currency: Currency) -> CardT:
+def card_in[CardT: ProductCard](card: CardT, converter: PriceConverter, currency: Currency) -> CardT:
     return card.model_copy(
         update={
             "price_from": converter.convert(card.price_from, currency),

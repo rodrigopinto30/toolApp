@@ -1,10 +1,15 @@
 from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, CheckConstraint, ForeignKey, Index, SmallInteger, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
 from app.db.types import BigIntPk, enum_check, str_enum
+
+if TYPE_CHECKING:
+    from app.models.catalog import Product
+    from app.models.identity import User
 
 
 class ReviewStatus(StrEnum):
@@ -14,8 +19,6 @@ class ReviewStatus(StrEnum):
 
 
 class Review(TimestampMixin, Base):
-    """Only buyers with a delivered order can review (service rule). Approval by an admin."""
-
     __tablename__ = "reviews"
     __table_args__ = (
         UniqueConstraint("product_id", "user_id"),
@@ -35,6 +38,9 @@ class Review(TimestampMixin, Base):
         default=ReviewStatus.PENDING,
         server_default=ReviewStatus.PENDING,
     )
+
+    product: Mapped["Product"] = relationship(lazy="raise")
+    user: Mapped["User"] = relationship(lazy="raise")
 
 
 class Favorite(TimestampMixin, Base):

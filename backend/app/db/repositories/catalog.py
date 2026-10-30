@@ -3,7 +3,7 @@ from dataclasses import replace
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import Select, Subquery, and_, func, or_, select, true
+from sqlalchemy import Select, Subquery, and_, exists, func, or_, select, true, update
 from sqlalchemy.orm import aliased, selectinload
 
 from app.db.repositories.base import SqlAlchemyRepository
@@ -18,11 +18,16 @@ from app.models import (
     AttributeValue,
     Brand,
     Category,
+    Favorite,
     Locale,
+    Order,
+    OrderItem,
+    OrderStatus,
     Product,
     ProductImage,
     ProductTranslation,
     ProductVariant,
+    Review,
     variant_attribute_values,
 )
 from app.schemas.catalog import ProductFacetCounts
@@ -81,6 +86,27 @@ _PRODUCT_OPTIONS = (
 )
 
 
+def _visible(statement: Select[Any]) -> Select[Any]:
+    return (
+        statement.join(Category, Category.id == Product.category_id)
+        .outerjoin(Brand, Brand.id == Product.brand_id)
+        .where(
+            Product.is_active.is_(true()),
+            Category.is_active.is_(true()),
+            or_(Product.brand_id.is_(None), Brand.is_active.is_(true())),
+        )
+    )
+
+
+def _delivered_to(user_id: int) -> Select[tuple[int]]:
+    return (
+        select(ProductVariant.product_id)
+        .join(OrderItem, OrderItem.variant_id == ProductVariant.id)
+        .join(Order, Order.id == OrderItem.order_id)
+        .where(Order.user_id == user_id, Order.status == OrderStatus.DELIVERED)
+    )
+
+
 class ProductRepository(SqlAlchemyRepository[Product]):
     model = Product
 
@@ -137,7 +163,44 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         featured_only: bool = False,
     ) -> tuple[Sequence[Product], int]:
         statement, _ = self._listing(product_filter, locale, featured_only=featured_only)
+        return await self._page(statement, offset, limit)
 
+    async def favorites(
+        self, user_id: int, *, locale: Locale, offset: int, limit: int
+    ) -> tuple[Sequence[Product], int]:
+        statement, _ = self._listing(ProductFilter(), locale)
+        statement = (
+            statement.join(Favorite, Favorite.product_id == Product.id)
+            .where(Favorite.user_id == user_id)
+            .order_by(None)
+            .order_by(Favorite.created_at.desc(), Product.id.desc())
+        )
+        return await self._page(statement, offset, limit)
+
+    async def reviewable(
+        self, user_id: int, *, locale: Locale, offset: int, limit: int
+    ) -> tuple[Sequence[Product], int]:
+        reviewed = select(Review.product_id).where(Review.user_id == user_id)
+        statement, _ = self._listing(ProductFilter(), locale)
+        statement = statement.where(
+            Product.id.in_(_delivered_to(user_id)), Product.id.not_in(reviewed)
+        )
+        return await self._page(statement, offset, limit)
+
+    async def set_rating(self, product_id: int, average: Decimal, count: int) -> None:
+        await self.session.execute(
+            update(Product)
+            .where(Product.id == product_id)
+            .values(rating_avg=average, rating_count=count)
+        )
+
+    async def was_delivered_to(self, user_id: int, product_id: int) -> bool:
+        delivered = _delivered_to(user_id).where(ProductVariant.product_id == product_id)
+        return bool(await self.session.scalar(select(exists(delivered))))
+
+    async def _page(
+        self, statement: Select[Any], offset: int, limit: int
+    ) -> tuple[Sequence[Product], int]:
         total = await self.session.scalar(
             select(func.count()).select_from(statement.order_by(None).subquery())
         )
@@ -233,19 +296,12 @@ class ProductRepository(SqlAlchemyRepository[Product]):
             .subquery()
         )
         translation = aliased(ProductTranslation)
-        statement = (
+        statement = _visible(
             select(Product)
             .join(prices, prices.c.product_id == Product.id)
             .join(
                 translation,
                 and_(translation.product_id == Product.id, translation.locale == locale),
-            )
-            .join(Category, Category.id == Product.category_id)
-            .outerjoin(Brand, Brand.id == Product.brand_id)
-            .where(
-                Product.is_active.is_(true()),
-                Category.is_active.is_(true()),
-                or_(Product.brand_id.is_(None), Brand.is_active.is_(true())),
             )
         )
         if featured_only:
@@ -253,17 +309,17 @@ class ProductRepository(SqlAlchemyRepository[Product]):
         columns = ProductQueryColumns(translation, prices.c.price_from, prices.c.max_stock)
         return product_filter.apply(statement, columns), columns
 
+    async def visible_id(self, slug: str) -> int | None:
+        statement = _visible(select(Product.id)).where(
+            Product.slug == slug,
+            Product.variants.any(ProductVariant.is_active.is_(true())),
+        )
+        return await self.session.scalar(statement)
+
     async def get_visible_by_slug(self, slug: str) -> Product | None:
         statement = (
-            select(Product)
-            .join(Category, Category.id == Product.category_id)
-            .outerjoin(Brand, Brand.id == Product.brand_id)
-            .where(
-                Product.slug == slug,
-                Product.is_active.is_(true()),
-                Category.is_active.is_(true()),
-                or_(Product.brand_id.is_(None), Brand.is_active.is_(true())),
-            )
+            _visible(select(Product))
+            .where(Product.slug == slug)
             .options(
                 *_PRODUCT_OPTIONS,
                 selectinload(Product.variants)
