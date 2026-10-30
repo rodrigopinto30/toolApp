@@ -10,6 +10,12 @@ describe("parseServerEnv", () => {
     });
   });
 
+  it("reads the revalidation secret, and treats an empty one as missing", () => {
+    expect(parseServerEnv({ ...VALID, REVALIDATE_SECRET: "secret" }).REVALIDATE_SECRET).toBe("secret");
+    expect(parseServerEnv({ ...VALID, REVALIDATE_SECRET: "" }).REVALIDATE_SECRET).toBeUndefined();
+    expect(parseServerEnv(VALID).REVALIDATE_SECRET).toBeUndefined();
+  });
+
   it.each([
     { PUBLIC_URL: VALID.PUBLIC_URL },
     { ...VALID, INTERNAL_API_ORIGIN: "" },

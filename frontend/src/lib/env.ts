@@ -14,6 +14,10 @@ function origin(protocol: RegExp) {
 const serverEnvSchema = z.object({
   INTERNAL_API_ORIGIN: origin(/^https?$/),
   PUBLIC_URL: origin(/^https$/),
+  REVALIDATE_SECRET: z
+    .string()
+    .optional()
+    .transform((value) => value || undefined),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
