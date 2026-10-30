@@ -20,6 +20,7 @@ from app.models import (
     Category,
     Locale,
     Product,
+    ProductImage,
     ProductTranslation,
     ProductVariant,
     variant_attribute_values,
@@ -82,6 +83,12 @@ _PRODUCT_OPTIONS = (
 
 class ProductRepository(SqlAlchemyRepository[Product]):
     model = Product
+
+    async def next_image_position(self, product_id: int) -> int:
+        statement = select(func.coalesce(func.max(ProductImage.position) + 1, 0)).where(
+            ProductImage.product_id == product_id
+        )
+        return await self.session.scalar(statement) or 0
 
     async def admin_search(
         self,

@@ -13,3 +13,5 @@ tenacity==9.1.4
 argon2-cffi==25.1.0
 pyjwt==2.15.1
 httpx==0.28.1
+pillow==13.0.0
+python-multipart==0.0.32

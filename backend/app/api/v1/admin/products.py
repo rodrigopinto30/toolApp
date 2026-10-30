@@ -2,11 +2,19 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, status
 
-from app.api.v1.admin.deps import EntityId, ProductAdminDep, VariantAdminDep
+from app.api.v1.admin.deps import (
+    EntityId,
+    ImageAdminDep,
+    ImageBytes,
+    ProductAdminDep,
+    VariantAdminDep,
+)
 from app.schemas.admin.products import (
+    AdminImageRead,
     AdminProductRead,
     AdminProductSummary,
     AdminVariantRead,
+    ImageUpdate,
     ProductCreate,
     ProductListParams,
     ProductUpdate,
@@ -72,3 +80,22 @@ async def adjust_stock(
     variant_id: EntityId, body: StockAdjustment, variants: VariantAdminDep
 ) -> AdminVariantRead:
     return await variants.adjust_stock(variant_id, body)
+
+
+@router.post("/products/{product_id}/images", status_code=status.HTTP_201_CREATED)
+async def upload_product_image(
+    product_id: EntityId, data: ImageBytes, images: ImageAdminDep
+) -> AdminImageRead:
+    return await images.upload(product_id, data)
+
+
+@router.patch("/images/{image_id}")
+async def update_product_image(
+    image_id: EntityId, body: ImageUpdate, images: ImageAdminDep
+) -> AdminImageRead:
+    return await images.update(image_id, body)
+
+
+@router.delete("/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_product_image(image_id: EntityId, images: ImageAdminDep) -> None:
+    await images.delete(image_id)

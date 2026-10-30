@@ -1,6 +1,7 @@
 import re
 import uuid
 from collections.abc import AsyncIterator, Callable, Iterator, Sequence
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -17,6 +18,7 @@ from app.core.container import (
     get_cache,
     get_email_sender,
     get_frontend_revalidator,
+    get_image_storage,
     get_key_prefix,
     get_payment_gateway,
     get_session_factory,
@@ -24,6 +26,7 @@ from app.core.container import (
 from app.core.security import CSRF_COOKIE, CSRF_HEADER
 from app.email.sender import EmailMessage
 from app.main import create_app
+from app.media.storage import LocalImageStorage
 from app.models import Address, PickupPoint, User, UserRole
 from app.payments.circuit_breaker import CircuitBreaker
 from app.payments.gateway import MockPaymentGateway, PaymentGateway
@@ -139,6 +142,11 @@ def revalidations() -> RevalidationLog:
 
 
 @pytest.fixture
+def image_storage(tmp_path: Path) -> LocalImageStorage:
+    return LocalImageStorage(tmp_path)
+
+
+@pytest.fixture
 def key_prefix() -> str:
     return f"test:{uuid.uuid4().hex}"
 
@@ -150,12 +158,14 @@ def raw_client_factory(
     cache: Cache,
     outbox: Outbox,
     revalidations: RevalidationLog,
+    image_storage: LocalImageStorage,
     key_prefix: str,
 ) -> Iterator[Callable[..., AsyncClient]]:
     app.dependency_overrides[get_session_factory] = lambda: session_factory
     app.dependency_overrides[get_cache] = lambda: cache
     app.dependency_overrides[get_email_sender] = lambda: outbox
     app.dependency_overrides[get_frontend_revalidator] = lambda: revalidations
+    app.dependency_overrides[get_image_storage] = lambda: image_storage
     app.dependency_overrides[get_key_prefix] = lambda: key_prefix
 
     def factory(**kwargs: Any) -> AsyncClient:

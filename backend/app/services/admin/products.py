@@ -39,6 +39,7 @@ class ProductAdmin(AdminResource[Product, AdminProductRead]):
     namespaces = ("catalog",)
     load = (
         selectinload(Product.translations),
+        selectinload(Product.images),
         selectinload(Product.variants).selectinload(ProductVariant.attribute_values),
     )
 

@@ -2,11 +2,19 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Any, ClassVar, Self
 
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import AfterValidator, BaseModel, Field, StringConstraints, field_validator
 
+from app.media.paths import media_url
 from app.models import Locale, Product, ProductTranslation, ProductVariant
-from app.schemas.admin.common import AdminPageParams, Position, PositiveUsdAmount, UsdAmount, slug
-from app.schemas.common import PatchModel, RequestModel
+from app.schemas.admin.common import (
+    AdminPageParams,
+    I18nText,
+    Position,
+    PositiveUsdAmount,
+    UsdAmount,
+    slug,
+)
+from app.schemas.common import PatchModel, ReadModel, RequestModel
 from app.schemas.validators import text
 
 MAX_STOCK_CHANGE = 1_000_000
@@ -98,6 +106,25 @@ class StockAdjustment(RequestModel):
         return value
 
 
+class ImageUpdate(PatchModel):
+    nullable: ClassVar[frozenset[str]] = frozenset({"alt", "variant_id"})
+
+    alt: I18nText | None = None
+    position: Position | None = None
+    variant_id: int | None = Field(None, gt=0)
+
+
+class AdminImageRead(ReadModel):
+    id: int
+    product_id: int
+    variant_id: int | None
+    url: Annotated[str, AfterValidator(media_url)] = Field(validation_alias="path")
+    alt: I18nText | None
+    position: int
+    width: int | None
+    height: int | None
+
+
 class AdminVariantRead(BaseModel):
     id: int
     product_id: int
@@ -160,6 +187,7 @@ class AdminProductRead(BaseModel):
     rating_count: int
     translations: AdminProductTexts
     variants: list[AdminVariantRead]
+    images: list[AdminImageRead]
     created_at: datetime
     updated_at: datetime
 
@@ -177,6 +205,7 @@ class AdminProductRead(BaseModel):
             rating_count=product.rating_count,
             translations=AdminProductTexts(es=texts[Locale.ES], en=texts[Locale.EN]),
             variants=[AdminVariantRead.from_variant(variant) for variant in product.variants],
+            images=[AdminImageRead.model_validate(image) for image in product.images],
             created_at=product.created_at,
             updated_at=product.updated_at,
         )

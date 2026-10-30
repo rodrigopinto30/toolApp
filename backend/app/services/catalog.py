@@ -15,6 +15,7 @@ from app.db.repositories.catalog import (
 )
 from app.db.repositories.product_filter import AttributeSelection, ProductFilter, ProductSort
 from app.db.unit_of_work import SqlAlchemyUnitOfWork
+from app.media.paths import media_url
 from app.models import Currency, Locale, Product, ProductImage, ProductTranslation, ProductVariant
 from app.schemas.catalog import (
     AttributeFacet,
@@ -42,10 +43,6 @@ from app.schemas.common import Money, Page
 from app.services.pricing import PriceConverter, PricingService
 
 FEATURED_LIMIT = 8
-
-
-def media_url(path: str | None) -> str | None:
-    return f"/media/{path}" if path else None
 
 
 class CatalogService:
@@ -355,7 +352,9 @@ def stock_status(stock: int, low_stock_threshold: int) -> StockStatus:
 
 def product_image(image: ProductImage, locale: Locale, fallback_alt: str) -> ImageRead:
     alt = (image.alt or {}).get(locale) or fallback_alt
-    return ImageRead(url=media_url(image.path) or "", alt=alt)
+    return ImageRead(
+        url=media_url(image.path) or "", alt=alt, width=image.width, height=image.height
+    )
 
 
 def _category_path(rows: dict[int, CategoryRow], category_id: int, locale: Locale) -> list[CategoryRef]:
