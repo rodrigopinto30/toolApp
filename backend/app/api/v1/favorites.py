@@ -18,6 +18,11 @@ async def list_favorites(
     return await favorites.page(user.id, params)
 
 
+@router.get("/slugs")
+async def list_favorite_slugs(user: CurrentUser, favorites: FavoriteServiceDep) -> list[str]:
+    return await favorites.slugs(user.id)
+
+
 @router.put("/{slug}", status_code=status.HTTP_204_NO_CONTENT)
 async def add_favorite(slug: Slug, user: CurrentUser, favorites: FavoriteServiceDep) -> None:
     await favorites.add(user.id, slug)

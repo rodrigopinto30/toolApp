@@ -32,6 +32,10 @@ class FavoriteService:
             ]
         return Page.of(items, page=params.page, size=params.size, total=total)
 
+    async def slugs(self, user_id: int) -> list[str]:
+        async with self.uow:
+            return list(await ProductRepository(self.uow.session).favorite_slugs(user_id))
+
     async def add(self, user_id: int, slug: str) -> None:
         async with self.uow:
             product_id = await ProductRepository(self.uow.session).visible_id(slug)
