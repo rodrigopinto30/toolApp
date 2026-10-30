@@ -2,12 +2,15 @@ import uuid
 from typing import Any
 
 from httpx import AsyncClient, Response
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import (
     Address,
     BillingProfile,
+    Order,
+    OrderStatus,
+    Product,
     ProductVariant,
     Province,
     TaxCondition,
@@ -32,6 +35,21 @@ async def login(client: AsyncClient, user: User) -> None:
 
 async def variant_id(session: AsyncSession, sku: str) -> int:
     return await session.scalar(select(ProductVariant.id).where(ProductVariant.sku == sku))
+
+
+async def product_of(session: AsyncSession, sku: str) -> Product:
+    statement = (
+        select(Product)
+        .join(ProductVariant, ProductVariant.product_id == Product.id)
+        .where(ProductVariant.sku == sku)
+    )
+    return (await session.scalars(statement)).one()
+
+
+async def deliver(session: AsyncSession, number: str) -> None:
+    await session.execute(
+        update(Order).where(Order.number == number).values(status=OrderStatus.DELIVERED)
+    )
 
 
 async def stock(session: AsyncSession, sku: str) -> int:

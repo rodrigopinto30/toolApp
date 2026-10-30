@@ -34,6 +34,7 @@ from app.services.admin.pricing import (
     ZoneAdmin,
 )
 from app.services.admin.products import ProductAdmin, VariantAdmin
+from app.services.admin.reviews import ReviewAdmin
 from app.services.admin.users import UserAdmin
 from app.services.audit import AuditTrail
 from app.services.revalidation import ChangePublisher
@@ -130,4 +131,5 @@ ProductAdminDep = Annotated[ProductAdmin, Depends(admin_service(ProductAdmin))]
 VariantAdminDep = Annotated[VariantAdmin, Depends(admin_service(VariantAdmin))]
 ImageAdminDep = Annotated[ImageAdmin, Depends(media_service(ImageAdmin))]
 OrderAdminDep = Annotated[OrderAdmin, Depends(get_order_admin)]
+ReviewAdminDep = Annotated[ReviewAdmin, Depends(admin_service(ReviewAdmin))]
 UserAdminDep = Annotated[UserAdmin, Depends(get_user_admin)]

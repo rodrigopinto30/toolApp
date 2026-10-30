@@ -1,5 +1,3 @@
-"""Minimal valid entities for tests. Each call uses unique slugs/emails."""
-
 import uuid
 from decimal import Decimal
 from itertools import count
@@ -14,6 +12,8 @@ from app.models import (
     Product,
     ProductVariant,
     Province,
+    Review,
+    ReviewStatus,
     ShippingZone,
     User,
     UserRole,
@@ -83,3 +83,25 @@ def build_address(user: User, province: Province, *, is_default: bool) -> Addres
         postal_code="1000",
         is_default=is_default,
     )
+
+
+async def make_review(
+    session: AsyncSession,
+    product_id: int,
+    user: User,
+    *,
+    rating: int = 5,
+    status: ReviewStatus = ReviewStatus.PENDING,
+    title: str = "Great tool",
+) -> Review:
+    review = Review(
+        product_id=product_id,
+        user_id=user.id,
+        rating=rating,
+        title=title,
+        body="It works as described.",
+        status=status,
+    )
+    session.add(review)
+    await session.flush()
+    return review

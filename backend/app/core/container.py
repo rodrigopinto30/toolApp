@@ -19,9 +19,11 @@ from app.services.auth import AuthService
 from app.services.cart import CartService
 from app.services.catalog import CatalogService
 from app.services.checkout import CheckoutService
+from app.services.favorites import FavoriteService
 from app.services.orders import OrderService
 from app.services.pricing import PricingService
 from app.services.revalidation import ChangePublisher, FrontendRevalidator
+from app.services.reviews import ReviewService
 from app.services.shipping import ShippingService
 
 
@@ -115,6 +117,22 @@ def get_cart_service(
 CatalogServiceDep = Annotated[CatalogService, Depends(get_catalog_service)]
 ShippingServiceDep = Annotated[ShippingService, Depends(get_shipping_service)]
 CartServiceDep = Annotated[CartService, Depends(get_cart_service)]
+
+
+def get_review_service(
+    session_factory: SessionFactoryDep, cache: CacheDep, settings: SettingsDep
+) -> ReviewService:
+    return ReviewService(SqlAlchemyUnitOfWork(session_factory), cache, settings)
+
+
+def get_favorite_service(
+    session_factory: SessionFactoryDep, catalog: CatalogServiceDep, pricing: PricingServiceDep
+) -> FavoriteService:
+    return FavoriteService(SqlAlchemyUnitOfWork(session_factory), catalog, pricing)
+
+
+ReviewServiceDep = Annotated[ReviewService, Depends(get_review_service)]
+FavoriteServiceDep = Annotated[FavoriteService, Depends(get_favorite_service)]
 
 
 def get_key_prefix() -> str:
