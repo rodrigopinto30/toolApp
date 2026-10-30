@@ -24,7 +24,7 @@ async function fill(user: ReturnType<typeof userEvent.setup>, taxId: string) {
 
 it("rejects a CUIT with a wrong check digit", async () => {
   const user = userEvent.setup();
-  renderWithProviders(<BillingProfileForm onCreated={jest.fn()} />);
+  renderWithProviders(<BillingProfileForm onSaved={jest.fn()} />);
 
   await fill(user, "20-12345678-5");
 
@@ -33,7 +33,7 @@ it("rejects a CUIT with a wrong check digit", async () => {
 
 it("only accepts a DNI for a final consumer", async () => {
   const user = userEvent.setup();
-  renderWithProviders(<BillingProfileForm onCreated={jest.fn()} />);
+  renderWithProviders(<BillingProfileForm onSaved={jest.fn()} />);
 
   await user.click(screen.getByText("DNI"));
   await fill(user, "12.345.678");
@@ -49,13 +49,13 @@ it("creates the profile with digits only", async () => {
       return HttpResponse.json({ id: 3, ...(body as object) }, { status: 201 });
     }),
   );
-  const onCreated = jest.fn();
+  const onSaved = jest.fn();
   const user = userEvent.setup();
-  renderWithProviders(<BillingProfileForm onCreated={onCreated} />);
+  renderWithProviders(<BillingProfileForm onSaved={onSaved} />);
 
   await fill(user, "20-12345678-6");
 
-  await waitFor(() => expect(onCreated).toHaveBeenCalledWith(expect.objectContaining({ id: 3 })));
+  await waitFor(() => expect(onSaved).toHaveBeenCalledWith(expect.objectContaining({ id: 3 })));
   expect(body).toEqual({
     tax_id_type: "CUIT",
     tax_id: "20123456786",
@@ -63,5 +63,43 @@ it("creates the profile with digits only", async () => {
     legal_name: "Ana Diaz",
     fiscal_address: "Calle Falsa 123",
     is_default: false,
+  });
+});
+
+const SAVED = {
+  id: 3,
+  tax_id_type: "CUIT",
+  tax_id: "20329642330",
+  tax_condition: "monotributo",
+  legal_name: "Ana Diaz",
+  fiscal_address: "Av. Corrientes 1234",
+  is_default: true,
+} as const;
+
+it("loads a profile and leaves out a default it cannot unset", async () => {
+  let body: unknown;
+  server.use(
+    http.patch(`${ORIGIN}/api/v1/me/billing-profiles/3`, async ({ request }) => {
+      body = await request.json();
+      return HttpResponse.json(SAVED);
+    }),
+  );
+  const onSaved = jest.fn();
+  const user = userEvent.setup();
+  renderWithProviders(<BillingProfileForm profile={SAVED} onSaved={onSaved} />);
+
+  expect(screen.getByLabelText("Nombre o razón social")).toHaveValue("Ana Diaz");
+  expect(screen.queryByLabelText("Usar como datos principales")).not.toBeInTheDocument();
+  await user.clear(screen.getByLabelText("Domicilio fiscal"));
+  await user.type(screen.getByLabelText("Domicilio fiscal"), "Otra calle 5");
+  await user.click(screen.getByRole("button", { name: "Guardar los datos" }));
+
+  await waitFor(() => expect(onSaved).toHaveBeenCalledWith(SAVED));
+  expect(body).toEqual({
+    tax_id_type: "CUIT",
+    tax_id: "20329642330",
+    tax_condition: "monotributo",
+    legal_name: "Ana Diaz",
+    fiscal_address: "Otra calle 5",
   });
 });

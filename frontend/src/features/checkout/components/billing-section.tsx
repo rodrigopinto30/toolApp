@@ -54,7 +54,7 @@ export function BillingSection({
         {adding ? (
           <div className="rounded-lg border border-dashed p-4">
             <BillingProfileForm
-              onCreated={(profile) => {
+              onSaved={(profile) => {
                 onProfileChange(profile.id);
                 setAdding(false);
               }}

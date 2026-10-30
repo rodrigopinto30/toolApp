@@ -8,7 +8,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
-    <NextIntlClientProvider messages={await clientMessages([...FORM_NAMESPACES, "Account"])}>
+    <NextIntlClientProvider messages={await clientMessages([...FORM_NAMESPACES, "Account", "AddressForm", "BillingForm"])}>
       <section className="mx-auto grid w-full max-w-3xl flex-1 content-start gap-6 px-4 py-10">
         <AccountNav />
         {children}

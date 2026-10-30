@@ -5,7 +5,7 @@ import type { Credentials } from "./users";
 
 export const AUTH_DIR = path.resolve(__dirname, "../.auth");
 export const BUYERS_FILE = path.join(AUTH_DIR, "buyers.json");
-export const BUYER_NAMES = ["cart", "checkout", "orders"] as const;
+export const BUYER_NAMES = ["books", "cart", "checkout", "orders"] as const;
 
 export type BuyerName = (typeof BUYER_NAMES)[number];
 export type Buyer = Credentials & { storageState: string };

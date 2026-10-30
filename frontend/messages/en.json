@@ -412,7 +412,9 @@
     "nav": {
       "label": "Account sections",
       "profile": "My details",
-      "orders": "My orders"
+      "orders": "My orders",
+      "addresses": "Addresses",
+      "billing": "Billing"
     },
     "verification": {
       "pending": "You have not confirmed your email yet. You will need it to buy.",
@@ -440,6 +442,41 @@
       "submit": "Change password",
       "submitting": "Changing…",
       "saved": "Your password changed and your other sessions were closed."
+    },
+    "book": {
+      "default": "Default",
+      "edit": "Edit",
+      "editItem": "Edit {name}",
+      "makeDefault": "Make default",
+      "makeDefaultItem": "Make {name} the default",
+      "delete": "Delete",
+      "deleteItem": "Delete {name}",
+      "confirmDelete": "Yes, delete",
+      "deleting": "Deleting…",
+      "keep": "No, keep it",
+      "close": "Close"
+    },
+    "addresses": {
+      "metaTitle": "My addresses",
+      "title": "My addresses",
+      "add": "Add address",
+      "addTitle": "New address",
+      "editTitle": "Edit address",
+      "empty": "You have not saved any address yet.",
+      "loading": "Loading your addresses…",
+      "deleteTitle": "Delete {name}?",
+      "deleteDescription": "Orders you already placed keep their address."
+    },
+    "billing": {
+      "metaTitle": "My billing details",
+      "title": "My billing details",
+      "add": "Add details",
+      "addTitle": "New billing details",
+      "editTitle": "Edit billing details",
+      "empty": "You have not saved any billing details yet.",
+      "loading": "Loading your billing details…",
+      "deleteTitle": "Delete the details of {name}?",
+      "deleteDescription": "Orders you already placed keep their details."
     }
   },
   "AddressForm": {
