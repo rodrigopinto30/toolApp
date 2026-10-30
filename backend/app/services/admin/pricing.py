@@ -9,7 +9,7 @@ from app.schemas.admin.pricing import (
     AdminProvinceRead,
     AdminZoneRead,
 )
-from app.services.admin.base import AdminResource, code_taken
+from app.services.admin.base import AdminResource, taken
 
 
 class ExchangeRateAdmin(AdminResource[ExchangeRate, AdminExchangeRateRead]):
@@ -30,7 +30,7 @@ class ZoneAdmin(AdminResource[ShippingZone, AdminZoneRead]):
     namespaces = ("shipping",)
 
     def conflict(self) -> AppError:
-        return code_taken()
+        return taken("code")
 
     async def validate(self, state: Mapping[str, Any], entity: ShippingZone | None) -> None:
         if state["eta_min_days"] > state["eta_max_days"]:

@@ -3,6 +3,7 @@ from typing import Any
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import ORMOption
 from sqlalchemy.sql import ColumnElement
 
 from app.db.base import Base
@@ -19,18 +20,30 @@ class SqlAlchemyRepository[ModelT: Base]:
     async def get(self, entity_id: Any) -> ModelT | None:
         return await self.session.get(self.model, entity_id)
 
-    async def get_by(self, **filters: Any) -> ModelT | None:
-        result = await self.session.scalars(select(self.model).filter_by(**filters).limit(1))
-        return result.first()
+    async def get_by(self, *, options: Sequence[ORMOption] = (), **filters: Any) -> ModelT | None:
+        statement = select(self.model).filter_by(**filters).options(*options).limit(1)
+        return (await self.session.scalars(statement)).first()
 
-    async def get_locked(self, **filters: Any) -> ModelT | None:
+    async def get_locked(
+        self, *, options: Sequence[ORMOption] = (), **filters: Any
+    ) -> ModelT | None:
         statement = (
             select(self.model)
             .filter_by(**filters)
+            .options(*options)
             .with_for_update()
             .execution_options(populate_existing=True)
         )
         return await self.session.scalar(statement)
+
+    async def get_fresh(self, *, options: Sequence[ORMOption] = (), **filters: Any) -> ModelT:
+        statement = (
+            select(self.model)
+            .filter_by(**filters)
+            .options(*options)
+            .execution_options(populate_existing=True)
+        )
+        return (await self.session.scalars(statement)).one()
 
     async def list(
         self,
@@ -38,9 +51,10 @@ class SqlAlchemyRepository[ModelT: Base]:
         offset: int = 0,
         limit: int = 100,
         order_by: Sequence[ColumnElement[Any]] = (),
+        options: Sequence[ORMOption] = (),
         **filters: Any,
     ) -> Sequence[ModelT]:
-        statement = select(self.model).filter_by(**filters).order_by(*order_by)
+        statement = select(self.model).filter_by(**filters).order_by(*order_by).options(*options)
         result = await self.session.scalars(statement.offset(offset).limit(limit))
         return result.all()
 

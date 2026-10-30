@@ -4,7 +4,7 @@ from typing import Any
 from app.core.exceptions import AppError, BusinessRuleViolation, ConflictError
 from app.models import Coupon, CouponType, Order
 from app.schemas.admin.coupons import AdminCouponRead
-from app.services.admin.base import AdminResource, code_taken
+from app.services.admin.base import AdminResource, taken
 
 FROZEN_ONCE_USED = ("code", "type", "value")
 
@@ -27,7 +27,7 @@ class CouponAdmin(AdminResource[Coupon, AdminCouponRead]):
     ordering = (Coupon.id.desc(),)
 
     def conflict(self) -> AppError:
-        return code_taken()
+        return taken("code")
 
     async def validate(self, state: Mapping[str, Any], entity: Coupon | None) -> None:
         if entity is not None and await self._freezes(state, entity):

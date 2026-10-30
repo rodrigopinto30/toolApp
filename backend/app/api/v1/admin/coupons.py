@@ -1,9 +1,6 @@
-from typing import Annotated
+from fastapi import APIRouter, status
 
-from fastapi import APIRouter, Query, status
-
-from app.api.v1.admin.deps import CouponAdminDep, EntityId
-from app.schemas.admin.common import AdminPageParams
+from app.api.v1.admin.deps import CouponAdminDep, EntityId, PageParams
 from app.schemas.admin.coupons import AdminCouponRead, CouponCreate, CouponUpdate
 from app.schemas.common import Page
 
@@ -11,9 +8,7 @@ router = APIRouter(prefix="/coupons")
 
 
 @router.get("")
-async def list_coupons(
-    params: Annotated[AdminPageParams, Query()], coupons: CouponAdminDep
-) -> Page[AdminCouponRead]:
+async def list_coupons(params: PageParams, coupons: CouponAdminDep) -> Page[AdminCouponRead]:
     return await coupons.page(params)
 
 

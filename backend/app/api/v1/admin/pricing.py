@@ -1,16 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Path, Query, status
+from fastapi import APIRouter, Path, status
 
 from app.api.v1.admin.deps import (
     EntityId,
     ExchangeRateAdminDep,
+    PageParams,
     PickupPointAdminDep,
     ProvinceAdminDep,
     ZoneAdminDep,
 )
 from app.api.v1.deps import AdminUser
-from app.schemas.admin.common import AdminPageParams
 from app.schemas.admin.pricing import (
     AdminExchangeRateRead,
     AdminPickupPointRead,
@@ -28,7 +28,6 @@ from app.schemas.common import Page
 router = APIRouter()
 
 ProvinceCode = Annotated[str, Path(min_length=1, max_length=8)]
-PageParams = Annotated[AdminPageParams, Query()]
 
 
 @router.get("/exchange-rates")

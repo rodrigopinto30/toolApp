@@ -38,6 +38,13 @@ class CategoryRepository(SqlAlchemyRepository[Category]):
         )
         return (await self.session.scalars(statement)).all()
 
+    async def parents(self) -> dict[int, int | None]:
+        rows = await self.session.execute(select(Category.id, Category.parent_id))
+        return {category_id: parent_id for category_id, parent_id in rows}
+
+    async def lock_tree(self) -> None:
+        await self.session.execute(select(Category.id).with_for_update())
+
 
 class BrandRepository(SqlAlchemyRepository[Brand]):
     model = Brand
@@ -59,6 +66,12 @@ class AttributeRepository(SqlAlchemyRepository[Attribute]):
         )
         return (await self.session.scalars(statement)).all()
 
+    async def values_by_ids(self, ids: Sequence[int]) -> Sequence[AttributeValue]:
+        if not ids:
+            return []
+        statement = select(AttributeValue).where(AttributeValue.id.in_(ids))
+        return (await self.session.scalars(statement)).all()
+
 
 _PRODUCT_OPTIONS = (
     selectinload(Product.translations),
@@ -69,6 +82,43 @@ _PRODUCT_OPTIONS = (
 
 class ProductRepository(SqlAlchemyRepository[Product]):
     model = Product
+
+    async def admin_search(
+        self,
+        *,
+        q: str | None,
+        category_id: int | None,
+        brand_id: int | None,
+        is_active: bool | None,
+        offset: int,
+        limit: int,
+    ) -> tuple[Sequence[Product], int]:
+        exact = (
+            (Product.category_id, category_id),
+            (Product.brand_id, brand_id),
+            (Product.is_active, is_active),
+        )
+        conditions = [column == value for column, value in exact if value is not None]
+        if q is not None:
+            conditions.append(
+                or_(
+                    Product.slug.contains(q, autoescape=True),
+                    Product.translations.any(ProductTranslation.name.contains(q, autoescape=True)),
+                    Product.variants.any(ProductVariant.sku.contains(q, autoescape=True)),
+                )
+            )
+        total = await self.session.scalar(
+            select(func.count()).select_from(Product).where(*conditions)
+        )
+        statement = (
+            select(Product)
+            .where(*conditions)
+            .options(selectinload(Product.translations), selectinload(Product.variants))
+            .order_by(Product.id.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        return (await self.session.scalars(statement)).all(), total or 0
 
     async def search(
         self,
