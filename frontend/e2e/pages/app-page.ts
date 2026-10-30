@@ -9,8 +9,8 @@ export abstract class AppPage {
   readonly header: SiteHeader;
   readonly heading: Locator;
   readonly alert: Locator;
+  readonly main: Locator;
   protected readonly t: Messages;
-  protected readonly main: Locator;
   protected abstract readonly path: string;
 
   constructor(page: Page, locale: Locale = "es") {

@@ -22,6 +22,7 @@
     "label": "Menú de la cuenta",
     "login": "Ingresar",
     "account": "Mi cuenta",
+    "orders": "Mis pedidos",
     "logout": "Cerrar sesión",
     "loading": "Cargando la cuenta"
   },
@@ -91,8 +92,10 @@
       "price_desc": "Mayor precio",
       "name": "Nombre"
     },
-    "empty": "No encontramos productos con estos filtros.",
-    "pagination": "Paginación",
+    "empty": "No encontramos productos con estos filtros."
+  },
+  "Pagination": {
+    "label": "Paginación",
     "previous": "Anterior",
     "next": "Siguiente",
     "page": "Página {page}"
@@ -247,6 +250,86 @@
       "cart": "Tu carrito cambió mientras pagabas."
     }
   },
+  "Orders": {
+    "metaTitle": "Mis pedidos",
+    "title": "Mis pedidos",
+    "loading": "Cargando tus pedidos",
+    "empty": {
+      "title": "Todavía no hiciste ningún pedido",
+      "cta": "Ir a la tienda"
+    },
+    "row": "Pedido {number} del {date}",
+    "units": "{count, plural, one {# unidad} other {# unidades}}",
+    "status": {
+      "pending_payment": "Pago pendiente",
+      "paid": "Pagado",
+      "preparing": "En preparación",
+      "shipped": "Enviado",
+      "ready_for_pickup": "Listo para retirar",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado",
+      "refunded": "Reembolsado"
+    },
+    "detail": {
+      "metaTitle": "Pedido {number}",
+      "title": "Pedido {number}",
+      "date": "Hecho el {date}",
+      "back": "Volver a mis pedidos",
+      "loading": "Cargando el pedido",
+      "notFound": "No encontramos ese pedido.",
+      "items": "Productos",
+      "totals": "Totales"
+    },
+    "placed": {
+      "paid": "¡Gracias por tu compra! Confirmamos tu pedido y te enviamos el detalle por email.",
+      "pending_payment": "Recibimos tu pedido, pero el pago quedó pendiente. Podés reintentarlo acá abajo o cancelar el pedido."
+    },
+    "delivery": {
+      "title": "Entrega",
+      "shipping": "Envío a domicilio",
+      "pickup": "Retiro en el local",
+      "eta": "Llega en {min} a {max} días hábiles."
+    },
+    "billing": {
+      "title": "Facturación",
+      "finalConsumer": "Consumidor final"
+    },
+    "history": {
+      "title": "Seguimiento",
+      "notes": {
+        "payment_rejected": "La tarjeta fue rechazada.",
+        "cancelled_by_customer": "Lo cancelaste vos."
+      }
+    },
+    "payments": {
+      "title": "Pagos",
+      "status": {
+        "pending": "Pendiente",
+        "approved": "Aprobado",
+        "rejected": "Rechazado",
+        "refunded": "Reembolsado"
+      },
+      "card": "{brand} terminada en {last4}"
+    },
+    "cancel": {
+      "open": "Cancelar el pedido",
+      "title": "¿Cancelar el pedido {number}?",
+      "description": "Vamos a liberar los productos y el cupón, si usaste uno.",
+      "refund": "Te reintegramos {total} en el mismo medio de pago.",
+      "confirm": "Sí, cancelar",
+      "confirming": "Cancelando…",
+      "keep": "No, mantener el pedido"
+    },
+    "pay": {
+      "title": "Reintentar el pago",
+      "submit": "Pagar {total}",
+      "submitting": "Procesando el pago…",
+      "pending": "El pago sigue pendiente. Probá de nuevo en unos minutos.",
+      "paid": "Recibimos el pago. ¡Gracias por tu compra!",
+      "rejected": "La tarjeta fue rechazada y cancelamos el pedido. Los productos volvieron a tu carrito.",
+      "cart": "Ir al carrito"
+    }
+  },
   "NotFound": {
     "title": "Página no encontrada",
     "description": "La página que buscás no existe o se movió.",
@@ -326,6 +409,11 @@
     "title": "Mi cuenta",
     "loading": "Cargando tu cuenta…",
     "logout": "Cerrar sesión",
+    "nav": {
+      "label": "Secciones de la cuenta",
+      "profile": "Mis datos",
+      "orders": "Mis pedidos"
+    },
     "verification": {
       "pending": "Todavía no confirmaste tu email. Lo vas a necesitar para comprar.",
       "resend": "Reenviar el link",
@@ -445,6 +533,7 @@
     "limit_reached": "Llegaste al máximo permitido.",
     "unknown_province": "Elegí una provincia de la lista.",
     "invalid_tax_id": "El documento no es válido para esa condición.",
+    "invalid_transition": "El pedido cambió de estado y ya no se puede hacer eso.",
     "unexpected": "Ocurrió un error inesperado.",
     "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }

@@ -12,7 +12,7 @@ export abstract class ListingPage extends AppPage {
   readonly products = this.main.getByRole("article");
   readonly emptyState = this.main.getByText(this.t.Listing.empty);
   readonly clearFilters = this.main.getByRole("link", { name: this.t.Listing.clearFilters });
-  readonly pagination = this.main.getByRole("navigation", { name: this.t.Listing.pagination });
+  readonly pagination = this.main.getByRole("navigation", { name: this.t.Pagination.label });
 
   filterOption(label: string) {
     return this.page.getByRole("checkbox", { name: new RegExp(`^${escapeRegExp(label)} \\(\\d+\\)$`) });

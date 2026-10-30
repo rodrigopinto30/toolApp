@@ -1,30 +1,15 @@
-import type { APIRequestContext, Page } from "@playwright/test";
-
-import { APPROVED_CARD, CheckoutPage, REJECTED_CARD } from "../pages/checkout-page";
+import { CheckoutPage } from "../pages/checkout-page";
+import { APPROVED_CARD, REJECTED_CARD } from "../pages/card-form";
 import { redirectedToLogin } from "../pages/login-page";
-import { cartVariants, serverCart, setServerLine } from "../support/cart";
-import { customerTest, expect, test, unverifiedTest } from "../support/fixtures";
+import { OrderPage } from "../pages/order-page";
+import { fillServerCart, serverCart } from "../support/cart";
+import { checkoutTest, expect, test, unverifiedTest } from "../support/fixtures";
 import { messages } from "../support/i18n";
-import { cancelOpenOrders, customerOrder, customerOrders } from "../support/orders";
+import { customerOrder, customerOrders } from "../support/orders";
 
 const t = messages.es;
 
-const checkoutTest = customerTest.extend<{ checkoutPage: CheckoutPage }>({
-  checkoutPage: async ({ page, context }, use) => {
-    await use(new CheckoutPage(page));
-    await cancelOpenOrders(context.request);
-  },
-});
-
-async function fillCart(request: APIRequestContext, units = 1) {
-  const { plenty } = await cartVariants(request);
-  await setServerLine(request, plenty.variant_id, units);
-  return plenty;
-}
-
-function placedNumber(page: Page): string {
-  return new URL(page.url()).pathname.split("/").at(-1) ?? "";
-}
+checkoutTest.use({ buyerName: "checkout" });
 
 test("the checkout asks a visitor to log in first", async ({ page }) => {
   await page.goto("/es/checkout");
@@ -42,7 +27,7 @@ unverifiedTest("an unverified customer is asked to confirm the email", async ({ 
 });
 
 checkoutTest("a pickup order is paid and leaves no card number behind", async ({ page, context, checkoutPage }) => {
-  await fillCart(context.request);
+  await fillServerCart(context.request);
 
   await checkoutPage.goto();
   await checkoutPage.chooseDelivery("pickup");
@@ -50,7 +35,7 @@ checkoutTest("a pickup order is paid and leaves no card number behind", async ({
   await checkoutPage.pay();
 
   await expect(page).toHaveURL(checkoutPage.orderUrl());
-  const order = await customerOrder(context.request, placedNumber(page));
+  const order = await customerOrder(context.request, OrderPage.numberIn(page));
   expect([order.status, order.delivery.method]).toEqual(["paid", "pickup"]);
   expect((await serverCart(context.request)).items).toEqual([]);
   const stored = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }) + location.href);
@@ -58,7 +43,7 @@ checkoutTest("a pickup order is paid and leaves no card number behind", async ({
 });
 
 checkoutTest("a shipping order with a new address and a coupon", async ({ page, context, checkoutPage }) => {
-  const plenty = await fillCart(context.request, 8);
+  const plenty = await fillServerCart(context.request, 8);
 
   await checkoutPage.goto();
   await checkoutPage.addAddress({
@@ -77,14 +62,14 @@ checkoutTest("a shipping order with a new address and a coupon", async ({ page, 
   await checkoutPage.pay();
 
   await expect(page).toHaveURL(checkoutPage.orderUrl());
-  const order = await customerOrder(context.request, placedNumber(page));
+  const order = await customerOrder(context.request, OrderPage.numberIn(page));
   expect(order.coupon?.code).toBe("BIENVENIDA10");
   expect(order.delivery.address?.street).toBe("Av. Corrientes");
   expect(order.items.map((item) => [item.sku, item.quantity])).toEqual([[plenty.sku, 8]]);
 });
 
 checkoutTest("billing details and coupons are checked before paying", async ({ context, checkoutPage }) => {
-  await fillCart(context.request);
+  await fillServerCart(context.request);
   const before = (await customerOrders(context.request)).length;
 
   await checkoutPage.goto();
@@ -98,7 +83,7 @@ checkoutTest("billing details and coupons are checked before paying", async ({ c
 });
 
 checkoutTest("a double click places a single order", async ({ page, context, checkoutPage }) => {
-  await fillCart(context.request);
+  await fillServerCart(context.request);
   const before = (await customerOrders(context.request)).length;
 
   await checkoutPage.goto();
@@ -111,7 +96,7 @@ checkoutTest("a double click places a single order", async ({ page, context, che
 });
 
 checkoutTest("a rejected card keeps the products in the cart", async ({ context, checkoutPage }) => {
-  const plenty = await fillCart(context.request, 2);
+  const plenty = await fillServerCart(context.request, 2);
 
   await checkoutPage.goto();
   await checkoutPage.chooseDelivery("pickup");
@@ -123,4 +108,37 @@ checkoutTest("a rejected card keeps the products in the cart", async ({ context,
   expect((await serverCart(context.request)).items.map((line) => [line.variant_id, line.quantity])).toEqual([
     [plenty.variant_id, 2],
   ]);
+});
+
+checkoutTest("an answer lost on the way back creates a single order", async ({ page, context, checkoutPage }) => {
+  await fillServerCart(context.request);
+  const before = (await customerOrders(context.request)).length;
+  await page.route("**/api/v1/checkout?*", async (route) => {
+    await route.fetch();
+    await route.abort("connectionreset");
+  }, { times: 1 });
+
+  await checkoutPage.goto();
+  await checkoutPage.chooseDelivery("pickup");
+  await checkoutPage.pay();
+  await expect(checkoutPage.payment.getByRole("alert")).toContainText(t.Errors.network_error);
+  await checkoutPage.pay();
+
+  await expect(page).toHaveURL(checkoutPage.orderUrl());
+  expect(await customerOrders(context.request)).toHaveLength(before + 1);
+});
+
+checkoutTest("switching the currency prices the order again", async ({ page, context, checkoutPage }) => {
+  await fillServerCart(context.request, 2);
+
+  await checkoutPage.goto();
+  await checkoutPage.chooseDelivery("pickup");
+  await expect(checkoutPage.payButton).toBeEnabled();
+  await checkoutPage.header.chooseCurrency("USD");
+  await expect(checkoutPage.summary).toContainText("US$");
+  await checkoutPage.pay();
+
+  await expect(page).toHaveURL(checkoutPage.orderUrl());
+  const order = await customerOrder(context.request, OrderPage.numberIn(page));
+  expect(order.currency).toBe("USD");
 });

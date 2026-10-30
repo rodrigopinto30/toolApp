@@ -1,10 +1,13 @@
 import { formatMoney } from "../../src/lib/money";
 import { CartPage } from "../pages/cart-page";
+import { CheckoutPage } from "../pages/checkout-page";
 import { LoginPage } from "../pages/login-page";
+import { OrderPage } from "../pages/order-page";
 import { ProductPage } from "../pages/product-page";
 import { cartVariants, emptyServerCart, quoteCart, serverCart, setServerLine } from "../support/cart";
 import { customerTest, expect, test } from "../support/fixtures";
 import { messages } from "../support/i18n";
+import { cancelOpenOrders } from "../support/orders";
 import { BASE_URL } from "../support/stack";
 
 const t = messages.es;
@@ -72,7 +75,7 @@ test("a guest sees how many units are left and keeps them with one click", async
   await expect(cartPage.quantity(limited.product_name)).toHaveValue(String(available));
 });
 
-test("the guest cart joins the account on login with the largest quantities", async ({
+test("a guest logs in, the carts merge and the purchase completes", async ({
   page,
   request,
   playwright,
@@ -113,6 +116,38 @@ test("the guest cart joins the account on login with the largest quantities", as
     [plenty.variant_id, 5],
     [limited.variant_id, limited.available],
   ]);
+
+  await test.step("the merged cart is bought with shipping, a coupon and billing details", async () => {
+    const checkoutPage = new CheckoutPage(page);
+    await cartPage.remove(limited.product_name);
+    await cartPage.setQuantity(plenty.product_name, 8);
+    await expect(cartPage.summary).toContainText("8 unidades");
+    await page.getByRole("link", { name: t.Cart.checkout }).click();
+    await expect(page).toHaveURL(`${BASE_URL}${checkoutPage.url}`);
+    await checkoutPage.addAddress({
+      label: "Casa",
+      recipient: "Ana Prueba",
+      phone: "11 5555-5555",
+      street: "Av. Corrientes",
+      number: "1234",
+      city: "CABA",
+      province: "Ciudad Autónoma de Buenos Aires",
+      postalCode: "C1043",
+    });
+    await checkoutPage.addBillingProfile("20-12345678-6");
+    await expect(checkoutPage.billing.getByRole("radio", { name: /Ana Prueba/ })).toBeChecked();
+    await checkoutPage.applyCoupon("BIENVENIDA10");
+    await expect(checkoutPage.summary).toContainText("Descuento (BIENVENIDA10)");
+    await checkoutPage.pay();
+    await expect(page).toHaveURL(checkoutPage.orderUrl());
+
+    const orderPage = new OrderPage(page, OrderPage.numberIn(page));
+    await expect(orderPage.status).toHaveText(t.Orders.status.paid);
+    await expect(orderPage.main).toContainText("20123456786");
+    await expect(orderPage.main).toContainText("Av. Corrientes 1234");
+  });
+
+  await cancelOpenOrders(account);
   await account.dispose();
 });
 
@@ -136,4 +171,10 @@ customerTest("a customer adds to the server cart and hears about the stock limit
   await cartPage.goto();
   await expect(cartPage.quantity(plenty.product_name)).toHaveValue("2");
   await expect(cartPage.line(limited.product_name)).toHaveCount(0);
+});
+
+test("the cart stays out of the index", async ({ request }) => {
+  const response = await request.get("/es/cart");
+
+  expect(await response.text()).toMatch(/<meta name="robots" content="noindex, follow"/);
 });

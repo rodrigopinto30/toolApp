@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext } from "@playwright/test";
 
-import type { Order } from "../../src/features/checkout/types";
+import type { Order } from "../../src/features/orders/types";
 import { csrfHeaders } from "./api";
 
 type OrderSummary = { number: string; status: string };

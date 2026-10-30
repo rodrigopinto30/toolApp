@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 
-import { loadCatalogSearchParams } from "@/features/catalog/search-params";
+import { loadCatalogSearchParams, serializeCatalogSearchParams } from "@/features/catalog/search-params";
 import { renderWithProviders } from "@/test/render";
 
 import { Pagination } from "./pagination";
@@ -18,8 +18,13 @@ jest.mock("@/i18n/navigation", () => ({
 }));
 
 it("links every page with the current filters and marks the current one", () => {
+  const state = loadCatalogSearchParams("?brand=bosch&page=2");
   renderWithProviders(
-    <Pagination page={2} pages={5} path="/categories/drills" state={loadCatalogSearchParams("?brand=bosch&page=2")} />,
+    <Pagination
+      page={2}
+      pages={5}
+      href={(page) => serializeCatalogSearchParams("/categories/drills", { ...state, page })}
+    />,
   );
 
   const nav = screen.getByRole("navigation", { name: "Paginación" });
@@ -34,7 +39,7 @@ it("links every page with the current filters and marks the current one", () => 
 });
 
 it("is not rendered for a single page", () => {
-  renderWithProviders(<Pagination page={1} pages={1} path="/search" state={loadCatalogSearchParams("?q=taladro")} />);
+  renderWithProviders(<Pagination page={1} pages={1} href={(page) => `/search?page=${page}`} />);
 
   expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
 });

@@ -38,6 +38,12 @@ export async function setServerLine(request: APIRequestContext, variantId: numbe
   expect(response.status(), "set a cart line").toBe(200);
 }
 
+export async function fillServerCart(request: APIRequestContext, units = 1): Promise<CartLine> {
+  const { plenty } = await cartVariants(request);
+  await setServerLine(request, plenty.variant_id, units);
+  return plenty;
+}
+
 export type CartVariants = { plenty: CartLine; limited: CartLine };
 
 export async function cartVariants(request: APIRequestContext): Promise<CartVariants> {

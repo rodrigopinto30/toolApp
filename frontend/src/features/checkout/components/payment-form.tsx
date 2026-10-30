@@ -1,11 +1,9 @@
 "use client";
 "use no memo";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
-import { useForm } from "react-hook-form";
 
 import { FormAlert } from "@/components/form/form-alert";
 import { SubmitButton } from "@/components/form/submit-button";
@@ -15,8 +13,8 @@ import { createAttemptKeys, keepsAttempt } from "@/features/checkout/attempt-key
 import { CardFields, cardPayment, clearCard } from "@/features/checkout/components/card-fields";
 import { checkoutKeys, usePlaceOrder } from "@/features/checkout/hooks";
 import { failureOf, type Failure } from "@/features/checkout/outcome";
-import { cardSchema, type CardValues } from "@/features/checkout/schemas";
 import type { CheckoutPreviewRequest } from "@/features/checkout/types";
+import { useCardForm } from "@/features/checkout/use-card-form";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import { orderPath } from "@/features/orders/paths";
 import { sessionKeys } from "@/features/session/hooks";
@@ -38,7 +36,6 @@ export function PaymentForm({
   onPlaced: () => void;
 }) {
   const t = useTranslations("Checkout");
-  const tv = useTranslations("Validation");
   const id = useId();
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -47,10 +44,7 @@ export function PaymentForm({
   const cooldown = useCooldown();
   const [keys] = useState(() => createAttemptKeys());
   const [failure, setFailure] = useState<{ failure: Failure; error: unknown } | null>(null);
-  const form = useForm<CardValues>({
-    resolver: zodResolver(cardSchema((key) => tv(key))),
-    defaultValues: { card_number: "", expiry: "", cvc: "", holder: "" },
-  });
+  const form = useCardForm();
   const place = usePlaceOrder(() => cardPayment(form.getValues()));
 
   const onFailure = (error: unknown) => {

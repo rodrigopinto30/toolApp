@@ -49,6 +49,7 @@ export function useErrorMessage() {
       case "limit_reached":
       case "unknown_province":
       case "invalid_tax_id":
+      case "invalid_transition":
         return t(error.code);
       case "coupon_min_subtotal": {
         const minimum = moneyDetail(error.details, "min_subtotal");

@@ -5,6 +5,7 @@ import { useId } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TotalsList } from "@/features/checkout/components/totals-list";
 import type { CheckoutPreview } from "@/features/checkout/types";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import type { Locale } from "@/i18n/locales";
@@ -54,30 +55,16 @@ export function CheckoutSummary({
               </li>
             ))}
           </ul>
-          <dl className="grid gap-2 border-t pt-3 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt>{t("subtotal")}</dt>
-              <dd className="tabular-nums">{formatMoney(preview.subtotal, locale)}</dd>
-            </div>
-            {preview.coupon && Number(preview.discount_total.amount) > 0 && (
-              <div className="flex justify-between gap-4">
-                <dt>{t("discount", { code: preview.coupon.code })}</dt>
-                <dd className="tabular-nums">-{formatMoney(preview.discount_total, locale)}</dd>
-              </div>
-            )}
-            <div className="flex justify-between gap-4">
-              <dt>{t("shipping")}</dt>
-              <dd className="tabular-nums">
-                {preview.delivery.is_free ? t("free") : formatMoney(preview.shipping_total, locale)}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-4 border-t pt-2 text-base font-semibold">
-              <dt>{t("total")}</dt>
-              <dd aria-live="polite" className="tabular-nums">
-                {formatMoney(preview.total, locale)}
-              </dd>
-            </div>
-          </dl>
+          <div className="border-t pt-3">
+            <TotalsList
+              subtotal={preview.subtotal}
+              discount={preview.discount_total}
+              shipping={preview.shipping_total}
+              total={preview.total}
+              couponCode={preview.coupon?.code}
+              freeShipping={preview.delivery.is_free}
+            />
+          </div>
           <p className="text-sm text-muted-foreground">
             {preview.delivery.pickup_point
               ? t("pickupAt", { name: preview.delivery.pickup_point.name })

@@ -3,30 +3,26 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { pageItems } from "@/features/catalog/pagination";
-import { serializeCatalogSearchParams, type CatalogSearchState } from "@/features/catalog/search-params";
 import { Link } from "@/i18n/navigation";
+import { pageItems } from "@/lib/pagination";
 
 export function Pagination({
   page,
   pages,
-  path,
-  state,
+  href,
 }: {
   page: number;
   pages: number;
-  path: string;
-  state: CatalogSearchState;
+  href: (page: number) => string;
 }) {
-  const t = useTranslations("Listing");
+  const t = useTranslations("Pagination");
 
   if (pages <= 1) {
     return null;
   }
-  const href = (target: number) => serializeCatalogSearchParams(path, { ...state, page: target });
 
   return (
-    <nav aria-label={t("pagination")} className="flex flex-wrap items-center justify-center gap-1">
+    <nav aria-label={t("label")} className="flex flex-wrap items-center justify-center gap-1">
       {page > 1 && (
         <Button asChild variant="ghost" size="sm">
           <Link href={href(page - 1)} rel="prev">
