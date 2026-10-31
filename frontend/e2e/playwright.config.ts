@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 import { BASE_URL } from "./support/stack";
 
-const SERIAL_SPECS = /(catalog-admin|operations)\.spec\.ts/;
+const SERIAL_SPECS = /(catalog-admin|community|operations)\.spec\.ts/;
 
 export default defineConfig({
   testDir: "./tests",
