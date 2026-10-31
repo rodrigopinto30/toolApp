@@ -5,6 +5,12 @@ export type Money = components["schemas"]["Money"];
 
 const INTL_LOCALES: Record<Locale, string> = { es: "es-AR", en: "en-US" };
 
+export function formatDecimal(value: string, locale: Locale, maximumFractionDigits: number): string {
+  return new Intl.NumberFormat(INTL_LOCALES[locale], { maximumFractionDigits }).format(
+    value as Intl.StringNumericLiteral,
+  );
+}
+
 export function formatMoney(money: Money, locale: Locale): string {
   const digits = money.currency === "ARS" ? 0 : 2;
   return new Intl.NumberFormat(INTL_LOCALES[locale], {

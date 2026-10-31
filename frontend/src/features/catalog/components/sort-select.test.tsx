@@ -38,7 +38,7 @@ it("writes the order to the URL, resets the page and leaves the default out", as
   await user.click(trigger);
   await user.click(await screen.findByRole("option", { name: "Menor precio" }));
   await waitFor(() => expect(updates.at(-1)?.queryString).toBe("?q=taladro&sort=price_asc"));
-  expect(trigger).toHaveTextContent("Menor precio");
+  await waitFor(() => expect(trigger).toHaveTextContent("Menor precio"));
 
   await user.click(trigger);
   await user.click(await screen.findByRole("option", { name: "Más relevantes" }));

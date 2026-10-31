@@ -14,6 +14,17 @@ export async function deliverPickupOrder(admin: APIRequestContext, number: strin
   }
 }
 
+export async function adminCoupon(admin: APIRequestContext, code: string): Promise<{ id: number }> {
+  const response = await admin.get("/api/v1/admin/coupons?size=100");
+  expect(response.status(), "coupons").toBe(200);
+  const items: { id: number; code: string }[] = (await response.json()).items;
+  const coupon = items.find((item) => item.code === code);
+  if (!coupon) {
+    throw new Error(`No coupon with the code ${code}`);
+  }
+  return coupon;
+}
+
 export async function approveReview(admin: APIRequestContext, title: string): Promise<void> {
   const list = await admin.get("/api/v1/admin/reviews?status=pending&size=100");
   expect(list.status(), "pending reviews").toBe(200);

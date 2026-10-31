@@ -136,6 +136,19 @@ export const checkoutTest = customerTest.extend<{ checkoutPage: CheckoutPage }>(
   },
 });
 
+export const adminTest = test.extend<{ emptyCart: void }>({
+  storageState: async ({}, use) => {
+    await use(readShopper("admin").storageState);
+  },
+  emptyCart: [
+    async ({ context }, use) => {
+      await emptyServerCart(context.request);
+      await use();
+    },
+    { auto: true },
+  ],
+});
+
 export const unverifiedTest = test.extend({
   storageState: async ({ unverifiedShopper }, use) => {
     await use(unverifiedShopper.storageState);

@@ -1,4 +1,4 @@
-import { formatMoney } from "./money";
+import { formatDecimal, formatMoney } from "./money";
 
 function format(amount: string, currency: "ARS" | "USD", locale: "es" | "en"): string {
   return formatMoney({ amount, currency }, locale).replace(/\s/g, " ");
@@ -13,4 +13,9 @@ it("formats pesos without decimals and dollars with two", () => {
 
 it("keeps the exact decimal value of large amounts", () => {
   expect(format("12345678901234.56", "USD", "en")).toBe("$12,345,678,901,234.56");
+});
+
+it("formats a decimal without rounding it through a float", () => {
+  expect(formatDecimal("1450.500000", "es", 6)).toBe("1.450,5");
+  expect(formatDecimal("1234567890123.123456", "en", 6)).toBe("1,234,567,890,123.123456");
 });

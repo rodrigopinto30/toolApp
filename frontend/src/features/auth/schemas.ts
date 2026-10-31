@@ -19,7 +19,14 @@ export type ValidationKey =
   | "cardExpiry"
   | "cardExpired"
   | "cardCvc"
-  | "rating";
+  | "rating"
+  | "amount"
+  | "rate"
+  | "code"
+  | "wholeNumber"
+  | "etaRange"
+  | "percent"
+  | "period";
 
 export type Translate = (key: ValidationKey) => string;
 

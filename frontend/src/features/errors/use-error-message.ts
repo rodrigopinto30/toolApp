@@ -52,6 +52,13 @@ export function useErrorMessage() {
       case "invalid_transition":
       case "review_exists":
       case "review_not_allowed":
+      case "in_use":
+      case "code_taken":
+      case "coupon_used":
+      case "invalid_coupon_value":
+      case "invalid_coupon_period":
+      case "invalid_eta_range":
+      case "unknown_zone":
         return t(error.code);
       case "coupon_min_subtotal": {
         const minimum = moneyDetail(error.details, "min_subtotal");
