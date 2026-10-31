@@ -16,9 +16,10 @@ export const LAYOUT_NAMESPACES = [
   "Error",
 ] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;
-export const SHOP_NAMESPACES = ["Listing"] as const;
-export const PRODUCT_NAMESPACES = ["Catalog", "Product", "Cart", "Validation", "Errors"] as const;
-export const PURCHASE_NAMESPACES = PRODUCT_NAMESPACES;
+export const CARD_NAMESPACES = ["Favorites"] as const;
+export const SHOP_NAMESPACES = ["Listing", ...CARD_NAMESPACES] as const;
+export const PURCHASE_NAMESPACES = ["Catalog", "Product", "Cart", "Validation", "Errors"] as const;
+export const PRODUCT_NAMESPACES = [...PURCHASE_NAMESPACES, ...CARD_NAMESPACES, "Reviews"] as const;
 export const CHECKOUT_NAMESPACES = [
   "Product",
   "Checkout",
@@ -28,6 +29,8 @@ export const CHECKOUT_NAMESPACES = [
   "Validation",
   "Errors",
 ] as const;
+export const FAVORITES_NAMESPACES = [...CARD_NAMESPACES, "Catalog", "Pagination", "Errors"] as const;
+export const REVIEWS_NAMESPACES = ["Reviews", "AccountReviews", "Validation", "Errors"] as const;
 export const ORDERS_NAMESPACES = [
   "Orders",
   "Pagination",

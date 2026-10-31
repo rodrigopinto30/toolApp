@@ -16,7 +16,7 @@ export const TAX_CONDITIONS = [
 
 const POSTAL_CODE_PATTERN = /^[A-Za-z0-9]{4,10}$/;
 
-const text = (t: Translate, max: number) => z.string().trim().min(1, t("required")).max(max, t("tooLong"));
+export const text = (t: Translate, max: number) => z.string().trim().min(1, t("required")).max(max, t("tooLong"));
 const optionalText = (t: Translate, max: number) => z.string().trim().max(max, t("tooLong"));
 
 export const profileSchema = (t: Translate) =>

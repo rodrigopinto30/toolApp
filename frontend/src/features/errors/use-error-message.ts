@@ -50,6 +50,8 @@ export function useErrorMessage() {
       case "unknown_province":
       case "invalid_tax_id":
       case "invalid_transition":
+      case "review_exists":
+      case "review_not_allowed":
         return t(error.code);
       case "coupon_min_subtotal": {
         const minimum = moneyDetail(error.details, "min_subtotal");

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { ACCOUNT_PATH, ADDRESSES_PATH, BILLING_PATH } from "@/features/account/paths";
+import { ACCOUNT_PATH, ADDRESSES_PATH, BILLING_PATH, FAVORITES_PATH, REVIEWS_PATH } from "@/features/account/paths";
 import { ORDERS_PATH } from "@/features/orders/paths";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -15,6 +15,8 @@ export function AccountNav() {
     { href: ORDERS_PATH, label: t("orders"), current: pathname.startsWith(ORDERS_PATH) },
     { href: ADDRESSES_PATH, label: t("addresses"), current: pathname === ADDRESSES_PATH },
     { href: BILLING_PATH, label: t("billing"), current: pathname === BILLING_PATH },
+    { href: FAVORITES_PATH, label: t("favorites"), current: pathname === FAVORITES_PATH },
+    { href: REVIEWS_PATH, label: t("reviews"), current: pathname === REVIEWS_PATH },
   ];
 
   return (

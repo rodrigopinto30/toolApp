@@ -1,9 +1,11 @@
+import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 
 import { getCategoryTree, getFeatured } from "@/features/catalog/api";
 import { CategoryList } from "@/features/catalog/components/category-list";
 import { ProductGrid, ProductGridSkeleton } from "@/features/catalog/components/product-grid";
+import { CARD_NAMESPACES, clientMessages } from "@/i18n/client-messages";
 import type { Locale } from "@/i18n/routing";
 import { getCurrency } from "@/lib/currency.server";
 
@@ -37,9 +39,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <h2 id="home-featured" className="text-xl font-semibold">
           {t("featured")}
         </h2>
-        <Suspense fallback={<ProductGridSkeleton count={FEATURED_PLACEHOLDERS} />}>
-          <FeaturedProducts locale={locale as Locale} />
-        </Suspense>
+        <NextIntlClientProvider messages={await clientMessages(CARD_NAMESPACES)}>
+          <Suspense fallback={<ProductGridSkeleton count={FEATURED_PLACEHOLDERS} />}>
+            <FeaturedProducts locale={locale as Locale} />
+          </Suspense>
+        </NextIntlClientProvider>
       </section>
     </div>
   );

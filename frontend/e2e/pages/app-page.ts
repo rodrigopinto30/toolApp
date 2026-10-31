@@ -31,6 +31,10 @@ export abstract class AppPage {
     await this.page.goto(this.url);
   }
 
+  favorite(name: string, pressed?: boolean): Locator {
+    return this.main.getByRole("button", { name: this.t.Favorites.toggle.replace("{name}", name), pressed });
+  }
+
   async openLink(link: string): Promise<void> {
     await this.page.goto("about:blank");
     await this.page.goto(link);

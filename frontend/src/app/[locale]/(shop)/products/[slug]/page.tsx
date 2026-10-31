@@ -18,6 +18,9 @@ import { categoryPath, productPath } from "@/features/catalog/paths";
 import { localizedAlternates, localizedUrl } from "@/features/catalog/seo";
 import { isSlug } from "@/features/catalog/slug";
 import { breadcrumbJsonLd, productJsonLd } from "@/features/catalog/structured-data";
+import { FavoriteButton } from "@/features/favorites/components/favorite-button";
+import { getProductReviews } from "@/features/reviews/api";
+import { ProductReviews } from "@/features/reviews/components/product-reviews";
 import { clientMessages, PRODUCT_NAMESPACES } from "@/i18n/client-messages";
 import type { Locale } from "@/i18n/routing";
 import { getCurrency } from "@/lib/currency.server";
@@ -63,10 +66,11 @@ export default async function ProductPage({ params }: Props) {
   }
   const { product, locale } = loaded;
   setRequestLocale(locale);
-  const [t, tBreadcrumbs, provinces] = await Promise.all([
+  const [t, tBreadcrumbs, provinces, reviews] = await Promise.all([
     getTranslations("Product"),
     getTranslations("Breadcrumbs"),
     getProvinces(locale),
+    getProductReviews(product.slug),
   ]);
   const origin = serverEnv().PUBLIC_URL;
   const path = productPath(product.slug);
@@ -87,7 +91,10 @@ export default async function ProductPage({ params }: Props) {
           <div className="flex flex-col gap-6">
             <header className="grid gap-2">
               {product.brand && <p className="text-sm text-muted-foreground">{product.brand.name}</p>}
-              <h1 className="text-2xl font-semibold tracking-tight">{product.name}</h1>
+              <div className="flex items-start justify-between gap-3">
+                <h1 className="text-2xl font-semibold tracking-tight">{product.name}</h1>
+                <FavoriteButton slug={product.slug} name={product.name} className="shrink-0" />
+              </div>
               <Rating average={product.rating_avg} count={product.rating_count} />
               <p className="text-muted-foreground">{product.short_description}</p>
             </header>
@@ -130,6 +137,7 @@ export default async function ProductPage({ params }: Props) {
             </dl>
           </section>
         )}
+        <ProductReviews slug={product.slug} initial={reviews} />
         <JsonLd data={productJsonLd(product, localizedUrl(origin, locale, path), origin)} />
         <JsonLd
           data={breadcrumbJsonLd(origin, locale, [

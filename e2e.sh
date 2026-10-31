@@ -29,16 +29,24 @@ run_sql() {
   "${COMPOSE[@]}" exec -T mysql sh -c 'MYSQL_PWD="$APP_DB_PASSWORD" exec mysql -u"$APP_DB_USER" "$MYSQL_DATABASE"'
 }
 
-verify_e2e_buyers() {
+prepare_e2e_accounts() {
   run_sql <<'SQL'
 UPDATE users SET email_verified_at = UTC_TIMESTAMP(6)
-WHERE email LIKE 'e2e+buyer-%@example.com' AND email_verified_at IS NULL;
+WHERE (email LIKE 'e2e+buyer-%@example.com' OR email LIKE 'e2e+admin-%@example.com') AND email_verified_at IS NULL;
+UPDATE users SET role = 'admin' WHERE email LIKE 'e2e+admin-%@example.com';
 SQL
 }
 
 delete_e2e_users() {
   run_sql <<'SQL'
 DELETE p FROM payments p JOIN orders o ON o.id = p.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
+UPDATE products p
+  JOIN (SELECT DISTINCT r.product_id FROM reviews r JOIN users u ON u.id = r.user_id WHERE u.email LIKE 'e2e+%@example.com') touched ON touched.product_id = p.id
+  LEFT JOIN (SELECT r.product_id, ROUND(AVG(r.rating), 2) AS average, COUNT(*) AS total FROM reviews r JOIN users u ON u.id = r.user_id WHERE r.status = 'approved' AND u.email NOT LIKE 'e2e+%@example.com' GROUP BY r.product_id) kept ON kept.product_id = p.id
+  SET p.rating_avg = COALESCE(kept.average, 0), p.rating_count = COALESCE(kept.total, 0);
+DELETE r FROM reviews r JOIN users u ON u.id = r.user_id WHERE u.email LIKE 'e2e+%@example.com';
+UPDATE audit_logs a JOIN users u ON u.id = a.actor_id SET a.actor_id = NULL WHERE u.email LIKE 'e2e+%@example.com';
+UPDATE order_status_history h JOIN users u ON u.id = h.changed_by SET h.changed_by = NULL WHERE u.email LIKE 'e2e+%@example.com';
 DELETE h FROM order_status_history h JOIN orders o ON o.id = h.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE i FROM order_items i JOIN orders o ON o.id = i.order_id JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE r FROM coupon_redemptions r JOIN users u ON u.id = r.user_id WHERE u.email LIKE 'e2e+%@example.com';
@@ -48,6 +56,10 @@ DELETE b FROM billing_profiles b JOIN users u ON u.id = b.user_id WHERE u.email 
 DELETE FROM users WHERE email LIKE 'e2e+%@example.com';
 SQL
   rm -rf frontend/e2e/.auth
+}
+
+warm_up_revalidation() {
+  "${COMPOSE[@]}" exec -T frontend node -e 'fetch("http://localhost:3000/api/revalidate", { method: "POST" }).catch(() => process.exit(1))'
 }
 
 trap delete_e2e_users EXIT
@@ -61,8 +73,11 @@ info "Provisioning the E2E buyers against the $STACK_MODE stack"
 reset_rate_limits
 "${COMPOSE[@]}" --profile e2e build e2e
 run_e2e e2e sh -ec 'npm run --silent typecheck && exec npx playwright test --project=buyers'
-verify_e2e_buyers
 reset_rate_limits
+run_e2e e2e sh -ec 'exec npx playwright test --project=community'
+prepare_e2e_accounts
+reset_rate_limits
+[[ "$STACK_MODE" == prod ]] || warm_up_revalidation
 
 info "Running the E2E suite against the $STACK_MODE stack"
 run_e2e e2e sh -ec 'exec npx playwright test --project=chromium "$@"' sh "$@"

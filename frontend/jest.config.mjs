@@ -7,6 +7,7 @@ const config = {
   testEnvironmentOptions: { url: "https://localhost/" },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testMatch: ["<rootDir>/src/**/*.test.{ts,tsx}"],
+  workerIdleMemoryLimit: "512MB",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^server-only$": "<rootDir>/src/test/empty-module.ts",

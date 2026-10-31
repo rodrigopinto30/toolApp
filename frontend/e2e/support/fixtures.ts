@@ -1,4 +1,4 @@
-import { test as base, expect } from "@playwright/test";
+import { test as base, expect, type APIRequestContext } from "@playwright/test";
 
 import { AccountPage } from "../pages/account-page";
 import { CheckoutPage } from "../pages/checkout-page";
@@ -10,10 +10,11 @@ import { ResetPasswordPage } from "../pages/reset-password-page";
 import { SearchPage } from "../pages/search-page";
 import { VerifyEmailPage } from "../pages/verify-email-page";
 import { registerUser } from "./api";
-import { readShoppers, type Buyer, type BuyerName } from "./buyers";
+import { readShopper, type Buyer, type BuyerName } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
 import { cancelOpenOrders } from "./orders";
+import { BASE_URL } from "./stack";
 import { newUser, type TestUser } from "./users";
 
 const EXPECTED_CONSOLE_ERROR =
@@ -25,6 +26,7 @@ type Fixtures = {
   buyerName: BuyerName;
   buyer: Buyer;
   account: TestUser;
+  adminApi: APIRequestContext;
   mailbox: Mailbox;
   homePage: HomePage;
   loginPage: LoginPage;
@@ -43,11 +45,11 @@ type WorkerFixtures = {
 export const test = base.extend<Fixtures, WorkerFixtures>({
   buyerName: ["cart", { option: true }],
   buyer: async ({ buyerName }, use) => {
-    await use(readShoppers().buyers[buyerName]);
+    await use(readShopper(buyerName));
   },
   unverifiedShopper: [
     async ({}, use) => {
-      await use(readShoppers().unverified);
+      await use(readShopper("unverified"));
     },
     { scope: "worker" },
   ],
@@ -78,6 +80,12 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     const user = newUser();
     await registerUser(request, user);
     await use(user);
+  },
+  adminApi: async ({ playwright }, use) => {
+    const { storageState } = readShopper("admin");
+    const request = await playwright.request.newContext({ baseURL: BASE_URL, storageState });
+    await use(request);
+    await request.dispose();
   },
   mailbox: async ({ request }, use) => {
     await use(new Mailbox(request));

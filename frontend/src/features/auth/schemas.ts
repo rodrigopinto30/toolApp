@@ -18,7 +18,8 @@ export type ValidationKey =
   | "cardNumber"
   | "cardExpiry"
   | "cardExpired"
-  | "cardCvc";
+  | "cardCvc"
+  | "rating";
 
 export type Translate = (key: ValidationKey) => string;
 

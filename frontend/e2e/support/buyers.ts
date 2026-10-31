@@ -1,20 +1,26 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type { Credentials } from "./users";
 
 export const AUTH_DIR = path.resolve(__dirname, "../.auth");
-export const BUYERS_FILE = path.join(AUTH_DIR, "buyers.json");
-export const BUYER_NAMES = ["books", "cart", "checkout", "orders"] as const;
 
-export type BuyerName = (typeof BUYER_NAMES)[number];
+export type BuyerName = "books" | "cart" | "checkout" | "community" | "orders";
+export type ShopperName = BuyerName | "unverified" | "admin";
 export type Buyer = Credentials & { storageState: string };
-export type Shoppers = { buyers: Record<BuyerName, Buyer>; unverified: Buyer };
 
-export function statePath(name: string): string {
+export function statePath(name: ShopperName): string {
   return path.join(AUTH_DIR, `${name}.json`);
 }
 
-export function readShoppers(): Shoppers {
-  return JSON.parse(readFileSync(BUYERS_FILE, "utf8")) as Shoppers;
+function accountPath(name: ShopperName): string {
+  return path.join(AUTH_DIR, `${name}.account.json`);
+}
+
+export function saveShopper(name: ShopperName, shopper: Buyer): void {
+  writeFileSync(accountPath(name), JSON.stringify(shopper));
+}
+
+export function readShopper(name: ShopperName): Buyer {
+  return JSON.parse(readFileSync(accountPath(name), "utf8")) as Buyer;
 }
