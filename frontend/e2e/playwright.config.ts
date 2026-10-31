@@ -22,6 +22,12 @@ export default defineConfig({
   projects: [
     { name: "buyers", testMatch: /buyers\.setup\.ts/ },
     { name: "community", testMatch: /community\.setup\.ts/ },
-    { name: "chromium", testIgnore: /\.setup\.ts/, use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", testIgnore: [/\.setup\.ts/, /catalog-admin\.spec\.ts/], use: { ...devices["Desktop Chrome"] } },
+    {
+      name: "catalog-admin",
+      testMatch: /catalog-admin\.spec\.ts/,
+      dependencies: ["chromium"],
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
 });

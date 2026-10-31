@@ -59,6 +59,23 @@ export function useErrorMessage() {
       case "invalid_coupon_period":
       case "invalid_eta_range":
       case "unknown_zone":
+      case "slug_taken":
+      case "sku_taken":
+      case "version_conflict":
+      case "category_cycle":
+      case "category_too_deep":
+      case "active_children":
+      case "inactive_parent":
+      case "unknown_parent":
+      case "unknown_category":
+      case "unknown_brand":
+      case "unknown_variant":
+      case "unknown_attribute_value":
+      case "duplicate_attribute":
+      case "invalid_compare_at":
+      case "invalid_image":
+      case "too_many_images":
+      case "payload_too_large":
         return t(error.code);
       case "coupon_min_subtotal": {
         const minimum = moneyDetail(error.details, "min_subtotal");
@@ -92,10 +109,11 @@ function moneyDetail(details: unknown, key: string): Money | undefined {
 }
 
 function availableUnits(details: unknown): number | undefined {
-  if (typeof details !== "object" || details === null || !("available" in details)) {
+  if (typeof details !== "object" || details === null) {
     return undefined;
   }
-  return typeof details.available === "number" ? details.available : undefined;
+  const { available, stock } = details as { available?: unknown; stock?: unknown };
+  return [available, stock].find((units) => typeof units === "number") as number | undefined;
 }
 
 export function invalidFields(error: unknown): string[] {

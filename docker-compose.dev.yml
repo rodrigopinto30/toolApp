@@ -19,7 +19,7 @@ services:
       start_period: 120s
     deploy:
       resources:
-        limits: { cpus: "2.00", memory: 1536M }
+        limits: { cpus: "2.00", memory: 3G }
 
   backend:
     build:

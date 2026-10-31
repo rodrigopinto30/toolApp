@@ -14,6 +14,26 @@ export async function deliverPickupOrder(admin: APIRequestContext, number: strin
   }
 }
 
+export async function changeVariantPrice(
+  admin: APIRequestContext,
+  productId: number,
+  sku: string,
+  price: string,
+): Promise<void> {
+  const product = await admin.get(`/api/v1/admin/products/${productId}`);
+  expect(product.status(), "product").toBe(200);
+  const variants: { id: number; sku: string; version: number }[] = (await product.json()).variants;
+  const variant = variants.find((item) => item.sku === sku);
+  if (!variant) {
+    throw new Error(`No variant with the SKU ${sku}`);
+  }
+  const response = await admin.patch(`/api/v1/admin/variants/${variant.id}`, {
+    headers: await csrfHeaders(admin),
+    data: { version: variant.version, price_usd: price },
+  });
+  expect(response.status(), "change the price").toBe(200);
+}
+
 export async function adminCoupon(admin: APIRequestContext, code: string): Promise<{ id: number }> {
   const response = await admin.get("/api/v1/admin/coupons?size=100");
   expect(response.status(), "coupons").toBe(200);
