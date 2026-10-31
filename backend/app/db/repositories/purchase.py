@@ -90,6 +90,19 @@ class OrderRepository(SqlAlchemyRepository[Order]):
     async def by_number(self, number: str, *, lock: bool = False) -> Order | None:
         return await self.session.scalar(_detail(Order.number == number, lock=lock))
 
+    async def overdue_ids(self, cutoff: datetime, *, limit: int) -> Sequence[int]:
+        statement = (
+            select(Order.id)
+            .where(Order.status == OrderStatus.PENDING_PAYMENT, Order.created_at < cutoff)
+            .order_by(Order.created_at, Order.id)
+            .limit(limit)
+        )
+        return (await self.session.scalars(statement)).all()
+
+    async def locked_pending(self, order_id: int) -> Order | None:
+        condition = and_(Order.id == order_id, Order.status == OrderStatus.PENDING_PAYMENT)
+        return await self.session.scalar(_detail(condition, lock=True))
+
     async def page_for(
         self, user_id: int, *, offset: int, limit: int
     ) -> tuple[Sequence[tuple[Order, int]], int]:

@@ -318,7 +318,8 @@
       "title": "Seguimiento",
       "notes": {
         "payment_rejected": "La tarjeta fue rechazada.",
-        "cancelled_by_customer": "Lo cancelaste vos."
+        "cancelled_by_customer": "Lo cancelaste vos.",
+        "expired": "Venció porque el pago no llegó a tiempo."
       }
     },
     "payments": {
@@ -329,6 +330,7 @@
         "rejected": "Rechazado",
         "refunded": "Reembolsado"
       },
+      "notCompleted": "No completado",
       "card": "{brand} terminada en {last4}"
     },
     "cancel": {

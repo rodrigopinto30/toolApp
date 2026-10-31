@@ -70,6 +70,10 @@ class Mailer:
         values = {"number": order.number}
         self._send("order_cancelled", user, locale, link, values=values, details=details)
 
+    def order_expired(self, user: User, order: OrderRead, locale: Locale) -> None:
+        link = self._link(locale, f"/account/orders/{order.number}")
+        self._send("order_expired", user, locale, link, values={"number": order.number})
+
     def order_status_changed(self, user: User, order: OrderRead, locale: Locale) -> None:
         link = self._link(locale, f"/account/orders/{order.number}")
         values = {"number": order.number}

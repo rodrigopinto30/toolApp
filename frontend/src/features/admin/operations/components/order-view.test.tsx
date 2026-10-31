@@ -101,6 +101,28 @@ it("shows the order with the customer, the language and who changed it", async (
   expect(screen.getByText("Cotización congelada al comprar: 1450.000000.")).toBeInTheDocument();
 });
 
+it("translates the note of an expired order and shows the system as its author", async () => {
+  serve({
+    ...ORDER,
+    status: "cancelled",
+    status_history: [
+      {
+        from_status: "pending_payment",
+        to_status: "cancelled",
+        note: "expired",
+        created_at: "2026-10-29T15:30:00Z",
+        changed_by: null,
+      },
+    ],
+  });
+
+  renderView();
+
+  expect(await screen.findByText("Venció porque el pago no llegó a tiempo.")).toBeInTheDocument();
+  expect(screen.getByText(/por el sistema/)).toBeInTheDocument();
+  expect(screen.queryByText("expired")).not.toBeInTheDocument();
+});
+
 it("offers one button per status the backend allows, and nothing else", async () => {
   serve();
   renderView();

@@ -140,7 +140,8 @@ FOREIGN_STEP: dict[DeliveryMethod, OrderStatus] = {
 
 CANCELLED_BY_CUSTOMER = "cancelled_by_customer"
 PAYMENT_REJECTED = "payment_rejected"
-CUSTOMER_NOTES = frozenset({CANCELLED_BY_CUSTOMER, PAYMENT_REJECTED})
+ORDER_EXPIRED = "expired"
+CUSTOMER_NOTES = frozenset({CANCELLED_BY_CUSTOMER, PAYMENT_REJECTED, ORDER_EXPIRED})
 
 
 class OrderStateMachine:

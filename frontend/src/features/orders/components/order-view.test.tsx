@@ -28,6 +28,13 @@ jest.mock("@/i18n/navigation", () => ({
 const ME = { id: 1, email: "ana@example.com", first_name: "Ana", last_name: "Diaz", email_verified: true };
 const NUMBER = "TA-2026-000001";
 const DETAIL = `${ORIGIN}/api/v1/me/orders/${NUMBER}`;
+const PENDING_PAYMENT: Order["payments"][number] = {
+  status: "pending",
+  amount: { amount: "10150", currency: "ARS" },
+  brand: null,
+  last4: null,
+  created_at: "2026-10-29T15:00:01Z",
+};
 const PENDING = orderOf({
   status: "pending_payment",
   paid_at: null,
@@ -117,6 +124,36 @@ it("offers no actions on an order that can no longer change", async () => {
   expect(await screen.findByText("Entregado", { selector: "[data-slot=badge]" })).toBeInTheDocument();
   expect(screen.queryByRole("button", { name: "Cancelar el pedido" })).not.toBeInTheDocument();
   expect(screen.queryByLabelText("Número de tarjeta")).not.toBeInTheDocument();
+});
+
+it("explains why an unpaid order expired and offers no way to pay it", async () => {
+  serveOrder(
+    orderOf({
+      status: "cancelled",
+      status_history: [
+        { from_status: null, to_status: "pending_payment", note: null, created_at: "2026-10-29T15:00:00Z" },
+        { from_status: "pending_payment", to_status: "cancelled", note: "expired", created_at: "2026-10-29T15:30:00Z" },
+      ],
+      payments: [PENDING_PAYMENT],
+    }),
+  );
+
+  renderOrder();
+
+  expect(await screen.findByText(/Venció porque el pago no llegó a tiempo\./)).toBeInTheDocument();
+  expect(screen.queryByLabelText("Número de tarjeta")).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Cancelar el pedido" })).not.toBeInTheDocument();
+  expect(screen.getByText("No completado")).toBeInTheDocument();
+  expect(screen.queryByText("Pendiente")).not.toBeInTheDocument();
+});
+
+it("keeps calling a payment pending while the order waits for it", async () => {
+  serveOrder(orderOf({ status: "pending_payment", payments: [PENDING_PAYMENT] }));
+
+  renderOrder();
+
+  expect(await screen.findByText("Pendiente")).toBeInTheDocument();
+  expect(screen.queryByText("No completado")).not.toBeInTheDocument();
 });
 
 it("retries the payment of a pending order", async () => {

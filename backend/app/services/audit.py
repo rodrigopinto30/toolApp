@@ -51,8 +51,8 @@ def diff(before: Mapping[str, Any], after: Mapping[str, Any]) -> dict[str, dict[
 
 @dataclass(frozen=True)
 class AuditTrail:
-    actor_id: int
-    ip: str
+    actor_id: int | None
+    ip: str | None
     request_id: str | None
 
     def record(

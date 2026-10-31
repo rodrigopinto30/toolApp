@@ -93,8 +93,8 @@ export function OrderBillingDetails({ order }: { order: Order }) {
   );
 }
 
-function isKnownNote(note: string | null): note is "payment_rejected" | "cancelled_by_customer" {
-  return note === "payment_rejected" || note === "cancelled_by_customer";
+export function isKnownNote(note: string | null): note is "payment_rejected" | "cancelled_by_customer" | "expired" {
+  return note === "payment_rejected" || note === "cancelled_by_customer" || note === "expired";
 }
 
 export function OrderHistory({ order }: { order: Order }) {
@@ -129,7 +129,9 @@ export function OrderPayments({ order }: { order: Order }) {
         {order.payments.map((payment) => (
           <li key={payment.created_at} className="flex flex-wrap justify-between gap-2">
             <span>
-              {t(`status.${payment.status}`)}
+              {order.status === "cancelled" && payment.status === "pending"
+                ? t("notCompleted")
+                : t(`status.${payment.status}`)}
               {payment.brand && payment.last4 && (
                 <span className="text-muted-foreground">
                   {" "}

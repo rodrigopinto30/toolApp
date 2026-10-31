@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     payment_timeout_seconds: float = 5.0
     payment_breaker_failures: int = 3
     payment_breaker_reset_seconds: float = 30.0
+    pending_order_ttl_minutes: int = 30
+    order_expiry_interval_seconds: int = 60
 
     frontend_internal_url: str = "http://frontend:3000"
     revalidate_secret: SecretStr | None = None
