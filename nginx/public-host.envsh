@@ -1,0 +1,5 @@
+#!/bin/sh
+authority="${PUBLIC_URL#*://}"
+authority="${authority%%/*}"
+export PUBLIC_AUTHORITY="$authority"
+export PUBLIC_HOST="${authority%%:*}"

@@ -14,9 +14,10 @@ import { readShopper, type Buyer, type BuyerName } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
 import { cancelOpenOrders } from "./orders";
-import { BASE_URL, ignoreHmrReloads } from "./stack";
+import { BASE_URL, ignoreHmrReloads, isDevStack } from "./stack";
 import { newUser, type TestUser } from "./users";
 
+const REACT_DEV_PROFILER_ERROR = /^Failed to execute 'measure' on 'Performance': .* negative time stamp/;
 const EXPECTED_CONSOLE_ERROR =
   /^Failed to load resource: (the server responded with a status of 4\d\d\b|net::ERR_CONNECTION_RESET)/;
 
@@ -71,7 +72,12 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
           errors.push(message.text());
         }
       });
-      context.on("weberror", (error) => errors.push(error.error().message));
+      context.on("weberror", (error) => {
+        const { message } = error.error();
+        if (!isDevStack || !REACT_DEV_PROFILER_ERROR.test(message)) {
+          errors.push(message);
+        }
+      });
       await use();
       expect(errors, "console errors, uncaught exceptions and CSP violations").toEqual([]);
     },

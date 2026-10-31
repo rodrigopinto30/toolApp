@@ -2,6 +2,10 @@ map "" $hsts_header {
     default "${NGINX_HSTS}";
 }
 
+map "" $public_authority {
+    default "${PUBLIC_AUTHORITY}";
+}
+
 server {
     listen 8080 default_server;
     server_name _;
@@ -13,7 +17,16 @@ server {
     }
 
     location / {
-        return 301 https://$host:${PUBLIC_HTTPS_PORT}$request_uri;
+        return 444;
+    }
+}
+
+server {
+    listen 8080;
+    server_name ${PUBLIC_HOST};
+
+    location / {
+        return 301 https://$public_authority$request_uri;
     }
 }
 
@@ -21,6 +34,16 @@ server {
     listen 8443 ssl default_server;
     http2 on;
     server_name _;
+
+    ssl_reject_handshake on;
+
+    return 444;
+}
+
+server {
+    listen 8443 ssl;
+    http2 on;
+    server_name ${PUBLIC_HOST};
 
     ssl_certificate     /etc/nginx/certs/tls.crt;
     ssl_certificate_key /etc/nginx/certs/tls.key;

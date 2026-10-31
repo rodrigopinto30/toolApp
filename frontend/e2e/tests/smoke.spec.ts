@@ -43,6 +43,20 @@ test.describe("security", () => {
     expect(response.headers().location).toBe(`${BASE_URL}/es`);
   });
 
+  test("an unknown Host gets no answer on either port", async ({ request }) => {
+    const headers = { Host: "evil.example" };
+
+    await expect(request.get(`${BASE_URL}/es`, { headers })).rejects.toThrow();
+    await expect(request.get(`${HTTP_URL}/es`, { headers })).rejects.toThrow();
+  });
+
+  test("a forged port never reaches a redirect", async ({ request }) => {
+    const response = await request.get("/", { headers: { Host: "localhost:9999" }, maxRedirects: 0 });
+
+    expect(response.status()).toBe(307);
+    expect(response.headers().location).not.toContain("9999");
+  });
+
   test("the Next.js image optimizer is closed", async ({ request }) => {
     const response = await request.get("/_next/image?url=%2Ffavicon.ico&w=64&q=75");
     expect(response.status()).toBe(404);
