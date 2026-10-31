@@ -3,7 +3,7 @@ import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 import { routing } from "@/i18n/routing";
-import { buildCsp, createNonce } from "@/lib/csp";
+import { buildCsp, buildReportOnlyCsp, createNonce, REPORTING_ENDPOINTS } from "@/lib/csp";
 import { isProtectedPath } from "@/lib/routes";
 import { ACCESS_COOKIE } from "@/lib/session-cookies";
 
@@ -29,6 +29,8 @@ export function proxy(request: NextRequest): NextResponse {
 
   const response = loginRedirect(request) ?? handleI18nRouting(withCspHeaders(request, nonce, csp));
   response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("Content-Security-Policy-Report-Only", buildReportOnlyCsp());
+  response.headers.set("Reporting-Endpoints", REPORTING_ENDPOINTS);
   return response;
 }
 

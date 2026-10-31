@@ -10,6 +10,7 @@ from app.api.v1 import (
     me,
     orders,
     pricing,
+    reports,
     reviews,
     shipping,
 )
@@ -26,4 +27,5 @@ api_router.include_router(reviews.router)
 api_router.include_router(favorites.router)
 api_router.include_router(pricing.router)
 api_router.include_router(shipping.router)
+api_router.include_router(reports.router)
 api_router.include_router(admin.router)

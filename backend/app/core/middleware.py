@@ -165,13 +165,25 @@ class CsrfMiddleware:
     SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
     SESSION_COOKIES = (ACCESS_COOKIE, REFRESH_COOKIE)
 
-    def __init__(self, app: ASGIApp, *, allowed_origin: str, always_protected_prefix: str) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        allowed_origin: str,
+        always_protected_prefix: str,
+        exempt_paths: frozenset[str] = frozenset(),
+    ) -> None:
         self.app = app
         self.allowed_origin = allowed_origin
         self.always_protected_prefix = always_protected_prefix
+        self.exempt_paths = exempt_paths
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] != "http" or scope["method"] in self.SAFE_METHODS:
+        if (
+            scope["type"] != "http"
+            or scope["method"] in self.SAFE_METHODS
+            or scope["path"] in self.exempt_paths
+        ):
             await self.app(scope, receive, send)
             return
 

@@ -1,4 +1,4 @@
-import { buildCsp, createNonce } from "./csp";
+import { buildCsp, buildReportOnlyCsp, createNonce, REPORTING_ENDPOINTS } from "./csp";
 
 describe("createNonce", () => {
   it("returns 16 random bytes in base64", () => {
@@ -22,5 +22,23 @@ describe("buildCsp", () => {
 
   it("allows eval only in development", () => {
     expect(buildCsp("abc", { isDev: true })).toContain("'strict-dynamic' 'unsafe-eval';");
+  });
+
+  it("reports violations in both formats", () => {
+    const csp = buildCsp("abc", { isDev: false });
+
+    expect(csp).toContain("report-uri /api/v1/csp-reports");
+    expect(csp).toContain("report-to csp");
+    expect(REPORTING_ENDPOINTS).toBe('csp="/api/v1/csp-reports"');
+  });
+});
+
+describe("buildReportOnlyCsp", () => {
+  it("tries Trusted Types and reports what would break", () => {
+    const csp = buildReportOnlyCsp();
+
+    expect(csp).toContain("require-trusted-types-for 'script'");
+    expect(csp).toContain("report-to csp");
+    expect(csp).not.toContain("script-src");
   });
 });

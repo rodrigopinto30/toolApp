@@ -61,6 +61,13 @@ describe("proxy", () => {
     expect(first.headers.get("x-middleware-request-content-security-policy")).toContain(`'nonce-${nonce}'`);
   });
 
+  it("sends the report endpoint and the report-only policy on every page", () => {
+    const response = proxy(request("/es"));
+
+    expect(response.headers.get("reporting-endpoints")).toBe('csp="/api/v1/csp-reports"');
+    expect(response.headers.get("content-security-policy-report-only")).toContain("require-trusted-types-for");
+  });
+
   it("redirects protected pages to login when there is no session cookie", () => {
     const response = proxy(request("/en/account?tab=profile"));
 

@@ -1,4 +1,4 @@
-import { buildCsp } from "../../src/lib/csp";
+import { buildCsp, buildReportOnlyCsp, REPORTING_ENDPOINTS } from "../../src/lib/csp";
 import { CURRENCY_COOKIE, DEFAULT_CURRENCY } from "../../src/lib/currency";
 import { AUTH_PATHS, PROTECTED_PATHS } from "../../src/lib/routes";
 import { redirectedToLogin } from "../pages/login-page";
@@ -18,6 +18,8 @@ test.describe("security", () => {
       const nonce = /'nonce-([^']+)'/.exec(headers["content-security-policy"] ?? "")?.[1] ?? "";
       expect(headers).toMatchObject({
         "content-security-policy": buildCsp(nonce, { isDev: isDevStack }),
+        "content-security-policy-report-only": buildReportOnlyCsp(),
+        "reporting-endpoints": REPORTING_ENDPOINTS,
         "x-content-type-options": "nosniff",
         "x-frame-options": "DENY",
         "referrer-policy": "strict-origin-when-cross-origin",
@@ -41,6 +43,35 @@ test.describe("security", () => {
     const response = await request.get(`${HTTP_URL}/es`, { maxRedirects: 0 });
     expect(response.status()).toBe(301);
     expect(response.headers().location).toBe(`${BASE_URL}/es`);
+  });
+
+  test.describe("reports", () => {
+    test.use({ allowedConsoleError: /ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS/ });
+
+    test("a violation in the browser reaches the report endpoint", async ({ page }) => {
+      await page.route("**/es/login", async (route) => {
+        const response = await route.fetch();
+        const headers = response.headers();
+        await route.fulfill({
+          response,
+          headers: {
+            ...headers,
+            "content-security-policy-report-only": headers["content-security-policy-report-only"].replace(
+              "; report-to csp",
+              "",
+            ),
+          },
+        });
+      });
+      await page.goto("/es/login");
+
+      const delivered = page.waitForResponse("**/api/v1/csp-reports");
+      await page.evaluate(() => {
+        document.createElement("div").innerHTML = "<b>report</b>";
+      });
+
+      expect((await delivered).status()).toBe(204);
+    });
   });
 
   test("an unknown Host gets no answer on either port", async ({ request }) => {

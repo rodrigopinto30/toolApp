@@ -61,6 +61,9 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
       const errors: string[] = [];
       await context.addInitScript(() => {
         document.addEventListener("securitypolicyviolation", (event) => {
+          if (event.disposition === "report") {
+            return;
+          }
           console.error(
             `CSP violation: ${event.violatedDirective} ${event.blockedURI} at ${event.sourceFile}:${event.lineNumber}:${event.columnNumber}`,
           );
