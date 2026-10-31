@@ -1,0 +1,29 @@
+import { expect, type APIRequestContext } from "@playwright/test";
+
+import { csrfHeaders } from "./api";
+
+type PendingReview = { id: number; title: string };
+
+const PICKUP_STEPS = ["preparing", "ready_for_pickup", "delivered"];
+
+export async function deliverPickupOrder(admin: APIRequestContext, number: string): Promise<void> {
+  const headers = await csrfHeaders(admin);
+  for (const status of PICKUP_STEPS) {
+    const response = await admin.post(`/api/v1/admin/orders/${number}/status`, { headers, data: { status } });
+    expect(response.status(), `order ${number} to ${status}`).toBe(200);
+  }
+}
+
+export async function approveReview(admin: APIRequestContext, title: string): Promise<void> {
+  const list = await admin.get("/api/v1/admin/reviews?status=pending&size=100");
+  expect(list.status(), "pending reviews").toBe(200);
+  const items: PendingReview[] = (await list.json()).items;
+  const review = items.find((item) => item.title === title);
+  if (!review) {
+    throw new Error(`No pending review titled ${title}`);
+  }
+  const response = await admin.post(`/api/v1/admin/reviews/${review.id}/approve`, {
+    headers: await csrfHeaders(admin),
+  });
+  expect(response.status(), "approve the review").toBe(200);
+}

@@ -17,6 +17,7 @@ export class ProductPage extends AppPage {
   readonly addToCartButton = this.buy.getByRole("button", { name: this.t.Cart.add.submit });
   readonly added = this.buy.getByText(this.t.Cart.add.added);
   readonly viewCart = this.buy.getByRole("link", { name: this.t.Cart.add.view });
+  readonly reviews = this.main.getByRole("region", { name: this.t.Reviews.title });
   protected readonly path: string;
 
   constructor(page: Page, slug: string, locale: Locale = "es") {

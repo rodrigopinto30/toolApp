@@ -5,6 +5,7 @@ import { Rating } from "@/features/catalog/components/rating";
 import { StockBadge } from "@/features/catalog/components/stock-badge";
 import { productPath } from "@/features/catalog/paths";
 import type { ProductSummary } from "@/features/catalog/types";
+import { FavoriteButton } from "@/features/favorites/components/favorite-button";
 
 const CARD_IMAGE_SIZES = "(min-width: 1024px) 15rem, (min-width: 640px) 33vw, 50vw";
 
@@ -31,6 +32,7 @@ export function ProductCard({ product }: { product: ProductSummary }) {
         />
         {product.stock_status !== "in_stock" && <StockBadge status={product.stock_status} />}
       </div>
+      <FavoriteButton slug={product.slug} name={product.name} className="absolute top-5 right-5 z-10" />
     </article>
   );
 }

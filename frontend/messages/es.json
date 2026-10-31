@@ -130,6 +130,25 @@
       }
     }
   },
+  "Favorites": {
+    "metaTitle": "Mis favoritos",
+    "title": "Mis favoritos",
+    "toggle": "Marcar {name} como favorito",
+    "loading": "Cargando tus favoritos…",
+    "empty": {
+      "title": "Todavía no guardaste favoritos",
+      "cta": "Ver productos"
+    }
+  },
+  "Reviews": {
+    "title": "Opiniones",
+    "empty": "Este producto todavía no tiene opiniones.",
+    "showMore": "Ver más opiniones",
+    "loadingMore": "Cargando…",
+    "rated": "{rating} de 5 estrellas",
+    "stars": "{count, plural, one {# estrella} other {# estrellas}}",
+    "byline": "{author}, {date}"
+  },
   "Cart": {
     "metaTitle": "Carrito",
     "title": "Tu carrito",
@@ -414,7 +433,9 @@
       "profile": "Mis datos",
       "orders": "Mis pedidos",
       "addresses": "Direcciones",
-      "billing": "Facturación"
+      "billing": "Facturación",
+      "favorites": "Favoritos",
+      "reviews": "Opiniones"
     },
     "verification": {
       "pending": "Todavía no confirmaste tu email. Lo vas a necesitar para comprar.",
@@ -479,6 +500,38 @@
       "deleteDescription": "Los pedidos que ya hiciste conservan sus datos."
     }
   },
+  "AccountReviews": {
+    "metaTitle": "Mis opiniones",
+    "title": "Mis opiniones",
+    "loading": "Cargando tus opiniones…",
+    "showMore": "Ver más",
+    "close": "Cerrar",
+    "reviewable": {
+      "title": "Productos para opinar",
+      "empty": "No tenés productos para opinar. Vas a poder hacerlo cuando recibas tu pedido.",
+      "write": "Opinar",
+      "writeItem": "Opinar sobre {name}"
+    },
+    "own": {
+      "title": "Opiniones enviadas",
+      "empty": "Todavía no enviaste opiniones."
+    },
+    "status": {
+      "pending": "En revisión",
+      "approved": "Publicada",
+      "rejected": "Rechazada"
+    },
+    "form": {
+      "title": "Tu opinión sobre {name}",
+      "rating": "Puntaje",
+      "headline": "Título",
+      "body": "Comentario",
+      "hint": "Hasta 2000 caracteres. La revisamos antes de publicarla y después no se puede editar.",
+      "submit": "Enviar opinión",
+      "submitting": "Enviando…",
+      "cancel": "Cancelar"
+    }
+  },
   "AddressForm": {
     "label": "Nombre de la dirección",
     "labelHint": "Por ejemplo: Casa, Trabajo.",
@@ -534,7 +587,8 @@
     "cardNumber": "El número de tarjeta no es válido.",
     "cardExpiry": "Usá el formato MM/AA.",
     "cardExpired": "La tarjeta está vencida.",
-    "cardCvc": "El código tiene 3 o 4 números."
+    "cardCvc": "El código tiene 3 o 4 números.",
+    "rating": "Elegí un puntaje."
   },
   "Errors": {
     "invalid_credentials": "Email o contraseña incorrectos.",
@@ -571,6 +625,8 @@
     "unknown_province": "Elegí una provincia de la lista.",
     "invalid_tax_id": "El documento no es válido para esa condición.",
     "invalid_transition": "El pedido cambió de estado y ya no se puede hacer eso.",
+    "review_exists": "Ya opinaste sobre este producto.",
+    "review_not_allowed": "Solo podés opinar sobre productos que recibiste.",
     "unexpected": "Ocurrió un error inesperado.",
     "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }

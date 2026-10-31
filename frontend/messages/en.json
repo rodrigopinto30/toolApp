@@ -130,6 +130,25 @@
       }
     }
   },
+  "Favorites": {
+    "metaTitle": "My favorites",
+    "title": "My favorites",
+    "toggle": "Mark {name} as a favorite",
+    "loading": "Loading your favorites…",
+    "empty": {
+      "title": "You have no favorites yet",
+      "cta": "Browse products"
+    }
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "empty": "This product has no reviews yet.",
+    "showMore": "Show more reviews",
+    "loadingMore": "Loading…",
+    "rated": "{rating} out of 5 stars",
+    "stars": "{count, plural, one {# star} other {# stars}}",
+    "byline": "{author}, {date}"
+  },
   "Cart": {
     "metaTitle": "Cart",
     "title": "Your cart",
@@ -414,7 +433,9 @@
       "profile": "My details",
       "orders": "My orders",
       "addresses": "Addresses",
-      "billing": "Billing"
+      "billing": "Billing",
+      "favorites": "Favorites",
+      "reviews": "Reviews"
     },
     "verification": {
       "pending": "You have not confirmed your email yet. You will need it to buy.",
@@ -479,6 +500,38 @@
       "deleteDescription": "Orders you already placed keep their details."
     }
   },
+  "AccountReviews": {
+    "metaTitle": "My reviews",
+    "title": "My reviews",
+    "loading": "Loading your reviews…",
+    "showMore": "Show more",
+    "close": "Close",
+    "reviewable": {
+      "title": "Products to review",
+      "empty": "You have no products to review. You can review them once your order arrives.",
+      "write": "Review",
+      "writeItem": "Review {name}"
+    },
+    "own": {
+      "title": "Sent reviews",
+      "empty": "You have not sent any reviews yet."
+    },
+    "status": {
+      "pending": "In review",
+      "approved": "Published",
+      "rejected": "Rejected"
+    },
+    "form": {
+      "title": "Your review of {name}",
+      "rating": "Rating",
+      "headline": "Title",
+      "body": "Comment",
+      "hint": "Up to 2000 characters. We check it before publishing it, and it cannot be edited afterwards.",
+      "submit": "Send review",
+      "submitting": "Sending…",
+      "cancel": "Cancel"
+    }
+  },
   "AddressForm": {
     "label": "Address name",
     "labelHint": "For example: Home, Work.",
@@ -534,7 +587,8 @@
     "cardNumber": "The card number is not valid.",
     "cardExpiry": "Use the MM/YY format.",
     "cardExpired": "The card has expired.",
-    "cardCvc": "The code has 3 or 4 digits."
+    "cardCvc": "The code has 3 or 4 digits.",
+    "rating": "Choose a rating."
   },
   "Errors": {
     "invalid_credentials": "Wrong email or password.",
@@ -571,6 +625,8 @@
     "unknown_province": "Choose a province from the list.",
     "invalid_tax_id": "The document is not valid for that condition.",
     "invalid_transition": "The order changed status and that is no longer possible.",
+    "review_exists": "You already reviewed this product.",
+    "review_not_allowed": "You can only review products you received.",
     "unexpected": "An unexpected error happened.",
     "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }
