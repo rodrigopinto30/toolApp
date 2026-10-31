@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <NextIntlClientProvider messages={await clientMessages(ADMIN_NAMESPACES)}>
       <AdminGate>
-        <div className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 content-start gap-6 px-4 py-8 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 content-start gap-6 px-4 py-8 lg:grid-cols-[13rem_minmax(0,1fr)]">
           <AdminNav />
           <div className="min-w-0">{children}</div>
         </div>

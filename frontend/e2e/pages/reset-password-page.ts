@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 import { AppPage } from "./app-page";
 
 export class ResetPasswordPage extends AppPage {
@@ -8,6 +10,7 @@ export class ResetPasswordPage extends AppPage {
   readonly success = this.main.getByText(this.t.Auth.reset.success);
 
   async reset(password: string, confirm = password): Promise<void> {
+    await expect(this.submit).toBeEnabled();
     await this.password.fill(password);
     await this.confirm.fill(confirm);
     await this.submit.click();

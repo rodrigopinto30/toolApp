@@ -1,7 +1,9 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 
 import { ADMIN_AUDIT_PATH, ADMIN_COUPONS_PATH, ADMIN_EXCHANGE_RATES_PATH, ADMIN_PICKUP_POINTS_PATH, ADMIN_SHIPPING_PATH } from "../../src/features/admin/paths";
 import { AppPage } from "./app-page";
+
+const HEADER_ROWS = 1;
 
 export type CouponDraft = { code: string; value: string };
 export type ZoneDraft = { code: string; name: string; cost: string; etaMin: string; etaMax: string };
@@ -111,5 +113,9 @@ export class AdminAuditPage extends AdminPage {
     await this.main.getByLabel(t.entity, { exact: true }).fill(entity);
     await this.main.getByLabel(t.entity_id, { exact: true }).fill(id);
     await this.main.getByRole("button", { name: t.apply }).click();
+  }
+
+  async expectEntries(count: number): Promise<void> {
+    await expect(this.main.getByRole("row")).toHaveCount(count + HEADER_ROWS);
   }
 }

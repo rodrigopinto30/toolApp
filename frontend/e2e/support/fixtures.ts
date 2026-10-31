@@ -14,7 +14,7 @@ import { readShopper, type Buyer, type BuyerName } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
 import { cancelOpenOrders } from "./orders";
-import { BASE_URL } from "./stack";
+import { BASE_URL, ignoreHmrReloads } from "./stack";
 import { newUser, type TestUser } from "./users";
 
 const EXPECTED_CONSOLE_ERROR =
@@ -56,6 +56,7 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
   allowedConsoleError: [null, { option: true }],
   browserErrors: [
     async ({ context, allowedConsoleError }, use) => {
+      await ignoreHmrReloads(context);
       const errors: string[] = [];
       await context.addInitScript(() => {
         document.addEventListener("securitypolicyviolation", (event) => {
