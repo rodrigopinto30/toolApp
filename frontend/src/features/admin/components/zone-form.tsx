@@ -10,7 +10,7 @@ import { CheckboxField } from "@/components/form/checkbox-field";
 import { FormAlert } from "@/components/form/form-alert";
 import { TextField } from "@/components/form/text-field";
 import { FormActions, I18nFields } from "@/features/admin/components/resource-parts";
-import { fieldsOf, isCodeTaken } from "@/features/admin/form-errors";
+import { fieldsOf, isTaken } from "@/features/admin/form-errors";
 import { useSaveZone } from "@/features/admin/hooks";
 import { zoneSchema, type ZoneInput, type ZoneValues } from "@/features/admin/schemas";
 import type { AdminZone } from "@/features/admin/types";
@@ -57,14 +57,14 @@ export function ZoneForm({
       onSuccess: () => onSaved(),
       onError: (error) =>
         fieldsOf(error, FIELDS).forEach((name) =>
-          form.setError(name, { message: isCodeTaken(error) ? errorMessage(error) : tv("invalid") }),
+          form.setError(name, { message: isTaken(error) ? errorMessage(error) : tv("invalid") }),
         ),
     }),
   );
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
-      <FormAlert message={save.error && !isCodeTaken(save.error) ? errorMessage(save.error) : undefined} />
+      <FormAlert message={save.error && !isTaken(save.error) ? errorMessage(save.error) : undefined} />
       <TextField label={t("code")} hint={t("codeHint")} maxLength={40} autoComplete="off" {...field("code")} />
       <I18nFields
         id={`${id}-name`}

@@ -12,7 +12,7 @@ import { SelectField } from "@/components/form/select-field";
 import { TextField } from "@/components/form/text-field";
 import { FormActions } from "@/features/admin/components/resource-parts";
 import { toLocalInput } from "@/features/admin/dates";
-import { fieldsOf, isCodeTaken } from "@/features/admin/form-errors";
+import { fieldsOf, isTaken } from "@/features/admin/form-errors";
 import { useSaveCoupon } from "@/features/admin/hooks";
 import { COUPON_TYPES, couponSchema, type CouponInput, type CouponValues } from "@/features/admin/schemas";
 import type { AdminCoupon } from "@/features/admin/types";
@@ -73,14 +73,14 @@ export function CouponForm({
       onSuccess: () => onSaved(),
       onError: (error) =>
         fieldsOf(error, FIELDS).forEach((name) =>
-          form.setError(name, { message: isCodeTaken(error) ? errorMessage(error) : tv("invalid") }),
+          form.setError(name, { message: isTaken(error) ? errorMessage(error) : tv("invalid") }),
         ),
     }),
   );
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
-      <FormAlert message={save.error && !isCodeTaken(save.error) ? errorMessage(save.error) : undefined} />
+      <FormAlert message={save.error && !isTaken(save.error) ? errorMessage(save.error) : undefined} />
       <TextField label={t("code")} hint={t("codeHint")} maxLength={40} autoComplete="off" {...field("code")} />
       <div className="grid items-start gap-4 sm:grid-cols-2">
         <Controller

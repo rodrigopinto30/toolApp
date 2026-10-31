@@ -22,6 +22,15 @@ function apiError(code: string, extra: Partial<ConstructorParameters<typeof ApiE
   return new ApiError({ status: 400, code, message: "backend text", ...extra });
 }
 
+it("reports the stock of an adjustment like the units left at checkout", () => {
+  const message = errorMessage();
+
+  expect(message(apiError("insufficient_stock", { details: { stock: 4 } }))).toBe(
+    message(apiError("insufficient_stock", { details: { available: 4 } })),
+  );
+  expect(message(apiError("insufficient_stock", { details: { stock: 0 } }))).toContain("0");
+});
+
 it("translates known error codes", () => {
   const message = errorMessage();
 

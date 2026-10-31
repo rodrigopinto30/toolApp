@@ -7,6 +7,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
+  ADMIN_ATTRIBUTES_PATH,
+  ADMIN_BRANDS_PATH,
+  ADMIN_CATEGORIES_PATH,
+  ADMIN_PRODUCTS_PATH,
+} from "@/features/admin/catalog/paths";
+import {
   ADMIN_AUDIT_PATH,
   ADMIN_COUPONS_PATH,
   ADMIN_EXCHANGE_RATES_PATH,
@@ -16,6 +22,10 @@ import {
 import { Link, usePathname } from "@/i18n/navigation";
 
 const SECTIONS = [
+  { href: ADMIN_PRODUCTS_PATH, label: "products" },
+  { href: ADMIN_CATEGORIES_PATH, label: "categories" },
+  { href: ADMIN_BRANDS_PATH, label: "brands" },
+  { href: ADMIN_ATTRIBUTES_PATH, label: "attributes" },
   { href: ADMIN_COUPONS_PATH, label: "coupons" },
   { href: ADMIN_EXCHANGE_RATES_PATH, label: "exchangeRates" },
   { href: ADMIN_SHIPPING_PATH, label: "shipping" },

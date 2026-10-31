@@ -54,6 +54,12 @@ DELETE o FROM orders o JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+
 DELETE a FROM addresses a JOIN users u ON u.id = a.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE b FROM billing_profiles b JOIN users u ON u.id = b.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE x FROM exchange_rates x JOIN users u ON u.id = x.created_by WHERE u.email LIKE 'e2e+%@example.com';
+DELETE v FROM product_variants v JOIN products p ON p.id = v.product_id WHERE p.slug LIKE 'e2e-%';
+DELETE FROM products WHERE slug LIKE 'e2e-%';
+DELETE FROM brands WHERE slug LIKE 'e2e-%';
+DELETE FROM categories WHERE slug LIKE 'e2e-%';
+DELETE v FROM attribute_values v JOIN attributes a ON a.id = v.attribute_id WHERE a.code LIKE 'e2e_%';
+DELETE FROM attributes WHERE code LIKE 'e2e_%';
 DELETE FROM coupons WHERE code LIKE 'E2E-%';
 DELETE FROM shipping_zones WHERE code LIKE 'e2e-%';
 DELETE FROM pickup_points WHERE name LIKE 'E2E %';
@@ -84,4 +90,4 @@ reset_rate_limits
 [[ "$STACK_MODE" == prod ]] || warm_up_revalidation
 
 info "Running the E2E suite against the $STACK_MODE stack"
-run_e2e e2e sh -ec 'exec npx playwright test --project=chromium "$@"' sh "$@"
+run_e2e e2e sh -ec 'exec npx playwright test --project=catalog-admin "$@"' sh "$@"

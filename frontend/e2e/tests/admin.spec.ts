@@ -15,7 +15,17 @@ import { adminTest, expect, test, unverifiedTest } from "../support/fixtures";
 import { messages } from "../support/i18n";
 
 const t = messages.es;
-const ADMIN_PAGES = ["coupons", "exchange-rates", "shipping", "pickup-points", "audit"];
+const ADMIN_PAGES = [
+  "products",
+  "categories",
+  "brands",
+  "attributes",
+  "coupons",
+  "exchange-rates",
+  "shipping",
+  "pickup-points",
+  "audit",
+];
 const PHONE_WIDTH = 375;
 
 function suffix(): string {

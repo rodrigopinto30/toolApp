@@ -26,7 +26,12 @@ export type ValidationKey =
   | "wholeNumber"
   | "etaRange"
   | "percent"
-  | "period";
+  | "period"
+  | "slug"
+  | "sku"
+  | "compareAt"
+  | "stockChange"
+  | "specs";
 
 export type Translate = (key: ValidationKey) => string;
 
