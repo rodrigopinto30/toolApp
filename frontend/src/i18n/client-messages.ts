@@ -31,6 +31,7 @@ export const CHECKOUT_NAMESPACES = [
 ] as const;
 export const FAVORITES_NAMESPACES = [...CARD_NAMESPACES, "Catalog", "Pagination", "Errors"] as const;
 export const REVIEWS_NAMESPACES = ["Reviews", "AccountReviews", "Validation", "Errors"] as const;
+export const ADMIN_NAMESPACES = ["Admin", "NotFound", "Pagination", "Validation", "Errors"] as const;
 export const ORDERS_NAMESPACES = [
   "Orders",
   "Pagination",

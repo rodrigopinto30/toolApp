@@ -53,6 +53,10 @@ DELETE r FROM coupon_redemptions r JOIN users u ON u.id = r.user_id WHERE u.emai
 DELETE o FROM orders o JOIN users u ON u.id = o.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE a FROM addresses a JOIN users u ON u.id = a.user_id WHERE u.email LIKE 'e2e+%@example.com';
 DELETE b FROM billing_profiles b JOIN users u ON u.id = b.user_id WHERE u.email LIKE 'e2e+%@example.com';
+DELETE x FROM exchange_rates x JOIN users u ON u.id = x.created_by WHERE u.email LIKE 'e2e+%@example.com';
+DELETE FROM coupons WHERE code LIKE 'E2E-%';
+DELETE FROM shipping_zones WHERE code LIKE 'e2e-%';
+DELETE FROM pickup_points WHERE name LIKE 'E2E %';
 DELETE FROM users WHERE email LIKE 'e2e+%@example.com';
 SQL
   rm -rf frontend/e2e/.auth

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ADMIN_PATH } from "@/features/admin/paths";
 import { ORDERS_PATH } from "@/features/orders/paths";
 import { useLogout, useMe } from "@/features/session/hooks";
 import { useSession } from "@/features/session/session-provider";
@@ -58,6 +59,11 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href={ORDERS_PATH}>{t("orders")}</Link>
         </DropdownMenuItem>
+        {me.data.role === "admin" && (
+          <DropdownMenuItem asChild>
+            <Link href={ADMIN_PATH}>{t("admin")}</Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem disabled={logout.isPending} onSelect={() => logout.mutate()}>
           {t("logout")}
         </DropdownMenuItem>
