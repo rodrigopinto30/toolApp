@@ -36,6 +36,17 @@ services:
       - ./backend/tests:/app/tests:ro
       - ./backend/pytest.ini:/app/pytest.ini:ro
 
+  worker:
+    build:
+      target: dev
+    image: toolapp-backend:dev
+    environment:
+      APP_ENV: development
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+    volumes:
+      - ./backend/app:/app/app:ro
+
   migrations:
     build:
       target: dev

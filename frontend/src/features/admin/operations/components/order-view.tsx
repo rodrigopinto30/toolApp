@@ -14,6 +14,7 @@ import type { AdminOrder } from "@/features/admin/operations/types";
 import { ADMIN_ORDERS_PATH } from "@/features/admin/paths";
 import { useErrorMessage } from "@/features/errors/use-error-message";
 import {
+  isKnownNote,
   OrderBillingDetails,
   OrderDelivery,
   OrderItems,
@@ -114,10 +115,6 @@ function OrderActions({ order }: { order: AdminOrder }) {
   );
 }
 
-function isCustomerNote(note: string | null): note is "payment_rejected" | "cancelled_by_customer" {
-  return note === "payment_rejected" || note === "cancelled_by_customer";
-}
-
 function History({ order }: { order: AdminOrder }) {
   const t = useTranslations("Admin.orders");
   const to = useTranslations("Orders");
@@ -140,7 +137,7 @@ function History({ order }: { order: AdminOrder }) {
             </span>
             {change.note && (
               <span className="wrap-anywhere whitespace-pre-line">
-                {isCustomerNote(change.note) ? to(`history.notes.${change.note}`) : change.note}
+                {isKnownNote(change.note) ? to(`history.notes.${change.note}`) : change.note}
               </span>
             )}
           </li>

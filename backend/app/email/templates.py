@@ -134,6 +134,26 @@ TEMPLATES: dict[str, dict[Locale, Template]] = {
             link_label="View order",
         ),
     },
+    "order_expired": {
+        Locale.ES: Template(
+            subject="Tu pedido {number} venció",
+            lines=(
+                "Hola {first_name},",
+                "Cancelamos tu pedido {number} porque no recibimos el pago a tiempo. "
+                "Si todavía querés estos productos, podés hacer un pedido nuevo.",
+            ),
+            link_label="Ver pedido",
+        ),
+        Locale.EN: Template(
+            subject="Your order {number} expired",
+            lines=(
+                "Hi {first_name},",
+                "We cancelled your order {number} because we did not receive the payment in "
+                "time. If you still want these products, you can place a new order.",
+            ),
+            link_label="View order",
+        ),
+    },
     "order_preparing": {
         Locale.ES: Template(
             subject="Estamos preparando tu pedido {number}",

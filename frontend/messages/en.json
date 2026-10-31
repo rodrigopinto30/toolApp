@@ -318,7 +318,8 @@
       "title": "Tracking",
       "notes": {
         "payment_rejected": "The card was rejected.",
-        "cancelled_by_customer": "You cancelled it."
+        "cancelled_by_customer": "You cancelled it.",
+        "expired": "It expired because the payment did not arrive in time."
       }
     },
     "payments": {
@@ -329,6 +330,7 @@
         "rejected": "Rejected",
         "refunded": "Refunded"
       },
+      "notCompleted": "Not completed",
       "card": "{brand} ending in {last4}"
     },
     "cancel": {

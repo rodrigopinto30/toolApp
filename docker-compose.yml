@@ -113,6 +113,45 @@ services:
       resources:
         limits: { cpus: "1.00", memory: 512M }
 
+  worker:
+    <<: *hardening
+    build:
+      context: ./backend
+      target: prod
+    image: toolapp-backend:latest
+    command: ["python", "-m", "app.jobs.expire_orders"]
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrations: { condition: service_completed_successfully }
+    environment:
+      APP_ENV: production
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      PUBLIC_URL: ${PUBLIC_URL}
+      PENDING_ORDER_TTL_MINUTES: ${PENDING_ORDER_TTL_MINUTES:-30}
+      FRONTEND_INTERNAL_URL: http://frontend:3000
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET}
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    stop_grace_period: 30s
+    networks: [edge, internal]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,sys,time; sys.exit(0 if time.time() - os.path.getmtime('/tmp/worker-heartbeat') < 180 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits: { cpus: "0.25", memory: 256M }
+
   migrations:
     <<: *hardening
     restart: "no"
