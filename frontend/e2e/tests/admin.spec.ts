@@ -7,6 +7,7 @@ import {
   AdminPickupPointsPage,
   AdminShippingPage,
 } from "../pages/admin-page";
+import { AdminOrdersPage } from "../pages/admin-operations-page";
 import { CheckoutPage } from "../pages/checkout-page";
 import { redirectedToLogin } from "../pages/login-page";
 import { adminCoupon } from "../support/admin";
@@ -16,6 +17,9 @@ import { messages } from "../support/i18n";
 
 const t = messages.es;
 const ADMIN_PAGES = [
+  "orders",
+  "reviews",
+  "users",
   "products",
   "categories",
   "brands",
@@ -27,6 +31,7 @@ const ADMIN_PAGES = [
   "audit",
 ];
 const PHONE_WIDTH = 375;
+const DESKTOP_WIDTH = 1280;
 
 function suffix(): string {
   return randomUUID().slice(0, 8);
@@ -49,15 +54,15 @@ unverifiedTest("a customer sees not-found on every panel page and no panel link"
 });
 
 adminTest("an admin reaches the panel from the user menu", async ({ page }) => {
-  const couponsPage = new AdminCouponsPage(page);
+  const ordersPage = new AdminOrdersPage(page);
 
   await page.goto("/es");
   await page.getByRole("banner").getByRole("button", { name: t.UserMenu.label }).click();
   await page.getByRole("menuitem", { name: t.UserMenu.admin }).click();
 
-  await page.waitForURL(`**${couponsPage.url}`);
-  await expect(couponsPage.heading).toHaveText(t.Admin.coupons.title);
-  await expect(couponsPage.navigation.getByRole("link", { name: t.Admin.nav.coupons })).toHaveAttribute(
+  await page.waitForURL(`**${ordersPage.url}`);
+  await expect(ordersPage.heading).toHaveText(t.Admin.orders.title);
+  await expect(ordersPage.navigation.getByRole("link", { name: t.Admin.nav.orders })).toHaveAttribute(
     "aria-current",
     "page",
   );
@@ -69,9 +74,25 @@ adminTest("every panel page fits a phone, and only its tables scroll", async ({ 
   for (const name of ADMIN_PAGES) {
     await page.goto(`/es/admin/${name}`);
     await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByRole("table").first()).toBeVisible();
+    await expect(page.getByLabel(t.Admin.loadingList)).toHaveCount(0);
     const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(pageWidth, `/admin/${name}`).toBeLessThanOrEqual(PHONE_WIDTH);
+  }
+});
+
+adminTest("on a desktop, every table shows all its columns without scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: DESKTOP_WIDTH, height: 800 });
+
+  for (const name of ADMIN_PAGES) {
+    await page.goto(`/es/admin/${name}`);
+    await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByLabel(t.Admin.loadingList)).toHaveCount(0);
+    const hidden = await page.evaluate(() =>
+      [...document.querySelectorAll("[data-slot=table-container]")].map(
+        (table) => table.scrollWidth - table.clientWidth,
+      ),
+    );
+    expect(Math.max(0, ...hidden), `/admin/${name}`).toBe(0);
   }
 });
 
@@ -96,6 +117,7 @@ adminTest("a coupon created in the panel works at checkout and leaves an audit t
     const auditPage = new AdminAuditPage(page);
     await auditPage.goto();
     await auditPage.filterByEntity("coupon", String(id));
+    await auditPage.expectEntries(2);
     await expect(auditPage.row("update")).toContainText(`coupon #${id}`);
     await expect(auditPage.row("create")).toContainText(`coupon #${id}`);
     await auditPage.row("update").getByText("1 cambio").click();

@@ -375,6 +375,7 @@
       "label": "Secciones del panel",
       "open": "Secciones",
       "close": "Cerrar",
+      "orders": "Pedidos",
       "products": "Productos",
       "categories": "Categorías",
       "brands": "Marcas",
@@ -383,7 +384,9 @@
       "exchangeRates": "Cotización",
       "shipping": "Envíos",
       "pickupPoints": "Puntos de retiro",
-      "audit": "Auditoría"
+      "audit": "Auditoría",
+      "reviews": "Opiniones",
+      "users": "Usuarios"
     },
     "coupons": {
       "metaTitle": "Cupones",
@@ -656,6 +659,103 @@
       "moveUp": "Subir {name}",
       "moveDown": "Bajar {name}",
       "deleteDescription": "Se borra de la tienda y no se puede recuperar."
+    },
+    "orders": {
+      "metaTitle": "Pedidos",
+      "title": "Pedidos",
+      "filters": "Filtros",
+      "empty": "No hay pedidos con esos filtros.",
+      "back": "Volver a pedidos",
+      "number": "Número",
+      "date": "Fecha",
+      "customer": "Cliente",
+      "delivery": "Entrega",
+      "units": "Unidades",
+      "total": "Total",
+      "status": "Estado",
+      "allStatuses": "Todos",
+      "email": "Email del cliente",
+      "from": "Desde",
+      "to": "Hasta",
+      "apply": "Filtrar",
+      "clear": "Limpiar",
+      "actionsTitle": "Cambiar el estado",
+      "note": "Nota interna",
+      "noteHint": "Opcional. No se le muestra al cliente.",
+      "finished": "Este pedido ya no tiene cambios posibles.",
+      "changed": "El pedido pasó a {status}. Le avisamos al cliente por email.",
+      "actions": {
+        "preparing": "Pasar a preparación",
+        "shipped": "Marcar como enviado",
+        "ready_for_pickup": "Marcar listo para retirar",
+        "delivered": "Marcar como entregado",
+        "refunded": "Reembolsar"
+      },
+      "refundTitle": "¿Reembolsar el pedido {number}?",
+      "refundDescription": "Se devuelve el pago, vuelve el stock y se libera el cupón. No se puede deshacer.",
+      "confirmRefund": "Sí, reembolsar",
+      "refunding": "Reembolsando…",
+      "bySystem": "por el sistema",
+      "byUser": "por el usuario #{id}",
+      "languages": {
+        "es": "Escribe en español",
+        "en": "Escribe en inglés"
+      },
+      "rateNote": "Cotización congelada al comprar: {rate}."
+    },
+    "reviews": {
+      "metaTitle": "Opiniones",
+      "title": "Opiniones",
+      "empty": "No hay opiniones con ese estado.",
+      "product": "Producto y autor",
+      "review": "Opinión",
+      "date": "Fecha",
+      "status": "Estado",
+      "allStatuses": "Todas",
+      "statuses": {
+        "pending": "En revisión",
+        "approved": "Publicada",
+        "rejected": "Rechazada"
+      },
+      "actions": "Acciones",
+      "approve": "Aprobar",
+      "approveItem": "Aprobar {title}",
+      "reject": "Rechazar",
+      "rejectItem": "Rechazar {title}"
+    },
+    "users": {
+      "metaTitle": "Usuarios",
+      "title": "Usuarios",
+      "empty": "No hay usuarios con esos filtros.",
+      "search": "Buscar",
+      "all": "Todos",
+      "role": "Rol",
+      "roles": {
+        "customer": "Cliente",
+        "admin": "Administrador"
+      },
+      "status": "Estado",
+      "lastLogin": "Último ingreso",
+      "never": "Nunca",
+      "actions": "Acciones",
+      "you": "Vos",
+      "confirm": "Sí, confirmar",
+      "makeAdmin": "Hacer admin",
+      "makeAdminItem": "Hacer administrador a {name}",
+      "makeAdminTitle": "¿Hacer administrador a {name}?",
+      "makeAdminDescription": "Va a tener acceso completo al panel.",
+      "removeAdmin": "Quitar admin",
+      "removeAdminItem": "Quitar administrador a {name}",
+      "removeAdminTitle": "¿Quitarle el rol de administrador a {name}?",
+      "removeAdminDescription": "Va a perder el acceso al panel.",
+      "deactivate": "Desactivar",
+      "deactivateItem": "Desactivar a {name}",
+      "deactivateTitle": "¿Desactivar a {name}?",
+      "deactivateDescription": "No va a poder ingresar y se cierran todas sus sesiones.",
+      "activate": "Activar",
+      "activateItem": "Activar a {name}",
+      "user": "Usuario",
+      "unverified": "Sin confirmar"
     }
   },
   "NotFound": {
@@ -972,6 +1072,8 @@
     "invalid_image": "El archivo no es una imagen válida.",
     "too_many_images": "Un producto admite hasta 12 imágenes.",
     "payload_too_large": "El archivo es demasiado grande.",
+    "last_admin": "Tiene que quedar al menos un administrador activo.",
+    "self_change": "No podés desactivarte ni quitarte el rol a vos mismo.",
     "unexpected": "Ocurrió un error inesperado.",
     "unexpectedWithId": "Ocurrió un error inesperado (código {requestId})."
   }

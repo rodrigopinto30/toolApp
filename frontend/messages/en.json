@@ -375,6 +375,7 @@
       "label": "Panel sections",
       "open": "Sections",
       "close": "Close",
+      "orders": "Orders",
       "products": "Products",
       "categories": "Categories",
       "brands": "Brands",
@@ -383,7 +384,9 @@
       "exchangeRates": "Exchange rate",
       "shipping": "Shipping",
       "pickupPoints": "Pickup points",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "reviews": "Reviews",
+      "users": "Users"
     },
     "coupons": {
       "metaTitle": "Coupons",
@@ -656,6 +659,103 @@
       "moveUp": "Move {name} up",
       "moveDown": "Move {name} down",
       "deleteDescription": "It leaves the store and cannot be recovered."
+    },
+    "orders": {
+      "metaTitle": "Orders",
+      "title": "Orders",
+      "filters": "Filters",
+      "empty": "No orders match those filters.",
+      "back": "Back to orders",
+      "number": "Number",
+      "date": "Date",
+      "customer": "Customer",
+      "delivery": "Delivery",
+      "units": "Units",
+      "total": "Total",
+      "status": "Status",
+      "allStatuses": "All",
+      "email": "Customer email",
+      "from": "From",
+      "to": "To",
+      "apply": "Filter",
+      "clear": "Clear",
+      "actionsTitle": "Change the status",
+      "note": "Internal note",
+      "noteHint": "Optional. The customer does not see it.",
+      "finished": "This order has no more possible changes.",
+      "changed": "The order moved to {status}. We emailed the customer.",
+      "actions": {
+        "preparing": "Move to preparing",
+        "shipped": "Mark as shipped",
+        "ready_for_pickup": "Mark ready for pickup",
+        "delivered": "Mark as delivered",
+        "refunded": "Refund"
+      },
+      "refundTitle": "Refund order {number}?",
+      "refundDescription": "The payment is returned, the stock comes back and the coupon is released. This cannot be undone.",
+      "confirmRefund": "Yes, refund",
+      "refunding": "Refunding…",
+      "bySystem": "by the system",
+      "byUser": "by user #{id}",
+      "languages": {
+        "es": "Writes in Spanish",
+        "en": "Writes in English"
+      },
+      "rateNote": "Rate frozen at purchase: {rate}."
+    },
+    "reviews": {
+      "metaTitle": "Reviews",
+      "title": "Reviews",
+      "empty": "No reviews with that status.",
+      "product": "Product and author",
+      "review": "Review",
+      "date": "Date",
+      "status": "Status",
+      "allStatuses": "All",
+      "statuses": {
+        "pending": "In review",
+        "approved": "Published",
+        "rejected": "Rejected"
+      },
+      "actions": "Actions",
+      "approve": "Approve",
+      "approveItem": "Approve {title}",
+      "reject": "Reject",
+      "rejectItem": "Reject {title}"
+    },
+    "users": {
+      "metaTitle": "Users",
+      "title": "Users",
+      "empty": "No users match those filters.",
+      "search": "Search",
+      "all": "All",
+      "role": "Role",
+      "roles": {
+        "customer": "Customer",
+        "admin": "Administrator"
+      },
+      "status": "Status",
+      "lastLogin": "Last login",
+      "never": "Never",
+      "actions": "Actions",
+      "you": "You",
+      "confirm": "Yes, confirm",
+      "makeAdmin": "Make admin",
+      "makeAdminItem": "Make {name} an administrator",
+      "makeAdminTitle": "Make {name} an administrator?",
+      "makeAdminDescription": "They will have full access to the panel.",
+      "removeAdmin": "Remove admin",
+      "removeAdminItem": "Remove administrator from {name}",
+      "removeAdminTitle": "Remove the administrator role from {name}?",
+      "removeAdminDescription": "They will lose access to the panel.",
+      "deactivate": "Deactivate",
+      "deactivateItem": "Deactivate {name}",
+      "deactivateTitle": "Deactivate {name}?",
+      "deactivateDescription": "They will not be able to log in, and all their sessions close.",
+      "activate": "Activate",
+      "activateItem": "Activate {name}",
+      "user": "User",
+      "unverified": "Unconfirmed"
     }
   },
   "NotFound": {
@@ -972,6 +1072,8 @@
     "invalid_image": "The file is not a valid image.",
     "too_many_images": "A product takes up to 12 images.",
     "payload_too_large": "The file is too large.",
+    "last_admin": "At least one active administrator must remain.",
+    "self_change": "You cannot deactivate or demote yourself.",
     "unexpected": "An unexpected error happened.",
     "unexpectedWithId": "An unexpected error happened (code {requestId})."
   }

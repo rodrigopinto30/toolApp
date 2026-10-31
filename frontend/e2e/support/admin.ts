@@ -14,6 +14,17 @@ export async function deliverPickupOrder(admin: APIRequestContext, number: strin
   }
 }
 
+export async function productStock(admin: APIRequestContext, name: string): Promise<number> {
+  const response = await admin.get(`/api/v1/admin/products?${new URLSearchParams({ q: name, size: "100" })}`);
+  expect(response.status(), "admin products").toBe(200);
+  const items: { name: string; stock: number }[] = (await response.json()).items;
+  const product = items.find((item) => item.name === name);
+  if (!product) {
+    throw new Error(`No product named ${name}`);
+  }
+  return product.stock;
+}
+
 export async function changeVariantPrice(
   admin: APIRequestContext,
   productId: number,

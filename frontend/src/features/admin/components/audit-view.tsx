@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { createParser, parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,18 +9,13 @@ import { Label } from "@/components/ui/label";
 import { DataTable, useAdminPage, type Column } from "@/features/admin/components/data-table";
 import { ResourceHeader } from "@/features/admin/components/resource-parts";
 import { endOfDay, startOfDay } from "@/features/admin/dates";
+import { parseAsDay } from "@/features/admin/filters";
 import { useAuditLogs } from "@/features/admin/hooks";
 import type { AuditLog } from "@/features/admin/types";
 
-const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TEXT_MAX_LENGTH = 60;
 const ENTITY_ID_MAX_LENGTH = 64;
 const NO_VALUE = "—";
-
-const parseAsDay = createParser({
-  parse: (value: string) => (DAY_PATTERN.test(value) ? value : null),
-  serialize: (value: string) => value,
-});
 
 const FILTERS = {
   entity: parseAsString,

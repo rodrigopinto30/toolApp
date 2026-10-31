@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 import { AppPage } from "./app-page";
 
 export class ForgotPasswordPage extends AppPage {
@@ -7,6 +9,7 @@ export class ForgotPasswordPage extends AppPage {
   readonly success = this.main.getByText(this.t.Auth.forgot.success);
 
   async requestLink(email: string): Promise<void> {
+    await expect(this.submit).toBeEnabled();
     await this.email.fill(email);
     await this.submit.click();
   }

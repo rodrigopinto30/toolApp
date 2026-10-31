@@ -90,4 +90,5 @@ reset_rate_limits
 [[ "$STACK_MODE" == prod ]] || warm_up_revalidation
 
 info "Running the E2E suite against the $STACK_MODE stack"
-run_e2e e2e sh -ec 'exec npx playwright test --project=catalog-admin "$@"' sh "$@"
+if [[ $# -gt 0 ]]; then scope="--project=chromium --project=serial --no-deps"; else scope="--project=serial"; fi
+run_e2e e2e sh -ec 'scope="$1"; shift; exec npx playwright test $scope "$@"' sh "$scope" "$@"

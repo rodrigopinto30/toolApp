@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 import { BASE_URL } from "./support/stack";
 
+const SERIAL_SPECS = /(catalog-admin|operations)\.spec\.ts/;
+
 export default defineConfig({
   testDir: "./tests",
   outputDir: "./test-results",
@@ -22,10 +24,11 @@ export default defineConfig({
   projects: [
     { name: "buyers", testMatch: /buyers\.setup\.ts/ },
     { name: "community", testMatch: /community\.setup\.ts/ },
-    { name: "chromium", testIgnore: [/\.setup\.ts/, /catalog-admin\.spec\.ts/], use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", testIgnore: [/\.setup\.ts/, SERIAL_SPECS], use: { ...devices["Desktop Chrome"] } },
     {
-      name: "catalog-admin",
-      testMatch: /catalog-admin\.spec\.ts/,
+      name: "serial",
+      testMatch: SERIAL_SPECS,
+      workers: 1,
       dependencies: ["chromium"],
       use: { ...devices["Desktop Chrome"] },
     },

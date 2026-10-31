@@ -4,4 +4,11 @@ export const ADMIN_EXCHANGE_RATES_PATH = "/admin/exchange-rates";
 export const ADMIN_SHIPPING_PATH = "/admin/shipping";
 export const ADMIN_PICKUP_POINTS_PATH = "/admin/pickup-points";
 export const ADMIN_AUDIT_PATH = "/admin/audit";
-export const ADMIN_HOME_PATH = ADMIN_COUPONS_PATH;
+export const ADMIN_ORDERS_PATH = "/admin/orders";
+export const ADMIN_REVIEWS_PATH = "/admin/reviews";
+export const ADMIN_USERS_PATH = "/admin/users";
+export const ADMIN_HOME_PATH = ADMIN_ORDERS_PATH;
+
+export function adminOrderPath(number: string): string {
+  return `${ADMIN_ORDERS_PATH}/${encodeURIComponent(number)}`;
+}

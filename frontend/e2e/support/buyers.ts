@@ -5,7 +5,7 @@ import type { Credentials } from "./users";
 
 export const AUTH_DIR = path.resolve(__dirname, "../.auth");
 
-export type BuyerName = "books" | "cart" | "checkout" | "community" | "orders";
+export type BuyerName = "books" | "cart" | "checkout" | "community" | "operations" | "orders";
 export type ShopperName = BuyerName | "unverified" | "admin";
 export type Buyer = Credentials & { storageState: string };
 

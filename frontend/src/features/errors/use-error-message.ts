@@ -76,6 +76,8 @@ export function useErrorMessage() {
       case "invalid_image":
       case "too_many_images":
       case "payload_too_large":
+      case "last_admin":
+      case "self_change":
         return t(error.code);
       case "coupon_min_subtotal": {
         const minimum = moneyDetail(error.details, "min_subtotal");

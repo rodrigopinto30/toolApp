@@ -16,12 +16,16 @@ import {
   ADMIN_AUDIT_PATH,
   ADMIN_COUPONS_PATH,
   ADMIN_EXCHANGE_RATES_PATH,
+  ADMIN_ORDERS_PATH,
   ADMIN_PICKUP_POINTS_PATH,
+  ADMIN_REVIEWS_PATH,
   ADMIN_SHIPPING_PATH,
+  ADMIN_USERS_PATH,
 } from "@/features/admin/paths";
 import { Link, usePathname } from "@/i18n/navigation";
 
 const SECTIONS = [
+  { href: ADMIN_ORDERS_PATH, label: "orders" },
   { href: ADMIN_PRODUCTS_PATH, label: "products" },
   { href: ADMIN_CATEGORIES_PATH, label: "categories" },
   { href: ADMIN_BRANDS_PATH, label: "brands" },
@@ -30,6 +34,8 @@ const SECTIONS = [
   { href: ADMIN_EXCHANGE_RATES_PATH, label: "exchangeRates" },
   { href: ADMIN_SHIPPING_PATH, label: "shipping" },
   { href: ADMIN_PICKUP_POINTS_PATH, label: "pickupPoints" },
+  { href: ADMIN_REVIEWS_PATH, label: "reviews" },
+  { href: ADMIN_USERS_PATH, label: "users" },
   { href: ADMIN_AUDIT_PATH, label: "audit" },
 ] as const;
 

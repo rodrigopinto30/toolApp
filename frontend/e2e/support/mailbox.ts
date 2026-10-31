@@ -12,6 +12,12 @@ export class Mailbox {
     this.request = request;
   }
 
+  async count(to: string): Promise<number> {
+    const search = await this.request.get(`${MAILPIT_URL}/api/v1/search`, { params: { query: `to:"${to}"` } });
+    const { messages }: SearchResult = await search.json();
+    return messages.length;
+  }
+
   async link(to: string, path: string): Promise<string> {
     let link = "";
     await expect

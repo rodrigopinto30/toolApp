@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 import type { Locale } from "../support/i18n";
 import type { Credentials } from "../support/users";
 import { AppPage } from "./app-page";
@@ -17,6 +19,7 @@ export class LoginPage extends AppPage {
   }
 
   async login({ email, password }: Credentials): Promise<void> {
+    await expect(this.submit).toBeEnabled();
     await this.email.fill(email);
     await this.password.fill(password);
     await this.submit.click();
