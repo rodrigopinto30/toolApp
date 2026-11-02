@@ -1,4 +1,4 @@
-import { test as base, expect, type APIRequestContext } from "@playwright/test";
+import { test as base, expect, type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 
 import { AccountPage } from "../pages/account-page";
 import { CheckoutPage } from "../pages/checkout-page";
@@ -139,12 +139,15 @@ export const customerTest = test.extend<{ emptyCart: void }>({
   ],
 });
 
-export const checkoutTest = customerTest.extend<{ checkoutPage: CheckoutPage }>({
-  checkoutPage: async ({ page, context }, use) => {
-    await use(new CheckoutPage(page));
-    await cancelOpenOrders(context.request);
-  },
-});
+async function checkoutPage(
+  { page, context }: { page: Page; context: BrowserContext },
+  use: (checkoutPage: CheckoutPage) => Promise<void>,
+): Promise<void> {
+  await use(new CheckoutPage(page));
+  await cancelOpenOrders(context.request);
+}
+
+export const checkoutTest = customerTest.extend<{ checkoutPage: CheckoutPage }>({ checkoutPage });
 
 export const adminTest = test.extend<{ emptyCart: void }>({
   storageState: async ({}, use) => {
@@ -158,6 +161,8 @@ export const adminTest = test.extend<{ emptyCart: void }>({
     { auto: true },
   ],
 });
+
+export const adminCheckoutTest = adminTest.extend<{ checkoutPage: CheckoutPage }>({ checkoutPage });
 
 export const unverifiedTest = test.extend({
   storageState: async ({ unverifiedShopper }, use) => {

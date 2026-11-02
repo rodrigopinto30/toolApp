@@ -76,6 +76,7 @@
     "hint": "Type at least 2 letters to search."
   },
   "Listing": {
+    "results": "Results",
     "count": "{count, plural, =0 {No products} one {# product} other {# products}}",
     "filters": "Filters",
     "closeFilters": "Close filters",
@@ -135,6 +136,7 @@
     "metaTitle": "My favorites",
     "title": "My favorites",
     "toggle": "Mark {name} as a favorite",
+    "saved": "Saved products",
     "loading": "Loading your favorites…",
     "empty": {
       "title": "You have no favorites yet",
