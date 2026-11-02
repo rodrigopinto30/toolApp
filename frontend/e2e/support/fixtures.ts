@@ -14,7 +14,7 @@ import { readShopper, type Buyer, type BuyerName } from "./buyers";
 import { emptyServerCart } from "./cart";
 import { Mailbox } from "./mailbox";
 import { cancelOpenOrders } from "./orders";
-import { BASE_URL, ignoreHmrReloads, isDevStack } from "./stack";
+import { BASE_URL, ignoreHmrReloads, isDevStack, muteWebVitals } from "./stack";
 import { newUser, type TestUser } from "./users";
 
 const REACT_DEV_PROFILER_ERROR = /^Failed to execute 'measure' on 'Performance': .* negative time stamp/;
@@ -23,6 +23,7 @@ const EXPECTED_CONSOLE_ERROR =
 
 type Fixtures = {
   allowedConsoleError: RegExp | null;
+  realWebVitals: boolean;
   browserErrors: void;
   buyerName: BuyerName;
   buyer: Buyer;
@@ -55,9 +56,13 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     { scope: "worker" },
   ],
   allowedConsoleError: [null, { option: true }],
+  realWebVitals: [false, { option: true }],
   browserErrors: [
-    async ({ context, allowedConsoleError }, use) => {
+    async ({ context, allowedConsoleError, realWebVitals }, use) => {
       await ignoreHmrReloads(context);
+      if (!realWebVitals) {
+        await muteWebVitals(context);
+      }
       const errors: string[] = [];
       await context.addInitScript(() => {
         document.addEventListener("securitypolicyviolation", (event) => {

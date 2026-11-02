@@ -15,7 +15,7 @@ export class LoginPage extends AppPage {
   readonly submit = this.main.getByRole("button", { name: this.t.Auth.login.submit, exact: true });
 
   async goto(next?: string): Promise<void> {
-    await this.page.goto(next === undefined ? this.url : `${this.url}?${new URLSearchParams({ next })}`);
+    await this.open(next === undefined ? this.url : `${this.url}?${new URLSearchParams({ next })}`);
   }
 
   async login({ email, password }: Credentials): Promise<void> {

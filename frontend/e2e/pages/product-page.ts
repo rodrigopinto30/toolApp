@@ -38,7 +38,7 @@ export class ProductPage extends AppPage {
   }
 
   async gotoVariant(sku: string): Promise<void> {
-    await this.page.goto(`${this.url}?variant=${encodeURIComponent(sku)}`);
+    await this.open(`${this.url}?variant=${encodeURIComponent(sku)}`);
   }
 
   async addToCart(units: number): Promise<void> {
