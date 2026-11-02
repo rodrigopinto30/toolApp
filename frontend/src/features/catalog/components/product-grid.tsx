@@ -4,15 +4,18 @@ import type { ProductSummary } from "@/features/catalog/types";
 
 const GRID = "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4";
 
-export function ProductGrid({ products }: { products: ProductSummary[] }) {
+export function ProductGrid({ products, heading }: { products: ProductSummary[]; heading?: string }) {
   return (
-    <ul className={GRID}>
-      {products.map((product) => (
-        <li key={product.slug}>
-          <ProductCard product={product} />
-        </li>
-      ))}
-    </ul>
+    <>
+      {heading && <h2 className="sr-only">{heading}</h2>}
+      <ul className={GRID}>
+        {products.map((product) => (
+          <li key={product.slug}>
+            <ProductCard product={product} />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 

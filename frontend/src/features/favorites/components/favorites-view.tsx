@@ -54,7 +54,7 @@ export function FavoritesView() {
   }
   return (
     <div className="grid gap-4">
-      <ProductGrid products={favorites.data.items} />
+      <ProductGrid products={favorites.data.items} heading={t("saved")} />
       <Pagination
         page={favorites.data.page}
         pages={favorites.data.pages}

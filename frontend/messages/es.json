@@ -76,6 +76,7 @@
     "hint": "Escribí al menos 2 letras para buscar."
   },
   "Listing": {
+    "results": "Resultados",
     "count": "{count, plural, =0 {Ningún producto} one {# producto} other {# productos}}",
     "filters": "Filtros",
     "closeFilters": "Cerrar filtros",
@@ -135,6 +136,7 @@
     "metaTitle": "Mis favoritos",
     "title": "Mis favoritos",
     "toggle": "Marcar {name} como favorito",
+    "saved": "Productos guardados",
     "loading": "Cargando tus favoritos…",
     "empty": {
       "title": "Todavía no guardaste favoritos",

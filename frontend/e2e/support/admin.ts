@@ -25,6 +25,12 @@ export async function productStock(admin: APIRequestContext, name: string): Prom
   return product.stock;
 }
 
+export async function firstProductId(admin: APIRequestContext): Promise<number> {
+  const response = await admin.get("/api/v1/admin/products?size=1");
+  expect(response.status(), "admin products").toBe(200);
+  return (await response.json()).items[0].id;
+}
+
 export async function changeVariantPrice(
   admin: APIRequestContext,
   productId: number,

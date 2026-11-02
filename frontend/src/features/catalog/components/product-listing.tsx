@@ -67,7 +67,7 @@ export async function ProductListing({
           </div>
           <ListingResults>
             {results.items.length > 0 ? (
-              <ProductGrid products={results.items} />
+              <ProductGrid products={results.items} heading={t("results")} />
             ) : (
               <div className="flex flex-col items-start gap-3 rounded-xl border p-6">
                 <p>{t("empty")}</p>

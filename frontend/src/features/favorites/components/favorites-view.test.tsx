@@ -53,6 +53,7 @@ it("shows the favorites as catalog cards in the current currency and language", 
 
   renderWithProviders(<FavoritesView />, { hasSession: true });
 
+  expect(await screen.findByRole("heading", { level: 2, name: "Productos guardados" })).toBeInTheDocument();
   expect(await screen.findByRole("link", { name: "Martillo" })).toHaveAttribute("href", "/products/truper-hammer");
   expect(await screen.findByRole("button", { name: "Marcar Martillo como favorito", pressed: true })).toBeEnabled();
   expect(requests[0].searchParams.get("currency")).toBe("ARS");
