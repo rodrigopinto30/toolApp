@@ -1,5 +1,5 @@
 import type { Translate } from "@/features/auth/schemas";
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 import { isExpired, parseExpiry, validCardNumber } from "./card";
 

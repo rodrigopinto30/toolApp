@@ -9,12 +9,15 @@ _SHARED_PROCESSORS: list[structlog.typing.Processor] = [
     structlog.stdlib.add_logger_name,
     structlog.processors.TimeStamper(fmt="iso", utc=True),
 ]
+_PROCESSORS: list[structlog.typing.Processor] = [
+    *_SHARED_PROCESSORS,
+    structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+]
 
 
 def configure_logging(level: str = "INFO") -> None:
-    """JSON logs to stdout. The request_id is bound per request by RequestContextMiddleware."""
     structlog.configure(
-        processors=[*_SHARED_PROCESSORS, structlog.stdlib.ProcessorFormatter.wrap_for_formatter],
+        processors=_PROCESSORS,
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
         cache_logger_on_first_use=True,

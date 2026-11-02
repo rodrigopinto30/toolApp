@@ -35,7 +35,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   }
   const { page } = await loadCatalogSearchParams(searchParams);
   const alternates = localizedAlternates(categoryPath(resolved.category.slug), resolved.locale, page);
-  const description = resolved.category.description ?? undefined;
+  const t = await getTranslations({ locale: resolved.locale, namespace: "Category" });
+  const description = resolved.category.description ?? t("metaDescription", { name: resolved.category.name });
   return {
     title: resolved.category.name,
     description,

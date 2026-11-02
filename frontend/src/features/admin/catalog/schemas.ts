@@ -1,6 +1,6 @@
 import { text } from "@/features/account/schemas";
 import type { Translate } from "@/features/auth/schemas";
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 import { areValidSpecs, parseSpecs } from "./specs";
 

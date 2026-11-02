@@ -68,7 +68,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         CsrfMiddleware,
         allowed_origin=settings.public_url,
         always_protected_prefix=f"{prefix}/v1/auth/",
-        exempt_paths=frozenset({f"{prefix}/v1/csp-reports"}),
+        exempt_paths=frozenset({f"{prefix}/v1/csp-reports", f"{prefix}/v1/web-vitals"}),
     )
     app.add_middleware(
         BodySizeLimitMiddleware,

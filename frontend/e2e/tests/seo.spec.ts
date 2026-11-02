@@ -1,5 +1,5 @@
 import { categoryPath, productPath } from "../../src/features/catalog/paths";
-import { allProductSlugs, categoryTree, flattenCategories } from "../support/catalog";
+import { allProductSlugs, categoryTree, flattenCategories, largestCategory } from "../support/catalog";
 import { expect, test } from "../support/fixtures";
 import { messages } from "../support/i18n";
 import { BASE_URL } from "../support/stack";
@@ -24,6 +24,14 @@ test("the sitemap lists every page in both languages with its alternates", async
   for (const [hreflang, locale] of [["es", "es"], ["en", "en"], ["x-default", "es"]]) {
     expect(xml).toContain(`<xhtml:link rel="alternate" hreflang="${hreflang}" href="${BASE_URL}/${locale}${product}" />`);
   }
+});
+
+test("a category with no description of its own still describes the page", async ({ page, request }) => {
+  const category = await largestCategory(request);
+
+  await page.goto(`/en${categoryPath(category.slug)}`);
+
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /delivered nationwide/);
 });
 
 test("robots.txt lets crawlers in, keeps them out of the API and points to the sitemap", async ({ request }) => {

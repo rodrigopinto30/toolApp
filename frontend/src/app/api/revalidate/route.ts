@@ -2,7 +2,7 @@ import { revalidateTag } from "next/cache";
 
 import { isBearer } from "@/lib/bearer";
 import { serverEnv } from "@/lib/env";
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 const REVALIDATION_TAGS = ["catalog", "pricing", "shipping"] as const;
 

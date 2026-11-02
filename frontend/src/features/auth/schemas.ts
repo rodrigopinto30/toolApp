@@ -1,4 +1,4 @@
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 export type ValidationKey =
   | "required"

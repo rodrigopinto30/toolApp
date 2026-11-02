@@ -1,6 +1,6 @@
 import "server-only";
 
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 function origin(protocol: RegExp) {
   return z

@@ -2,7 +2,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { createStore } from "zustand/vanilla";
 
 import type { components } from "@/lib/api/schema";
-import { z } from "@/lib/zod";
 
 export const GUEST_CART_KEY = "toolapp-cart";
 export const MAX_CART_LINES = 50;
@@ -21,21 +20,22 @@ export type GuestCartState = {
   setAdjustments: (adjustments: CartAdjustment[]) => void;
 };
 
-const storedCartSchema = z.object({
-  items: z
-    .array(
-      z.object({
-        variantId: z.number().int().positive(),
-        quantity: z.number().int().min(1).max(MAX_LINE_QUANTITY),
-      }),
-    )
-    .max(MAX_CART_LINES)
-    .refine((items) => new Set(items.map((item) => item.variantId)).size === items.length),
-});
+function isWholeNumber(value: unknown, min: number, max = Number.MAX_SAFE_INTEGER): boolean {
+  return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max;
+}
+
+function isStoredLine(line: unknown): line is GuestItem {
+  const { variantId, quantity } = (line ?? {}) as Partial<GuestItem>;
+  return isWholeNumber(variantId, 1) && isWholeNumber(quantity, 1, MAX_LINE_QUANTITY);
+}
 
 export function parseStoredItems(value: unknown): GuestItem[] {
-  const parsed = storedCartSchema.safeParse(value);
-  return parsed.success ? parsed.data.items : [];
+  const items = (value as { items?: unknown } | null | undefined)?.items;
+  if (!Array.isArray(items) || items.length > MAX_CART_LINES || !items.every(isStoredLine)) {
+    return [];
+  }
+  const unique = new Set(items.map((item) => item.variantId));
+  return unique.size === items.length ? items.map(({ variantId, quantity }) => ({ variantId, quantity })) : [];
 }
 
 function clampQuantity(quantity: number): number {

@@ -74,6 +74,25 @@ test.describe("security", () => {
     });
   });
 
+  test("a page reports its web vitals when it is hidden", async ({ page, loginPage }) => {
+    await loginPage.goto();
+    await expect(loginPage.submit).toBeEnabled();
+
+    const beacon = page.waitForResponse("**/api/v1/web-vitals");
+    await page.evaluate(() => {
+      Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    const response = await beacon;
+    expect(response.status()).toBe(204);
+    expect(response.request().postDataJSON()).toMatchObject({
+      name: expect.stringMatching(/^(LCP|INP|CLS)$/),
+      rating: expect.any(String),
+      path: "/es/login",
+    });
+  });
+
   test("an unknown Host gets no answer on either port", async ({ request }) => {
     const headers = { Host: "evil.example" };
 
