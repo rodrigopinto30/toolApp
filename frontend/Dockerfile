@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24-alpine AS base
+FROM node:25-alpine AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 RUN chown node:node /app
@@ -23,7 +23,7 @@ FROM deps AS builder
 COPY --chown=node:node . .
 RUN npm run build
 
-FROM node:24-alpine AS runner
+FROM node:25-alpine AS runner
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
