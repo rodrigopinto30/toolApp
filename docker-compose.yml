@@ -15,7 +15,7 @@ x-hardening: &hardening
 services:
   nginx:
     <<: *hardening
-    image: nginxinc/nginx-unprivileged:1.28-alpine
+    image: nginxinc/nginx-unprivileged:1.31-alpine
     depends_on:
       frontend: { condition: service_healthy }
       backend: { condition: service_healthy }
