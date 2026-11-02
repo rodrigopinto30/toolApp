@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import { messages, type Locale, type Messages } from "../support/i18n";
 import { SiteHeader } from "./site-header";
@@ -28,7 +28,17 @@ export abstract class AppPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto(this.url);
+    await this.open(this.url);
+  }
+
+  protected async open(url: string): Promise<void> {
+    await this.page.goto(url);
+    await expect
+      .poll(
+        () => this.header.currency.evaluate((button) => Object.keys(button).some((key) => key.startsWith("__reactProps"))),
+        { intervals: [50] },
+      )
+      .toBe(true);
   }
 
   favorite(name: string, pressed?: boolean): Locator {

@@ -6,6 +6,6 @@ export class SearchPage extends ListingPage {
   readonly hint = this.main.getByText(this.t.Search.hint);
 
   async search(query: string): Promise<void> {
-    await this.page.goto(`${this.url}?${new URLSearchParams({ q: query })}`);
+    await this.open(`${this.url}?${new URLSearchParams({ q: query })}`);
   }
 }

@@ -56,7 +56,10 @@ export async function cartVariants(request: APIRequestContext): Promise<CartVari
     .map((variant) => ({ variant_id: variant.id, quantity: MAX_QUANTITY }));
   const { items: lines } = await quoteCart(request, lineItems);
   const plenty = lines.find((line) => line.issue === null);
-  const limited = lines.find((line) => line.issue === "insufficient_stock" && (line.available ?? 0) > 1);
+  const limited = lines.find(
+    (line) =>
+      line.issue === "insufficient_stock" && (line.available ?? 0) > 1 && line.product_slug !== plenty?.product_slug,
+  );
   if (!plenty || !limited) {
     throw new Error("The seed needs a variant with 99 or more units and one with fewer");
   }

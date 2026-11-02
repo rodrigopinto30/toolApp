@@ -1,0 +1,86 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /frontend
+      - /frontend/e2e
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+        exclude-patterns:
+          - "@playwright/test"
+    ignore:
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: docker
+    directories:
+      - /frontend
+      - /backend
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    allow:
+      - dependency-name: nginxinc/nginx-unprivileged
+      - dependency-name: mysql
+      - dependency-name: redis
+      - dependency-name: grafana/k6
+      - dependency-name: axllent/mailpit
+      - dependency-name: phpmyadmin
+    ignore:
+      - dependency-name: mysql
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch

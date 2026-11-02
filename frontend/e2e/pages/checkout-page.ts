@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 import { AppPage } from "./app-page";
 import { APPROVED_CARD, fillCard, type CardNumber } from "./card-form";
 
@@ -27,12 +29,16 @@ export class CheckoutPage extends AppPage {
   }
 
   async addAddress(address: NewAddress): Promise<void> {
-    const add = this.delivery.getByRole("button", { name: this.t.Checkout.delivery.addAddress });
-    if (await add.isVisible()) {
-      await add.click();
-    }
     const form = this.t.AddressForm;
-    await this.delivery.getByLabel(form.label, { exact: true }).fill(address.label);
+    const add = this.delivery.getByRole("button", { name: this.t.Checkout.delivery.addAddress });
+    const label = this.delivery.getByLabel(form.label, { exact: true });
+    await expect(async () => {
+      if (await add.isVisible()) {
+        await add.click({ timeout: 1_000 });
+      }
+      await expect(label).toBeVisible({ timeout: 1_000 });
+    }).toPass();
+    await label.fill(address.label);
     await this.delivery.getByLabel(form.recipient, { exact: true }).fill(address.recipient);
     await this.delivery.getByLabel(form.phone, { exact: true }).fill(address.phone);
     await this.delivery.getByLabel(form.street, { exact: true }).fill(address.street);

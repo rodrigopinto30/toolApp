@@ -72,7 +72,7 @@ export class AdminUsersPage extends AppPage {
   }
 
   async search(text: string): Promise<void> {
-    await this.page.goto(`${this.url}?${new URLSearchParams({ q: text })}`);
+    await this.open(`${this.url}?${new URLSearchParams({ q: text })}`);
   }
 
   async confirm(label: string, email: string): Promise<void> {

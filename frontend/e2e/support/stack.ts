@@ -23,3 +23,10 @@ export async function ignoreHmrReloads(context: BrowserContext): Promise<void> {
     });
   });
 }
+
+export async function muteWebVitals(context: BrowserContext): Promise<void> {
+  await context.addInitScript(() => {
+    const send = navigator.sendBeacon.bind(navigator);
+    navigator.sendBeacon = (url, data) => String(url).endsWith("/api/v1/web-vitals") || send(url, data);
+  });
+}
