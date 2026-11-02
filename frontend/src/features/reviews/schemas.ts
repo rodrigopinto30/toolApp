@@ -1,6 +1,6 @@
 import { text } from "@/features/account/schemas";
 import type { Translate } from "@/features/auth/schemas";
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 export const RATINGS = [1, 2, 3, 4, 5] as const;
 export const TITLE_MAX_LENGTH = 120;

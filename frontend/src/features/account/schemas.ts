@@ -1,6 +1,6 @@
 import { anyPassword, name, newPassword, phone, PHONE_PATTERN, type Translate } from "@/features/auth/schemas";
 import type { components } from "@/lib/api/schema";
-import { z } from "@/lib/zod";
+import * as z from "@/lib/zod";
 
 import { digitsOnly, isValidCuit, isValidDni } from "./tax-id";
 

@@ -1,0 +1,10 @@
+{
+  "home": { "pattern": "^/\\[locale\\]$", "maxGzipKilobytes": 266 },
+  "catalog": { "pattern": "^/\\[locale\\]/(categories|search)", "maxGzipKilobytes": 286 },
+  "product": { "pattern": "^/\\[locale\\]/products/", "maxGzipKilobytes": 338 },
+  "purchase": { "pattern": "^/\\[locale\\]/(cart|checkout)", "maxGzipKilobytes": 335 },
+  "auth": { "pattern": "^/\\[locale\\]/(login|register|verify-email|forgot-password|reset-password)", "maxGzipKilobytes": 310 },
+  "account": { "pattern": "^/\\[locale\\]/account", "maxGzipKilobytes": 333 },
+  "admin": { "pattern": "^/\\[locale\\]/admin", "maxGzipKilobytes": 357 },
+  "other": { "pattern": "^/(_not-found|\\[locale\\]/\\[\\.\\.\\.rest\\])$", "maxGzipKilobytes": 257 }
+}

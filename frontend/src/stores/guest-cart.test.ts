@@ -57,6 +57,21 @@ it.each([
   ["a quantity over 99", { items: [{ variantId: 30, quantity: 100 }] }, []],
   ["a price snuck in", { items: [{ variantId: 30, quantity: 1, price: "1" }] }, [{ variantId: 30, quantity: 1 }]],
   ["garbage", "not a cart", []],
+  ["nothing", null, []],
+  ["a number", 7, []],
+  ["no items", {}, []],
+  ["items that are not a list", { items: "1" }, []],
+  ["a line that is not an object", { items: [1] }, []],
+  ["a null line", { items: [null] }, []],
+  ["a missing quantity", { items: [{ variantId: 30 }] }, []],
+  ["a variant as text", { items: [{ variantId: "30", quantity: 1 }] }, []],
+  ["a zero variant", { items: [{ variantId: 0, quantity: 1 }] }, []],
+  ["a negative variant", { items: [{ variantId: -1, quantity: 1 }] }, []],
+  ["a zero quantity", { items: [{ variantId: 30, quantity: 0 }] }, []],
+  ["a fractional quantity", { items: [{ variantId: 30, quantity: 1.5 }] }, []],
+  ["the largest quantity", { items: [{ variantId: 30, quantity: 99 }] }, [{ variantId: 30, quantity: 99 }]],
+  ["no lines", { items: [] }, []],
+  ["one bad line among good ones", { items: [{ variantId: 30, quantity: 1 }, { variantId: 31, quantity: 0 }] }, []],
 ])("reads %s from storage safely", (_, value, expected) => {
   expect(parseStoredItems(value)).toEqual(expected);
 });
