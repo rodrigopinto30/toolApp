@@ -69,7 +69,7 @@ export async function ProductListing({
             {results.items.length > 0 ? (
               <ProductGrid products={results.items} heading={t("results")} />
             ) : (
-              <div className="flex flex-col items-start gap-3 rounded-xl border p-6">
+              <div className="flex flex-col items-start gap-3 rounded-xl border bg-card p-6 shadow-xs">
                 <p>{t("empty")}</p>
                 <Button asChild variant="outline" size="sm">
                   <Link href={serializeCatalogSearchParams(path, { q: state.q })}>{t("clearFilters")}</Link>

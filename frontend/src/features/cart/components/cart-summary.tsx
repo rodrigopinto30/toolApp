@@ -16,7 +16,7 @@ export function CartSummary({ cart, isGuest }: { cart: Cart; isGuest: boolean })
   const headingId = useId();
 
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border p-4">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={headingId} className="text-lg font-semibold">
         {t("summary.title")}
       </h2>

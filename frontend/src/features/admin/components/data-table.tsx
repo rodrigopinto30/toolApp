@@ -82,7 +82,7 @@ export function DataTable<Row>({
   }
   return (
     <div className="grid min-w-0 grid-cols-1 gap-4">
-      <div className="min-w-0 rounded-lg border">
+      <div className="min-w-0 rounded-lg border bg-card shadow-xs">
         <Table aria-label={label}>
           <TableHeader>
             <TableRow>

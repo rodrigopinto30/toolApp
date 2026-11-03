@@ -28,7 +28,7 @@ export async function SiteHeader({ currency }: { currency: Currency }) {
   const categories = await categoryLinks();
 
   return (
-    <header className="border-b">
+    <header className="border-b bg-card">
       <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-2 px-4 py-2 sm:flex-nowrap sm:gap-4">
         <Link href="/" aria-label={t("home")} className="text-lg font-semibold tracking-tight">
           ToolApp

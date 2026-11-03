@@ -93,6 +93,29 @@ test("switching the currency drops a price range typed in the other one", async 
   await expect(listing.header.currency).toHaveText("USD");
 });
 
+test("clickable controls show the hand cursor", async ({ page, request }) => {
+  const category = await largestCategory(request);
+  const brand = (await productFacets(request, { category: category.slug })).brands[0];
+  const listing = new CategoryPage(page, category.slug);
+
+  await listing.goto();
+  const checkbox = listing.filterOption(brand.label);
+  const label = page.locator(`label[for="${await checkbox.getAttribute("id")}"]`);
+  const favorite = listing.products.first().getByRole("button", {
+    name: new RegExp(`^${t.Favorites.toggle.replace("{name}", ".+")}$`),
+  });
+  await expect(favorite).toBeEnabled();
+  for (const control of [checkbox, label, favorite, listing.sort, listing.header.currency]) {
+    await expect(control).toHaveCSS("cursor", "pointer");
+  }
+
+  await listing.sort.click();
+  await expect(page.getByRole("option").first()).toHaveCSS("cursor", "pointer");
+  await page.keyboard.press("Escape");
+  await listing.header.currency.click();
+  await expect(page.getByRole("menuitem").first()).toHaveCSS("cursor", "pointer");
+});
+
 test.describe("on a small screen", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 

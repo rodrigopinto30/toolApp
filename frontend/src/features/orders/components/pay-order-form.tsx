@@ -56,7 +56,7 @@ export function PayOrderForm({
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-labelledby={`${id}-title`} className="grid gap-4 rounded-lg border p-4">
+    <form onSubmit={onSubmit} noValidate aria-labelledby={`${id}-title`} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={`${id}-title`} className="text-lg font-semibold">
         {t("title")}
       </h2>

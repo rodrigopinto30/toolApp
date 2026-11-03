@@ -9,7 +9,7 @@ export function ReviewItem({ review }: { review: ProductReview }) {
   const date = format.dateTime(new Date(review.created_at), { dateStyle: "medium" });
 
   return (
-    <li className="grid gap-1 rounded-lg border p-4">
+    <li className="grid gap-1 rounded-lg border bg-card p-4 shadow-xs">
       <ReviewStars rating={review.rating} />
       <h3 className="font-medium wrap-anywhere">{review.title}</h3>
       <p className="whitespace-pre-line wrap-anywhere text-muted-foreground">{review.body}</p>

@@ -64,7 +64,7 @@ function OrderActions({ order }: { order: AdminOrder }) {
     );
 
   return (
-    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-lg border p-4">
+    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={`${id}-title`} className="text-base font-semibold">
         {t("actionsTitle")}
       </h2>
@@ -122,7 +122,7 @@ function History({ order }: { order: AdminOrder }) {
   const id = useId();
 
   return (
-    <section aria-labelledby={id} className="grid gap-3 rounded-lg border p-4">
+    <section aria-labelledby={id} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={id} className="text-base font-semibold">
         {to("history.title")}
       </h2>
@@ -152,7 +152,7 @@ function Customer({ order }: { order: AdminOrder }) {
   const id = useId();
 
   return (
-    <section aria-labelledby={id} className="grid gap-3 rounded-lg border p-4">
+    <section aria-labelledby={id} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={id} className="text-base font-semibold">
         {t("customer")}
       </h2>
