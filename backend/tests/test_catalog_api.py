@@ -140,6 +140,40 @@ async def test_price_varies_only_when_variant_prices_differ(client: AsyncClient)
     assert cards[DRILL] is False
 
 
+async def test_single_variant_id_only_when_one_variant_is_active(
+    client: AsyncClient, session: AsyncSession
+) -> None:
+    variants = {
+        variant.sku: variant
+        for variant in await session.scalars(
+            select(ProductVariant).where(
+                ProductVariant.sku.in_(["BOS-HD18-18V", "TRU-WP-6", "TRU-WP-8", "TRU-WP-10"])
+            )
+        )
+    }
+    variants["TRU-WP-8"].is_active = False
+    variants["TRU-WP-10"].is_active = False
+    await session.flush()
+
+    response = await client.get("/api/v1/products", params={"size": 48})
+
+    cards = {card["slug"]: card["single_variant_id"] for card in response.json()["items"]}
+    assert cards[DRILL] == variants["BOS-HD18-18V"].id
+    assert cards["truper-nylon-wall-plugs-100"] == variants["TRU-WP-6"].id
+    assert cards["truper-leather-work-gloves"] is None
+    assert cards["stanley-tape-measure"] is None
+
+
+async def test_detail_and_featured_carry_the_single_variant_id(client: AsyncClient) -> None:
+    detail = (await client.get(f"/api/v1/products/{DRILL}")).json()
+    featured = (await client.get("/api/v1/products/featured")).json()
+
+    assert detail["single_variant_id"] == detail["variants"][0]["id"]
+    by_slug = {card["slug"]: card["single_variant_id"] for card in featured}
+    assert by_slug[DRILL] == detail["single_variant_id"]
+    assert by_slug["stanley-tape-measure"] is None
+
+
 @pytest.mark.parametrize(
     "path",
     [
