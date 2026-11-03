@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  frontend:
+    name: Frontend checks and bundle budgets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Give the frontend folder to the container user, uid 1000
+        run: sudo chown -R 1000:1000 frontend
+
+      - name: Lint, types, unit tests and npm audit
+        run: ./test-front.sh
+
+      - name: Bundle budgets
+        run: ./budgets.sh
+
+  stack:
+    name: Backend tests and E2E on the production build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Start the production stack
+        run: ./start.sh prod
+
+      - name: Backend tests and pip-audit
+        run: ./test.sh
+
+      - name: E2E
+        run: ./e2e.sh
+
+      - name: Collect the service logs
+        if: failure()
+        run: docker compose -f docker-compose.yml logs --no-color --timestamps > compose.log
+
+      - name: Upload traces, screenshots and logs
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: e2e-results
+          path: |
+            frontend/e2e/test-results/
+            compose.log
+          retention-days: 7
+          if-no-files-found: ignore

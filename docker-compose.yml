@@ -15,7 +15,7 @@ x-hardening: &hardening
 services:
   nginx:
     <<: *hardening
-    image: nginxinc/nginx-unprivileged:1.28-alpine
+    image: nginxinc/nginx-unprivileged:1.30-alpine
     depends_on:
       frontend: { condition: service_healthy }
       backend: { condition: service_healthy }
@@ -235,6 +235,7 @@ services:
       HOME: /tmp
       NODE_EXTRA_CA_CERTS: /ca/dev-ca.crt
       STACK_MODE: ${STACK_MODE:-dev}
+      CI: ${CI:-}
     volumes:
       - ./frontend:/app:ro
       - ./frontend/e2e:/app/e2e
