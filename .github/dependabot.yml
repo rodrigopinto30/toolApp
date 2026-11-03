@@ -49,6 +49,10 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      - dependency-name: node
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: docker-compose
     directory: /
@@ -69,6 +73,9 @@ updates:
       - dependency-name: axllent/mailpit
       - dependency-name: phpmyadmin
     ignore:
+      - dependency-name: nginxinc/nginx-unprivileged
+        update-types:
+          - version-update:semver-minor
       - dependency-name: mysql
         update-types:
           - version-update:semver-major
