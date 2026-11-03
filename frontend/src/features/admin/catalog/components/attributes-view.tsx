@@ -196,7 +196,7 @@ function AttributeValues({ attribute }: { attribute: AdminAttribute }) {
       ) : (
         <ul className="grid gap-2">
           {attribute.values.map((value) => (
-            <li key={value.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-2">
+            <li key={value.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-2 shadow-xs">
               <span className="min-w-0 wrap-anywhere">{value.value[locale]}</span>
               <span className="flex gap-2">
                 <Button

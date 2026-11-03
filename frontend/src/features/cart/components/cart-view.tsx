@@ -59,7 +59,7 @@ function CartShipping({ cart, provinces }: { cart: Cart; provinces: ProvinceOpti
     return null;
   }
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border p-4">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={headingId} className="text-base font-semibold">
         {t("shipping")}
       </h2>

@@ -11,7 +11,7 @@ const CARD_IMAGE_SIZES = "(min-width: 1024px) 15rem, (min-width: 640px) 33vw, 50
 
 export function ProductCard({ product }: { product: ProductSummary }) {
   return (
-    <article className="relative flex h-full flex-col gap-3 rounded-xl border p-3 transition-colors hover:bg-muted/40">
+    <article className="relative flex h-full flex-col gap-3 rounded-xl border bg-card p-3 shadow-xs transition-colors hover:bg-muted/40">
       <ProductImage image={product.image} sizes={CARD_IMAGE_SIZES} />
       <div className="flex flex-1 flex-col gap-1">
         {product.brand && <p className="text-xs text-muted-foreground">{product.brand.name}</p>}

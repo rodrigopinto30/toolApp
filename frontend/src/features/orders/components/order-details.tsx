@@ -13,7 +13,7 @@ import { formatMoney } from "@/lib/money";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const headingId = useId();
   return (
-    <section aria-labelledby={headingId} className="grid gap-3 rounded-lg border p-4">
+    <section aria-labelledby={headingId} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={headingId} className="text-base font-semibold">
         {title}
       </h2>

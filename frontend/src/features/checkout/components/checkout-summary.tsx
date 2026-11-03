@@ -31,7 +31,7 @@ export function CheckoutSummary({
     <section
       aria-labelledby={headingId}
       aria-busy={isUpdating}
-      className="grid gap-4 rounded-lg border p-4 lg:sticky lg:top-4"
+      className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs lg:sticky lg:top-4"
     >
       <h2 id={headingId} className="text-lg font-semibold">
         {t("title")}

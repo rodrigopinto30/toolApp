@@ -23,7 +23,7 @@ export function ProductGridSkeleton({ count }: { count: number }) {
   return (
     <ul aria-hidden="true" className={GRID}>
       {Array.from({ length: count }, (_, index) => (
-        <li key={index} className="grid gap-3 rounded-xl border p-3">
+        <li key={index} className="grid gap-3 rounded-xl border bg-card p-3 shadow-xs">
           <Skeleton className="aspect-square w-full rounded-lg" />
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-4 w-1/3" />

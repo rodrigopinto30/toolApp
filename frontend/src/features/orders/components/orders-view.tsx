@@ -74,7 +74,7 @@ function OrderRow({ order }: { order: OrderSummary }) {
     <li>
       <Link
         href={orderPath(order.number)}
-        className="grid gap-1 rounded-lg border p-3 transition-colors hover:bg-muted/50 sm:grid-cols-[1fr_auto] sm:items-center"
+        className="grid gap-1 rounded-lg border bg-card p-3 shadow-xs transition-colors hover:bg-muted/50 sm:grid-cols-[1fr_auto] sm:items-center"
       >
         <span className="grid gap-0.5">
           <span className="font-medium">{t("row", { number: order.number, date })}</span>

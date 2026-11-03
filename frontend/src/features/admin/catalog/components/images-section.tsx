@@ -117,7 +117,7 @@ export function ImagesSection({ product }: { product: AdminProduct }) {
           {images.map((image, index) => {
             const name = nameOf(index);
             return (
-              <li key={image.id} className="flex flex-wrap items-center gap-3 rounded-lg border p-2">
+              <li key={image.id} className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-2 shadow-xs">
                 <ProductImage
                   image={{ url: image.url, alt: image.alt?.[locale] ?? "" }}
                   sizes={THUMBNAIL_SIZES}

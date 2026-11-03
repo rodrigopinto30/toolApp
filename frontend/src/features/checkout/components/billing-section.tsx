@@ -24,7 +24,7 @@ export function BillingSection({
   const [adding, setAdding] = useState(false);
 
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border p-4">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
       <h2 id={headingId} className="text-lg font-semibold">
         {t("title")}
       </h2>

@@ -99,7 +99,7 @@ function ReviewableRow({ product, onWrite }: { product: ReviewProduct; onWrite: 
   const t = useTranslations("AccountReviews");
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border p-3">
+    <li className="flex items-center gap-3 rounded-lg border bg-card p-3 shadow-xs">
       <ProductImage image={product.image} sizes={THUMBNAIL_SIZES} className="size-12 shrink-0" />
       <Link href={productPath(product.slug)} className="min-w-0 flex-1 font-medium wrap-anywhere hover:underline">
         {product.name}
@@ -122,7 +122,7 @@ function OwnReviewRow({ review }: { review: OwnReview }) {
   const date = format.dateTime(new Date(review.created_at), { dateStyle: "medium" });
 
   return (
-    <li className="grid gap-1 rounded-lg border p-3">
+    <li className="grid gap-1 rounded-lg border bg-card p-3 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link href={productPath(review.product.slug)} className="font-medium wrap-anywhere hover:underline">
           {review.product.name}
