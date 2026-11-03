@@ -96,6 +96,7 @@ class ProductCard(BaseModel):
     price_varies: bool
     compare_at: Money | None
     stock_status: StockStatus
+    single_variant_id: int | None
     rating_avg: Decimal
     rating_count: int
 

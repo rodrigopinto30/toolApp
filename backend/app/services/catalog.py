@@ -273,6 +273,7 @@ class CatalogService:
             price_varies=len({variant.price_usd for variant in variants}) > 1,
             compare_at=_usd(cheapest.compare_at_price_usd),
             stock_status=self._stock_status(sum(v.stock for v in variants)),
+            single_variant_id=variants[0].id if len(variants) == 1 else None,
             rating_avg=product.rating_avg,
             rating_count=product.rating_count,
         )
