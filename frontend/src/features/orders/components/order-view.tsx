@@ -1,10 +1,13 @@
 "use client";
 
+import { ArrowLeftIcon, PackageIcon } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
+import { PageHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CART_PATH } from "@/features/cart/paths";
@@ -52,9 +55,9 @@ export function OrderView({ number }: { number: string }) {
 
   if (order.error instanceof ApiError && order.error.status === 404) {
     return (
-      <div className="grid justify-items-start gap-3">
-        <p>{t("detail.notFound")}</p>
+      <div className="grid gap-4">
         <BackToOrders />
+        <EmptyState icon={PackageIcon} description={t("detail.notFound")} />
       </div>
     );
   }
@@ -65,7 +68,7 @@ export function OrderView({ number }: { number: string }) {
     return (
       <div aria-busy="true" aria-label={t("detail.loading")} className="grid gap-4">
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-40 w-full rounded-xl" />
       </div>
     );
   }
@@ -83,7 +86,10 @@ function BackToOrders() {
   const t = useTranslations("Orders.detail");
   return (
     <Button asChild variant="ghost" size="sm" className="justify-self-start">
-      <Link href={ORDERS_PATH}>{t("back")}</Link>
+      <Link href={ORDERS_PATH}>
+        <ArrowLeftIcon aria-hidden="true" />
+        {t("back")}
+      </Link>
     </Button>
   );
 }
@@ -129,7 +135,7 @@ function OrderContent({
       <BackToOrders />
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="grid gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("title", { number: order.number })}</h1>
+          <PageHeading>{t("title", { number: order.number })}</PageHeading>
           <p className="text-sm text-muted-foreground">
             {t("date", { date: format.dateTime(new Date(order.created_at), { dateStyle: "long" }) })}
           </p>

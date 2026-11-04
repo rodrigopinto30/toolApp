@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { PageHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,7 +35,7 @@ export function AccountView() {
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">{t("title")}</h1>
+        <PageHeading>{t("title")}</PageHeading>
         <Button variant="outline" disabled={logout.isPending} onClick={() => logout.mutate()}>
           {t("logout")}
         </Button>

@@ -56,7 +56,12 @@ export function PayOrderForm({
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-labelledby={`${id}-title`} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      aria-labelledby={`${id}-title`}
+      className="grid gap-4 rounded-xl border border-l-4 border-l-brand bg-card p-4 shadow-xs sm:p-5"
+    >
       <h2 id={`${id}-title`} className="text-lg font-semibold">
         {t("title")}
       </h2>
@@ -66,7 +71,8 @@ export function PayOrderForm({
         pending={pay.isPending}
         pendingLabel={t("submitting")}
         disabled={cooldown.active}
-        className="justify-self-start"
+        size="lg"
+        className="w-full sm:w-auto sm:justify-self-start"
       >
         {t("submit", { total: formatMoney(order.total, locale) })}
       </SubmitButton>

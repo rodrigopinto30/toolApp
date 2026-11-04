@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { StepHeading } from "@/features/checkout/components/step-heading";
 import { useApplyCoupon } from "@/features/checkout/hooks";
 import type { CheckoutPreviewRequest } from "@/features/checkout/types";
 import { useErrorMessage } from "@/features/errors/use-error-message";
@@ -49,10 +50,10 @@ export function CouponSection({
   };
 
   return (
-    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
-      <h2 id={`${id}-title`} className="text-lg font-semibold">
+    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-xl border bg-card p-4 shadow-xs sm:p-5">
+      <StepHeading id={`${id}-title`} step={3}>
         {t("title")}
-      </h2>
+      </StepHeading>
       {coupon && (
         <div role="status" className="flex flex-wrap items-center gap-2 text-sm">
           <p>{t("applied", { code: coupon })}</p>

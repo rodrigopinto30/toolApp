@@ -7,6 +7,7 @@ import { RadioCard } from "@/components/form/radio-card";
 import { Button } from "@/components/ui/button";
 import { BillingProfileForm } from "@/features/account/components/billing-profile-form";
 import { useBillingProfiles } from "@/features/account/hooks";
+import { StepHeading } from "@/features/checkout/components/step-heading";
 
 const FINAL_CONSUMER = "final-consumer";
 
@@ -24,10 +25,10 @@ export function BillingSection({
   const [adding, setAdding] = useState(false);
 
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
-      <h2 id={headingId} className="text-lg font-semibold">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-xl border bg-card p-4 shadow-xs sm:p-5">
+      <StepHeading id={headingId} step={2}>
         {t("title")}
-      </h2>
+      </StepHeading>
       <fieldset className="grid gap-2">
         <legend className="mb-2 text-sm font-medium">{t("profile")}</legend>
         <RadioCard

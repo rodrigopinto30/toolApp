@@ -39,9 +39,9 @@ export function TotalsList({
         <dt>{t("shipping")}</dt>
         <dd className="tabular-nums">{freeShipping ? t("free") : formatMoney(shipping, locale)}</dd>
       </div>
-      <div className="flex justify-between gap-4 border-t pt-2 text-base font-semibold">
+      <div className="flex items-baseline justify-between gap-4 border-t pt-2 text-base font-semibold">
         <dt>{t("total")}</dt>
-        <dd aria-live="polite" className="tabular-nums">
+        <dd aria-live="polite" className="font-heading text-xl font-bold tabular-nums">
           {formatMoney(total, locale)}
         </dd>
       </div>

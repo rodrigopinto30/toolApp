@@ -63,7 +63,7 @@ export function CartLineItem({ line }: { line: CartLine }) {
           disabled={update.isPending || line.issue === "unavailable"}
           onValueChange={change}
         />
-        <p className="font-medium tabular-nums">{formatMoney(line.line_total, locale)}</p>
+        <p className="font-heading text-lg font-bold tabular-nums">{formatMoney(line.line_total, locale)}</p>
         <Button
           variant="ghost"
           size="sm"

@@ -1,10 +1,12 @@
 "use client";
 
+import { HeartIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Pagination } from "@/components/layout/pagination";
 import { Button } from "@/components/ui/button";
 import { FAVORITES_PATH } from "@/features/account/paths";
@@ -44,12 +46,15 @@ export function FavoritesView() {
   }
   if (favorites.data.total === 0) {
     return (
-      <div className="grid justify-items-center gap-3 rounded-lg border border-dashed px-4 py-12 text-center">
-        <p className="text-lg font-semibold">{t("empty.title")}</p>
-        <Button asChild variant="outline">
-          <Link href="/">{t("empty.cta")}</Link>
-        </Button>
-      </div>
+      <EmptyState
+        icon={HeartIcon}
+        title={t("empty.title")}
+        action={
+          <Button asChild size="lg">
+            <Link href="/">{t("empty.cta")}</Link>
+          </Button>
+        }
+      />
     );
   }
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { ReceiptTextIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AccountBook } from "@/features/account/components/account-book";
@@ -27,6 +28,7 @@ export function BillingBook() {
 
   return (
     <AccountBook
+      icon={ReceiptTextIcon}
       labels={{
         title: t("title"),
         add: t("add"),

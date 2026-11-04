@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeading } from "@/components/layout/page-heading";
 import { OrdersView } from "@/features/orders/components/orders-view";
 import type { Locale } from "@/i18n/routing";
 
@@ -17,7 +18,7 @@ export default async function OrdersPage({ params }: PageProps<"/[locale]/accoun
 
   return (
     <div className="grid gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <PageHeading>{t("title")}</PageHeading>
       <OrdersView />
     </div>
   );

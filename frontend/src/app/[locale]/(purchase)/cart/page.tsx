@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeading } from "@/components/layout/page-heading";
 import { CartView } from "@/features/cart/components/cart-view";
 import { getProvinces } from "@/features/catalog/api";
 import type { Locale } from "@/i18n/routing";
@@ -18,7 +19,7 @@ export default async function CartPage({ params }: PageProps<"/[locale]/cart">) 
 
   return (
     <div className="mx-auto grid w-full max-w-5xl flex-1 content-start gap-6 px-4 py-8">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <PageHeading>{t("title")}</PageHeading>
       <CartView provinces={provinces.map(({ code, name }) => ({ code, name }))} />
     </div>
   );

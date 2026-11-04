@@ -11,6 +11,7 @@ import { cartKeys } from "@/features/cart/hooks";
 import { CART_PATH } from "@/features/cart/paths";
 import { createAttemptKeys, keepsAttempt } from "@/features/checkout/attempt-keys";
 import { CardFields, cardPayment, clearCard } from "@/features/checkout/components/card-fields";
+import { StepHeading } from "@/features/checkout/components/step-heading";
 import { checkoutKeys, usePlaceOrder } from "@/features/checkout/hooks";
 import { failureOf, type Failure } from "@/features/checkout/outcome";
 import type { CheckoutPreviewRequest } from "@/features/checkout/types";
@@ -92,17 +93,23 @@ export function PaymentForm({
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-labelledby={`${id}-title`} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
-      <h2 id={`${id}-title`} className="text-lg font-semibold">
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      aria-labelledby={`${id}-title`}
+      className="grid gap-4 rounded-xl border bg-card p-4 shadow-xs sm:p-5"
+    >
+      <StepHeading id={`${id}-title`} step={4}>
         {t("payment.title")}
-      </h2>
+      </StepHeading>
       <FailureAlert failure={failure} errorMessage={errorMessage} />
       <CardFields form={form} idPrefix={id} />
       <SubmitButton
         pending={place.isPending}
         pendingLabel={t("payment.submitting")}
         disabled={!body || !total || cooldown.active}
-        className="justify-self-start"
+        size="lg"
+        className="w-full sm:w-auto sm:justify-self-start"
       >
         {total ? t("payment.submit", { total: formatMoney(total, locale) }) : t("payment.submitNoTotal")}
       </SubmitButton>

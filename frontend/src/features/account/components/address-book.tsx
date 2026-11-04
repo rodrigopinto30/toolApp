@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPinIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AccountBook } from "@/features/account/components/account-book";
@@ -27,6 +28,7 @@ export function AddressBook({ provinces }: { provinces: ProvinceOption[] }) {
 
   return (
     <AccountBook
+      icon={MapPinIcon}
       labels={{
         title: t("title"),
         add: t("add"),

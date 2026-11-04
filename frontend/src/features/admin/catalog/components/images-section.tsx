@@ -9,6 +9,7 @@ import { Controller, useForm, useFormState } from "react-hook-form";
 
 import { ConfirmAction } from "@/components/form/confirm-action";
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { SelectField } from "@/components/form/select-field";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/features/admin/catalog/components/image-upload";
@@ -111,7 +112,7 @@ export function ImagesSection({ product }: { product: AdminProduct }) {
       <ImageUpload label={t("upload")} upload={upload} disabled={images.length >= MAX_IMAGES} />
       <FormAlert message={failure ? errorMessage(failure) : undefined} />
       {images.length === 0 ? (
-        <p className="rounded-lg border border-dashed px-4 py-8 text-center text-muted-foreground">{t("empty")}</p>
+        <EmptyState description={t("empty")} className="py-8" />
       ) : (
         <ol className="grid gap-2">
           {images.map((image, index) => {

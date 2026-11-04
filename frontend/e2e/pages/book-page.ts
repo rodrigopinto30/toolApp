@@ -8,6 +8,9 @@ export type BillingDetails = { legalName: string; taxId: string; fiscalAddress: 
 abstract class BookPage extends AppPage {
   readonly sheet = this.page.getByRole("dialog");
   readonly dialog = this.page.getByRole("alertdialog");
+  readonly currentSection = this.main
+    .getByRole("navigation", { name: this.t.Account.nav.label })
+    .locator("[aria-current=page]");
   abstract readonly empty: Locator;
   abstract readonly addButton: Locator;
 
