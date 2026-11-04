@@ -33,8 +33,8 @@ export function LocaleSwitcher() {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" disabled={isPending} aria-label={t("label")}>
-          <LanguagesIcon aria-hidden="true" />
+        <Button variant="chrome" size="lg" disabled={isPending} aria-label={t("label")}>
+          <LanguagesIcon aria-hidden="true" className="hidden sm:block" />
           {locale.toUpperCase()}
         </Button>
       </DropdownMenuTrigger>

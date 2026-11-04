@@ -27,22 +27,22 @@ export function UserMenu() {
 
   if (!hasSession || me.isError) {
     return (
-      <Button asChild variant="outline" size="sm">
+      <Button asChild variant="chrome-outline" size="lg">
         <Link href="/login">{t("login")}</Link>
       </Button>
     );
   }
 
   if (!me.data) {
-    return <Skeleton className="h-8 w-24" aria-label={t("loading")} />;
+    return <Skeleton className="h-9 w-24 bg-chrome-foreground/15" aria-label={t("loading")} />;
   }
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label={t("label")}>
+        <Button variant="chrome-outline" size="lg" aria-label={t("label")}>
           <UserIcon aria-hidden="true" />
-          {me.data.first_name}
+          <span className="hidden max-w-32 truncate sm:inline">{me.data.first_name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

@@ -1,7 +1,11 @@
 import { formatMoney } from "../../src/lib/money";
 import { categoryTree, featuredProducts } from "../support/catalog";
 import { expect, test } from "../support/fixtures";
+import { messages } from "../support/i18n";
 import { BASE_URL } from "../support/stack";
+
+const t = messages.es;
+const PHONE_WIDTH = 375;
 
 test("the home page lists the categories and the featured products", async ({ homePage, request }) => {
   const [categories, featured] = await Promise.all([categoryTree(request), featuredProducts(request, "ARS")]);
@@ -45,6 +49,44 @@ test("the category menu links every category", async ({ page, homePage, request 
       `/es/categories/${category.slug}`,
     );
   }
+});
+
+test("the category bar links every top category, under the trust strip", async ({ page, homePage, request }) => {
+  const categories = await categoryTree(request);
+
+  await homePage.goto();
+
+  await expect(homePage.header.categoryBar.getByRole("link")).toHaveCount(categories.length);
+  for (const category of categories) {
+    await expect(homePage.header.categoryBar.getByRole("link", { name: category.name, exact: true })).toHaveAttribute(
+      "href",
+      `/es/categories/${category.slug}`,
+    );
+  }
+  for (const item of Object.values(t.TrustStrip)) {
+    await expect(page.getByRole("banner").getByText(item, { exact: true })).toBeVisible();
+  }
+});
+
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: PHONE_WIDTH, height: 812 } });
+
+  test("the header fits and the category bar scrolls on its own", async ({ page, homePage, request }) => {
+    const last = (await categoryTree(request)).at(-1);
+    if (!last) {
+      throw new Error("The seed needs categories");
+    }
+
+    await homePage.goto();
+    const link = homePage.header.categoryBar.getByRole("link", { name: last.name, exact: true });
+    await expect(homePage.header.searchBox).toBeVisible();
+    await expect(homePage.header.categoryMenu).toBeVisible();
+    await expect(link).not.toBeInViewport();
+
+    await link.focus();
+    await expect(link).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(PHONE_WIDTH);
+  });
 });
 
 test("the header search opens the search page", async ({ page, homePage }) => {
