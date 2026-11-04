@@ -30,6 +30,7 @@ const CARD = {
   price_varies: false,
   compare_at: null,
   stock_status: "in_stock" as const,
+  single_variant_id: null,
   rating_avg: "0.00",
   rating_count: 0,
 };

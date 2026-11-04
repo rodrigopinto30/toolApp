@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Fragment } from "react";
 
+import { SectionHeading } from "@/components/layout/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddToCart } from "@/features/cart/components/add-to-cart";
@@ -90,17 +90,23 @@ export default async function ProductPage({ params }: Props) {
           <ProductImage image={product.images[0] ?? product.image} sizes={IMAGE_SIZES} />
           <div className="flex flex-col gap-6">
             <header className="grid gap-2">
-              {product.brand && <p className="text-sm text-muted-foreground">{product.brand.name}</p>}
+              {product.brand && (
+                <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                  {product.brand.name}
+                </p>
+              )}
               <div className="flex items-start justify-between gap-3">
-                <h1 className="text-2xl font-semibold tracking-tight">{product.name}</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
                 <FavoriteButton slug={product.slug} name={product.name} className="shrink-0" />
               </div>
               <Rating average={product.rating_avg} count={product.rating_count} />
               <p className="text-muted-foreground">{product.short_description}</p>
             </header>
-            <VariantSummary variants={product.variants} />
-            {product.variants.length > 1 && <VariantSelector variants={product.variants} />}
-            <AddToCart variants={product.variants} />
+            <div className="grid gap-5 rounded-xl border bg-card p-4 shadow-xs sm:p-5">
+              <VariantSummary variants={product.variants} />
+              {product.variants.length > 1 && <VariantSelector variants={product.variants} />}
+              <AddToCart variants={product.variants} />
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle>
@@ -117,22 +123,18 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </div>
         <section aria-labelledby="product-description" className="grid gap-3">
-          <h2 id="product-description" className="text-lg font-semibold">
-            {t("description")}
-          </h2>
+          <SectionHeading id="product-description">{t("description")}</SectionHeading>
           <p className="max-w-3xl whitespace-pre-line text-muted-foreground">{product.description}</p>
         </section>
         {specs.length > 0 && (
           <section aria-labelledby="product-specs" className="grid gap-3">
-            <h2 id="product-specs" className="text-lg font-semibold">
-              {t("specs")}
-            </h2>
-            <dl className="grid max-w-3xl gap-x-6 gap-y-2 sm:grid-cols-[12rem_1fr]">
+            <SectionHeading id="product-specs">{t("specs")}</SectionHeading>
+            <dl className="max-w-3xl overflow-hidden rounded-xl border bg-card shadow-xs">
               {specs.map((spec) => (
-                <Fragment key={spec.name}>
+                <div key={spec.name} className="grid gap-x-6 gap-y-1 px-4 py-2.5 even:bg-muted sm:grid-cols-[12rem_1fr]">
                   <dt className="font-medium">{spec.name}</dt>
                   <dd className="text-muted-foreground">{spec.value}</dd>
-                </Fragment>
+                </div>
               ))}
             </dl>
           </section>

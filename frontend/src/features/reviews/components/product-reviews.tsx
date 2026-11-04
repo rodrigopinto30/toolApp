@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { SectionHeading } from "@/components/layout/section-heading";
 import { ReviewItem } from "@/features/reviews/components/review-item";
 import { ShowMore } from "@/features/reviews/components/show-more";
 import { useProductReviews } from "@/features/reviews/hooks";
@@ -14,9 +15,7 @@ export function ProductReviews({ slug, initial }: { slug: string; initial: Produ
 
   return (
     <section aria-labelledby="product-reviews" className="grid gap-3">
-      <h2 id="product-reviews" className="text-lg font-semibold">
-        {t("title")}
-      </h2>
+      <SectionHeading id="product-reviews">{t("title")}</SectionHeading>
       {items.length === 0 ? (
         <p className="text-muted-foreground">{t("empty")}</p>
       ) : (

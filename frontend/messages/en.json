@@ -55,7 +55,8 @@
     "title": "Tools for work",
     "subtitle": "Drills, grinders, wrenches and everything you need to work, priced in pesos or dollars with nationwide shipping.",
     "categories": "Categories",
-    "featured": "Featured"
+    "featured": "Featured",
+    "cta": "Shop {category}"
   },
   "Catalog": {
     "price": {
@@ -67,7 +68,20 @@
       "low_stock": "Last units",
       "out_of_stock": "Out of stock"
     },
-    "rating": "{average} out of 5, {count, plural, one {# review} other {# reviews}}"
+    "rating": "{average} out of 5, {count, plural, one {# review} other {# reviews}}",
+    "discount": "{percent} off",
+    "card": {
+      "options": "See options",
+      "view": "See product"
+    }
+  },
+  "QuickAdd": {
+    "add": "Add to cart",
+    "addShort": "Add",
+    "adding": "Adding…",
+    "added": "Added",
+    "addedStatus": "{name} was added to the cart.",
+    "error": "Could not add it to the cart."
   },
   "Breadcrumbs": {
     "label": "Breadcrumb",

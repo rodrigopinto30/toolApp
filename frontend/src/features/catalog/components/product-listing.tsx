@@ -52,7 +52,7 @@ export async function ProductListing({
   return (
     <ListingProvider>
       <div className="grid gap-6 lg:grid-cols-[15rem_1fr]">
-        <aside aria-label={t("filters")} className="hidden lg:block">
+        <aside aria-label={t("filters")} className="hidden self-start rounded-xl border bg-card p-4 shadow-xs lg:block">
           {filters}
         </aside>
         <div className="flex flex-col gap-4">
@@ -91,7 +91,7 @@ export async function ProductListing({
 export function ProductListingSkeleton() {
   return (
     <div aria-hidden="true" className="grid gap-6 lg:grid-cols-[15rem_1fr]">
-      <div className="hidden gap-3 lg:grid lg:content-start">
+      <div className="hidden gap-3 self-start rounded-xl border bg-card p-4 shadow-xs lg:grid">
         {Array.from({ length: 6 }, (_, index) => (
           <Skeleton key={index} className="h-5 w-3/4" />
         ))}

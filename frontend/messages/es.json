@@ -55,7 +55,8 @@
     "title": "Herramientas para trabajar",
     "subtitle": "Taladros, amoladoras, llaves y todo lo que necesitás para trabajar, con precios en pesos o dólares y envío a todo el país.",
     "categories": "Categorías",
-    "featured": "Destacados"
+    "featured": "Destacados",
+    "cta": "Ver {category}"
   },
   "Catalog": {
     "price": {
@@ -67,7 +68,20 @@
       "low_stock": "Últimas unidades",
       "out_of_stock": "Sin stock"
     },
-    "rating": "{average} de 5, {count, plural, one {# opinión} other {# opiniones}}"
+    "rating": "{average} de 5, {count, plural, one {# opinión} other {# opiniones}}",
+    "discount": "{percent} de descuento",
+    "card": {
+      "options": "Ver opciones",
+      "view": "Ver producto"
+    }
+  },
+  "QuickAdd": {
+    "add": "Agregar al carrito",
+    "addShort": "Agregar",
+    "adding": "Agregando…",
+    "added": "Agregado",
+    "addedStatus": "{name} se agregó al carrito.",
+    "error": "No se pudo agregar al carrito."
   },
   "Breadcrumbs": {
     "label": "Ruta de navegación",

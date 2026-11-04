@@ -2988,6 +2988,8 @@ export interface components {
             price_varies: boolean;
             compare_at: components["schemas"]["Money"] | null;
             stock_status: components["schemas"]["StockStatus"];
+            /** Single Variant Id */
+            single_variant_id: number | null;
             /** Rating Avg */
             rating_avg: string;
             /** Rating Count */
@@ -3023,6 +3025,8 @@ export interface components {
             price_varies: boolean;
             compare_at: components["schemas"]["Money"] | null;
             stock_status: components["schemas"]["StockStatus"];
+            /** Single Variant Id */
+            single_variant_id: number | null;
             /** Rating Avg */
             rating_avg: string;
             /** Rating Count */

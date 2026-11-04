@@ -8,11 +8,13 @@ export function Price({
   compareAt,
   varies = false,
   className,
+  amountClassName,
 }: {
   price: Money;
   compareAt?: Money | null;
   varies?: boolean;
   className?: string;
+  amountClassName?: string;
 }) {
   const t = useTranslations("Catalog.price");
   const locale = useLocale();
@@ -20,7 +22,7 @@ export function Price({
 
   return (
     <p className={cn("flex flex-wrap items-baseline gap-x-2", className)}>
-      <span className="font-semibold">{varies ? t("from", { price: amount }) : amount}</span>
+      <span className={cn("font-semibold", amountClassName)}>{varies ? t("from", { price: amount }) : amount}</span>
       {compareAt && (
         <s className="text-sm text-muted-foreground">
           <span className="sr-only">{t("before")} </span>
