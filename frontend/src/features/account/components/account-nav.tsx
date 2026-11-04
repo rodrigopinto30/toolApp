@@ -20,9 +20,9 @@ export function AccountNav() {
   ];
 
   return (
-    <nav aria-label={t("label")} className="flex flex-wrap gap-1 border-b pb-2">
+    <nav aria-label={t("label")} className="flex flex-wrap gap-1 rounded-xl border bg-card p-1.5 shadow-xs">
       {links.map(({ href, label, current }) => (
-        <Button key={href} asChild variant={current ? "secondary" : "ghost"} size="sm">
+        <Button key={href} asChild variant={current ? "selected" : "ghost"}>
           <Link href={href} aria-current={current ? "page" : undefined}>
             {label}
           </Link>

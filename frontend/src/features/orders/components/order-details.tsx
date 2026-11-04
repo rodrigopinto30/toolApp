@@ -6,6 +6,7 @@ import { useId } from "react";
 import { addressLine } from "@/features/account/address-line";
 import { PickupPointDetails } from "@/features/catalog/components/pickup-point-details";
 import { TotalsList } from "@/features/checkout/components/totals-list";
+import { StatusTimeline } from "@/features/orders/components/status-timeline";
 import type { Order } from "@/features/orders/types";
 import type { Locale } from "@/i18n/locales";
 import { formatMoney } from "@/lib/money";
@@ -13,7 +14,10 @@ import { formatMoney } from "@/lib/money";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const headingId = useId();
   return (
-    <section aria-labelledby={headingId} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
+    <section
+      aria-labelledby={headingId}
+      className="grid content-start gap-3 rounded-xl border bg-card p-4 shadow-xs sm:p-5"
+    >
       <h2 id={headingId} className="text-base font-semibold">
         {title}
       </h2>
@@ -102,17 +106,17 @@ export function OrderHistory({ order }: { order: Order }) {
   const format = useFormatter();
   return (
     <Section title={t("history.title")}>
-      <ol className="grid gap-2 text-sm">
-        {order.status_history.map((change) => (
-          <li key={`${change.to_status}-${change.created_at}`} className="grid gap-0.5">
+      <StatusTimeline items={order.status_history} itemKey={(change) => `${change.to_status}-${change.created_at}`}>
+        {(change) => (
+          <>
             <span className="font-medium">{t(`status.${change.to_status}`)}</span>
             <span className="text-muted-foreground">
               {format.dateTime(new Date(change.created_at), { dateStyle: "medium", timeStyle: "short" })}
               {isKnownNote(change.note) && ` · ${t(`history.notes.${change.note}`)}`}
             </span>
-          </li>
-        ))}
-      </ol>
+          </>
+        )}
+      </StatusTimeline>
     </Section>
   );
 }

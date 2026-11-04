@@ -19,6 +19,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/25 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        selected: "bg-primary text-primary-foreground hover:bg-primary/90",
         chrome:
           "text-chrome-foreground hover:bg-chrome-foreground/10 focus-visible:border-brand focus-visible:ring-brand/50 aria-expanded:bg-chrome-foreground/10",
         "chrome-outline":

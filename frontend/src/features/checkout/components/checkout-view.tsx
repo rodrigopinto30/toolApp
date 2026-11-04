@@ -1,9 +1,11 @@
 "use client";
 
+import { ShoppingCartIcon, TriangleAlertIcon, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VerificationBanner } from "@/features/account/components/verification-banner";
@@ -37,9 +39,12 @@ export function CheckoutView({
   }
   if (!me.data || isLoading) {
     return (
-      <div aria-busy="true" aria-label={t("loading")} className="grid gap-4">
-        <Skeleton className="h-40 w-full" />
-        <Skeleton className="h-40 w-full" />
+      <div aria-busy="true" aria-label={t("loading")} className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start">
+        <div className="grid gap-6">
+          <Skeleton className="h-56 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+        </div>
+        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     );
   }
@@ -52,22 +57,25 @@ export function CheckoutView({
     );
   }
   if (isEmpty || !cart) {
-    return <CartNotice message={error ? errorMessage(error) : t("emptyCart")} />;
+    return <CartNotice icon={ShoppingCartIcon} message={error ? errorMessage(error) : t("emptyCart")} />;
   }
   if (cart.has_issues) {
-    return <CartNotice message={t("cartIssues")} />;
+    return <CartNotice icon={TriangleAlertIcon} message={t("cartIssues")} />;
   }
   return <CheckoutForm provinces={provinces} pickupPoints={pickupPoints} onPlaced={() => setPlaced(true)} />;
 }
 
-function CartNotice({ message }: { message: string }) {
+function CartNotice({ icon, message }: { icon: LucideIcon; message: string }) {
   const t = useTranslations("Checkout");
   return (
-    <div className="grid justify-items-start gap-3">
-      <p>{message}</p>
-      <Button asChild variant="outline">
-        <Link href={CART_PATH}>{t("backToCart")}</Link>
-      </Button>
-    </div>
+    <EmptyState
+      icon={icon}
+      description={message}
+      action={
+        <Button asChild size="lg">
+          <Link href={CART_PATH}>{t("backToCart")}</Link>
+        </Button>
+      }
+    />
   );
 }

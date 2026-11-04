@@ -1,5 +1,8 @@
 import { AddressesPage, BillingPage } from "../pages/book-page";
 import { customerTest, expect } from "../support/fixtures";
+import { messages } from "../support/i18n";
+
+const t = messages.es;
 
 customerTest.use({ buyerName: "books" });
 
@@ -7,6 +10,7 @@ customerTest("a customer keeps a book of addresses", async ({ page }) => {
   const addresses = new AddressesPage(page);
   await addresses.goto();
   await expect(addresses.empty).toBeVisible();
+  await expect(addresses.currentSection).toHaveText(t.Account.nav.addresses);
 
   await customerTest.step("the first address becomes the default", async () => {
     await addresses.add({ label: "Casa", street: "Av. Corrientes" });
@@ -44,6 +48,7 @@ customerTest("a customer keeps a book of billing details", async ({ page }) => {
   const billing = new BillingPage(page);
   await billing.goto();
   await expect(billing.empty).toBeVisible();
+  await expect(billing.currentSection).toHaveText(t.Account.nav.billing);
 
   await billing.add({ legalName: "Ana Diaz", taxId: "20-32964233-0", fiscalAddress: "Av. Corrientes 1234" });
   await expect(billing.defaultBadge("Ana Diaz")).toBeVisible();

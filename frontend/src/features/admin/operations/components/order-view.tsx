@@ -5,6 +5,8 @@ import { useId, useState } from "react";
 
 import { ConfirmAction } from "@/components/form/confirm-action";
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
+import { PageHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,6 +23,7 @@ import {
   OrderPayments,
 } from "@/features/orders/components/order-details";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
+import { StatusTimeline } from "@/features/orders/components/status-timeline";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
 
@@ -64,7 +67,7 @@ function OrderActions({ order }: { order: AdminOrder }) {
     );
 
   return (
-    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
+    <section aria-labelledby={`${id}-title`} className="grid gap-3 rounded-xl border bg-card p-4 shadow-xs">
       <h2 id={`${id}-title`} className="text-base font-semibold">
         {t("actionsTitle")}
       </h2>
@@ -122,13 +125,13 @@ function History({ order }: { order: AdminOrder }) {
   const id = useId();
 
   return (
-    <section aria-labelledby={id} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
+    <section aria-labelledby={id} className="grid gap-3 rounded-xl border bg-card p-4 shadow-xs">
       <h2 id={id} className="text-base font-semibold">
         {to("history.title")}
       </h2>
-      <ol className="grid gap-2 text-sm">
-        {order.status_history.map((change) => (
-          <li key={`${change.to_status}-${change.created_at}`} className="grid gap-0.5">
+      <StatusTimeline items={order.status_history} itemKey={(change) => `${change.to_status}-${change.created_at}`}>
+        {(change) => (
+          <>
             <span className="font-medium">{to(`status.${change.to_status}`)}</span>
             <span className="text-muted-foreground">
               {format.dateTime(new Date(change.created_at), { dateStyle: "medium", timeStyle: "short" })}
@@ -140,9 +143,9 @@ function History({ order }: { order: AdminOrder }) {
                 {isKnownNote(change.note) ? to(`history.notes.${change.note}`) : change.note}
               </span>
             )}
-          </li>
-        ))}
-      </ol>
+          </>
+        )}
+      </StatusTimeline>
     </section>
   );
 }
@@ -152,7 +155,7 @@ function Customer({ order }: { order: AdminOrder }) {
   const id = useId();
 
   return (
-    <section aria-labelledby={id} className="grid gap-3 rounded-lg border bg-card p-4 shadow-xs">
+    <section aria-labelledby={id} className="grid gap-3 rounded-xl border bg-card p-4 shadow-xs">
       <h2 id={id} className="text-base font-semibold">
         {t("customer")}
       </h2>
@@ -177,7 +180,7 @@ export function OrderView({ number }: { number: string }) {
     return (
       <div className="grid gap-4">
         <BackLink />
-        <p className="rounded-lg border border-dashed px-4 py-12 text-center text-muted-foreground">{to("notFound")}</p>
+        <EmptyState description={to("notFound")} />
       </div>
     );
   }
@@ -198,7 +201,7 @@ export function OrderView({ number }: { number: string }) {
     <div className="grid gap-4">
       <BackLink />
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{to("title", { number: data.number })}</h1>
+        <PageHeading>{to("title", { number: data.number })}</PageHeading>
         <OrderStatusBadge status={data.status} />
       </header>
       <OrderActions order={data} />

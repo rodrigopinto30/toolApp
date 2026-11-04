@@ -1,3 +1,4 @@
+import { PageHeading } from "@/components/layout/page-heading";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AuthCard({
@@ -10,10 +11,10 @@ export function AuthCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="border-t-4 border-t-brand shadow-sm">
       <CardHeader>
         <CardTitle>
-          <h1 className="text-xl font-semibold">{title}</h1>
+          <PageHeading className="sm:text-2xl">{title}</PageHeading>
         </CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>

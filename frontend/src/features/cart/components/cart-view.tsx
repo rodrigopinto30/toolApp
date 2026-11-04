@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useId } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CartLineItem } from "@/features/cart/components/cart-line-item";
@@ -29,7 +30,7 @@ export function CartView({ provinces }: { provinces: ProvinceOption[] }) {
         <EmptyCart />
       ) : cart ? (
         <div className="grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start">
-          <section aria-label={t("lines")} aria-busy={isUpdating}>
+          <section aria-label={t("lines")} aria-busy={isUpdating} className="rounded-xl border bg-card px-4 shadow-xs">
             <ul className="divide-y">
               {cart.items.map((line) => (
                 <CartLineItem key={line.variant_id} line={line} />
@@ -59,8 +60,8 @@ function CartShipping({ cart, provinces }: { cart: Cart; provinces: ProvinceOpti
     return null;
   }
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
-      <h2 id={headingId} className="text-base font-semibold">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-xl border bg-card p-4 shadow-xs">
+      <h2 id={headingId} className="text-lg font-semibold">
         {t("shipping")}
       </h2>
       <ShippingQuote items={() => items} provinces={provinces} />
@@ -71,23 +72,28 @@ function CartShipping({ cart, provinces }: { cart: Cart; provinces: ProvinceOpti
 function EmptyCart() {
   const t = useTranslations("Cart.empty");
   return (
-    <div className="grid justify-items-center gap-3 rounded-lg border border-dashed px-4 py-12 text-center">
-      <ShoppingCartIcon aria-hidden="true" className="size-10 text-muted-foreground" />
-      <h2 className="text-lg font-semibold">{t("title")}</h2>
-      <p className="text-muted-foreground">{t("body")}</p>
-      <Button asChild variant="outline">
-        <Link href="/">{t("cta")}</Link>
-      </Button>
-    </div>
+    <EmptyState
+      icon={ShoppingCartIcon}
+      title={t("title")}
+      description={t("body")}
+      action={
+        <Button asChild size="lg">
+          <Link href="/">{t("cta")}</Link>
+        </Button>
+      }
+    />
   );
 }
 
 function CartSkeleton() {
   const t = useTranslations("Cart");
   return (
-    <div aria-busy="true" aria-label={t("loading")} className="grid gap-4">
-      <Skeleton className="h-24 w-full" />
-      <Skeleton className="h-24 w-full" />
+    <div aria-busy="true" aria-label={t("loading")} className="grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start">
+      <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-xs">
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+      <Skeleton className="h-48 w-full rounded-xl" />
     </div>
   );
 }

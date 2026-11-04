@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ConfirmAction } from "@/components/form/confirm-action";
 import { SubmitButton } from "@/components/form/submit-button";
 import { TextField } from "@/components/form/text-field";
+import { PageHeading } from "@/components/layout/page-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { UseFormRegisterReturn } from "react-hook-form";
@@ -12,7 +13,7 @@ import type { UseFormRegisterReturn } from "react-hook-form";
 export function ResourceHeader({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+      <PageHeading>{title}</PageHeading>
       {children}
     </div>
   );

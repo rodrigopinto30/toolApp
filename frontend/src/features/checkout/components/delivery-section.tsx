@@ -12,6 +12,7 @@ import { AddressForm } from "@/features/account/components/address-form";
 import { useAddresses } from "@/features/account/hooks";
 import { PickupPointDetails, type PickupPoint } from "@/features/catalog/components/pickup-point-details";
 import type { ProvinceOption } from "@/features/catalog/components/shipping-quote";
+import { StepHeading } from "@/features/checkout/components/step-heading";
 import type { DeliveryMethod } from "@/features/checkout/types";
 
 const METHODS = ["shipping", "pickup"] as const satisfies readonly DeliveryMethod[];
@@ -43,10 +44,10 @@ export function DeliverySection({
   const showForm = adding || (addresses.isSuccess && saved.length === 0);
 
   return (
-    <section aria-labelledby={headingId} className="grid gap-4 rounded-lg border bg-card p-4 shadow-xs">
-      <h2 id={headingId} className="text-lg font-semibold">
+    <section aria-labelledby={headingId} className="grid gap-4 rounded-xl border bg-card p-4 shadow-xs sm:p-5">
+      <StepHeading id={headingId} step={1}>
         {t("title")}
-      </h2>
+      </StepHeading>
       <fieldset className="grid gap-2">
         <legend className="mb-2 text-sm font-medium">{t("method")}</legend>
         <div className="flex flex-wrap gap-2">

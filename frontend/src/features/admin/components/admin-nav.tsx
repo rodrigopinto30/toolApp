@@ -49,7 +49,7 @@ function SectionLinks({ onNavigate }: { onNavigate?: () => void }) {
         const current = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <li key={href}>
-            <Button asChild variant={current ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
+            <Button asChild variant={current ? "selected" : "ghost"} className="w-full justify-start">
               <Link href={href} aria-current={current ? "page" : undefined} onClick={onNavigate}>
                 {t(label)}
               </Link>
@@ -67,7 +67,7 @@ export function AdminNav() {
 
   return (
     <>
-      <nav aria-label={t("label")} className="hidden lg:block">
+      <nav aria-label={t("label")} className="hidden self-start rounded-xl border bg-card p-2 shadow-xs lg:block">
         <SectionLinks />
       </nav>
       <div className="lg:hidden">

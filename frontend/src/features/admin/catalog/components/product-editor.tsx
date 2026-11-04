@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { ConfirmAction } from "@/components/form/confirm-action";
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImagesSection } from "@/features/admin/catalog/components/images-section";
@@ -57,7 +58,7 @@ export function ProductEditor({ id }: { id: number }) {
     return (
       <div className="grid gap-4">
         <BackLink />
-        <p className="rounded-lg border border-dashed px-4 py-12 text-center text-muted-foreground">{t("notFound")}</p>
+        <EmptyState description={t("notFound")} />
       </div>
     );
   }

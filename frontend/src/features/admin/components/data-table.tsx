@@ -6,6 +6,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect } from "react";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Pagination } from "@/components/layout/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -78,11 +79,11 @@ export function DataTable<Row>({
     );
   }
   if (query.data.total === 0) {
-    return <p className="rounded-lg border border-dashed px-4 py-12 text-center text-muted-foreground">{emptyLabel}</p>;
+    return <EmptyState description={emptyLabel} />;
   }
   return (
     <div className="grid min-w-0 grid-cols-1 gap-4">
-      <div className="min-w-0 rounded-lg border bg-card shadow-xs">
+      <div className="min-w-0 rounded-xl border bg-card shadow-xs">
         <Table aria-label={label}>
           <TableHeader>
             <TableRow>

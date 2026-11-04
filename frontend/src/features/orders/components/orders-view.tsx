@@ -1,9 +1,11 @@
 "use client";
 
+import { PackageIcon } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { parseAsInteger, useQueryState } from "nuqs";
 
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
 import { Pagination } from "@/components/layout/pagination";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,19 +35,22 @@ export function OrdersView() {
   if (!orders.data) {
     return (
       <div aria-busy="true" aria-label={t("loading")} className="grid gap-2">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full rounded-xl" />
+        <Skeleton className="h-16 w-full rounded-xl" />
       </div>
     );
   }
   if (orders.data.total === 0) {
     return (
-      <div className="grid justify-items-center gap-3 rounded-lg border border-dashed px-4 py-12 text-center">
-        <p className="text-lg font-semibold">{t("empty.title")}</p>
-        <Button asChild variant="outline">
-          <Link href="/">{t("empty.cta")}</Link>
-        </Button>
-      </div>
+      <EmptyState
+        icon={PackageIcon}
+        title={t("empty.title")}
+        action={
+          <Button asChild size="lg">
+            <Link href="/">{t("empty.cta")}</Link>
+          </Button>
+        }
+      />
     );
   }
   return (
@@ -74,7 +79,7 @@ function OrderRow({ order }: { order: OrderSummary }) {
     <li>
       <Link
         href={orderPath(order.number)}
-        className="grid gap-1 rounded-lg border bg-card p-3 shadow-xs transition-colors hover:bg-muted/50 sm:grid-cols-[1fr_auto] sm:items-center"
+        className="grid gap-2 rounded-xl border bg-card p-4 shadow-xs transition-colors hover:bg-muted/50 sm:grid-cols-[1fr_auto] sm:items-center"
       >
         <span className="grid gap-0.5">
           <span className="font-medium">{t("row", { number: order.number, date })}</span>
@@ -82,7 +87,7 @@ function OrderRow({ order }: { order: OrderSummary }) {
         </span>
         <span className="flex items-center gap-3 sm:justify-end">
           <OrderStatusBadge status={order.status} />
-          <span className="font-medium tabular-nums">{formatMoney(order.total, locale)}</span>
+          <span className="font-heading text-lg font-bold tabular-nums">{formatMoney(order.total, locale)}</span>
         </span>
       </Link>
     </li>

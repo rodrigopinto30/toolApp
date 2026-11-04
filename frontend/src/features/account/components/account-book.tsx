@@ -1,11 +1,14 @@
 "use client";
 
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
+import type { LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ConfirmAction } from "@/components/form/confirm-action";
 import { FormAlert } from "@/components/form/form-alert";
+import { EmptyState } from "@/components/layout/empty-state";
+import { PageHeading } from "@/components/layout/page-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +31,7 @@ type BookLabels = {
 };
 
 export function AccountBook<Item extends Entry>({
+  icon,
   labels,
   items,
   remove,
@@ -36,6 +40,7 @@ export function AccountBook<Item extends Entry>({
   details,
   form,
 }: {
+  icon: LucideIcon;
   labels: BookLabels;
   items: UseQueryResult<Item[]>;
   remove: UseMutationResult<unknown, Error, number>;
@@ -55,18 +60,18 @@ export function AccountBook<Item extends Entry>({
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">{labels.title}</h1>
+        <PageHeading>{labels.title}</PageHeading>
         <Button onClick={() => setEditing("new")}>{labels.add}</Button>
       </div>
       <FormAlert message={failure ? errorMessage(failure) : undefined} />
       {!items.data && !items.error && (
         <div aria-busy="true" aria-label={labels.loading} className="grid gap-3">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-xl" />
         </div>
       )}
       {items.data?.length === 0 && (
-        <p className="rounded-lg border border-dashed px-4 py-12 text-center text-muted-foreground">{labels.empty}</p>
+        <EmptyState icon={icon} description={labels.empty} />
       )}
       {items.data && items.data.length > 0 && (
         <ul className="grid gap-3">

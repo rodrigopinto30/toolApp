@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeading } from "@/components/layout/page-heading";
 import { ReviewsView } from "@/features/reviews/components/reviews-view";
 import type { Locale } from "@/i18n/routing";
 
@@ -17,7 +18,7 @@ export default async function ReviewsPage({ params }: PageProps<"/[locale]/accou
 
   return (
     <div className="grid gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <PageHeading>{t("title")}</PageHeading>
       <ReviewsView />
     </div>
   );

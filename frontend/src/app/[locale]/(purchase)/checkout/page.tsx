@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { PageHeading } from "@/components/layout/page-heading";
 import { getPickupPoints, getProvinces } from "@/features/catalog/api";
 import { CheckoutView } from "@/features/checkout/components/checkout-view";
 import { CHECKOUT_NAMESPACES, clientMessages } from "@/i18n/client-messages";
@@ -25,7 +26,7 @@ export default async function CheckoutPage({ params }: PageProps<"/[locale]/chec
   return (
     <NextIntlClientProvider messages={await clientMessages(CHECKOUT_NAMESPACES)}>
       <div className="mx-auto grid w-full max-w-5xl flex-1 content-start gap-6 px-4 py-8">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <PageHeading>{t("title")}</PageHeading>
         <CheckoutView provinces={provinces.map(({ code, name }) => ({ code, name }))} pickupPoints={pickupPoints} />
       </div>
     </NextIntlClientProvider>

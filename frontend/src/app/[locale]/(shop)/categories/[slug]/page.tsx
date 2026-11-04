@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 
+import { PageHeading } from "@/components/layout/page-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
 import { findCategory, getCategoryTree } from "@/features/catalog/api";
@@ -61,7 +62,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8">
       <Breadcrumbs trail={trail} current={category.name} />
       <header className="grid gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight uppercase">{category.name}</h1>
+        <PageHeading>{category.name}</PageHeading>
         {category.description && <p className="max-w-2xl text-muted-foreground">{category.description}</p>}
       </header>
       {children.length > 0 && (
