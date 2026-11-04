@@ -1,9 +1,11 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { CategoryBar } from "@/components/layout/category-bar";
 import { CategoryMenu, type CategoryLink } from "@/components/layout/category-menu";
 import { CurrencySwitcher } from "@/components/layout/currency-switcher";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { SearchBox } from "@/components/layout/search-box";
+import { TrustStrip } from "@/components/layout/trust-strip";
 import { UserMenu } from "@/components/layout/user-menu";
 import { CartLink } from "@/features/cart/components/cart-link";
 import { getCategoryTree } from "@/features/catalog/api";
@@ -28,20 +30,30 @@ export async function SiteHeader({ currency }: { currency: Currency }) {
   const categories = await categoryLinks();
 
   return (
-    <header className="border-b bg-card">
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-2 px-4 py-2 sm:flex-nowrap sm:gap-4">
-        <Link href="/" aria-label={t("home")} className="text-lg font-semibold tracking-tight">
-          ToolApp
-        </Link>
-        {categories.length > 0 && <CategoryMenu categories={categories} />}
-        <SearchBox className="order-last w-full sm:order-none sm:w-auto sm:flex-1" />
-        <div className="ml-auto flex items-center gap-1">
-          <CurrencySwitcher value={currency} />
-          <LocaleSwitcher />
-          <CartLink />
-          <UserMenu />
+    <header className="bg-chrome text-chrome-foreground">
+      <div className="border-b-4 border-brand">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-1 gap-y-3 px-4 py-3 lg:flex-nowrap lg:gap-4">
+          <Link
+            href="/"
+            aria-label={t("home")}
+            className="mr-auto rounded-sm font-heading text-xl font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-2xl"
+          >
+            ToolApp
+          </Link>
+          <div className="order-last flex w-full items-center gap-2 lg:order-none lg:flex-1">
+            {categories.length > 0 && <CategoryMenu categories={categories} />}
+            <SearchBox className="flex-1" />
+          </div>
+          <div className="flex items-center gap-1">
+            <CurrencySwitcher value={currency} />
+            <LocaleSwitcher />
+            <CartLink />
+            <UserMenu />
+          </div>
         </div>
       </div>
+      {categories.length > 0 && <CategoryBar categories={categories} />}
+      <TrustStrip />
     </header>
   );
 }

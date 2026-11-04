@@ -13,11 +13,11 @@ export function CartLink() {
   const count = useCartCount();
 
   return (
-    <Button asChild variant="ghost" size="sm">
+    <Button asChild variant="chrome-outline" size="lg">
       <Link href={CART_PATH} aria-label={count === undefined ? t("loading") : t("label", { count })}>
         <ShoppingCartIcon aria-hidden="true" />
         {count !== undefined && count > 0 && (
-          <span aria-hidden="true" className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground tabular-nums">
+          <span aria-hidden="true" className="rounded-full bg-brand px-1.5 text-xs font-semibold text-brand-foreground tabular-nums">
             {count}
           </span>
         )}

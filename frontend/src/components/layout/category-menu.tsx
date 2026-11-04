@@ -23,9 +23,9 @@ export function CategoryMenu({ categories }: { categories: CategoryLink[] }) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <MenuIcon aria-hidden="true" />
-          {t("label")}
+        <Button variant="chrome" size="lg" className="h-11">
+          <MenuIcon aria-hidden="true" className="size-5" />
+          <span className="sr-only sm:not-sr-only">{t("label")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">

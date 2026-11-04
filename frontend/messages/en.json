@@ -34,6 +34,14 @@
   "CategoryMenu": {
     "label": "Categories"
   },
+  "CategoryBar": {
+    "label": "Main categories"
+  },
+  "TrustStrip": {
+    "shipping": "Shipping nationwide",
+    "pickup": "Pickup at the store",
+    "currency": "Prices in pesos or dollars"
+  },
   "SearchBox": {
     "label": "Search products",
     "placeholder": "Search tools…",

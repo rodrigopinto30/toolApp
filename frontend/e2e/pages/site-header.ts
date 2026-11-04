@@ -9,6 +9,7 @@ export class SiteHeader {
   readonly currency: Locator;
   readonly language: Locator;
   readonly categoryMenu: Locator;
+  readonly categoryBar: Locator;
   readonly searchBox: Locator;
   readonly cartLink: Locator;
   private readonly page: Page;
@@ -23,6 +24,7 @@ export class SiteHeader {
     this.currency = banner.getByRole("button", { name: this.t.CurrencySwitcher.label });
     this.language = banner.getByRole("button", { name: this.t.LocaleSwitcher.label });
     this.categoryMenu = banner.getByRole("button", { name: this.t.CategoryMenu.label });
+    this.categoryBar = banner.getByRole("navigation", { name: this.t.CategoryBar.label });
     this.searchBox = banner.getByRole("searchbox", { name: this.t.SearchBox.label });
     this.cartLink = banner.getByRole("link", { name: new RegExp(`^${this.t.CartLink.loading}`) });
   }

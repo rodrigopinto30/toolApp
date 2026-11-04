@@ -16,6 +16,7 @@
   --color-chrome: var(--chrome);
   --color-chrome-foreground: var(--chrome-foreground);
   --color-chrome-muted: var(--chrome-muted);
+  --color-chrome-secondary: var(--chrome-secondary);
   --color-sale: var(--sale);
   --color-sale-foreground: var(--sale-foreground);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -81,6 +82,7 @@
   --chrome: oklch(0.238 0.006 258.4);
   --chrome-foreground: oklch(1 0 0);
   --chrome-muted: oklch(0.842 0.006 264.5);
+  --chrome-secondary: oklch(0.29 0.008 260);
   --sale: oklch(0.53 0.207 22.3);
   --sale-foreground: oklch(1 0 0);
   --chart-1: oklch(0.87 0 0);
@@ -124,6 +126,7 @@
     --chrome: oklch(0.173 0.004 264.5);
     --chrome-foreground: oklch(0.961 0.003 106.4);
     --chrome-muted: oklch(0.744 0.008 260.7);
+    --chrome-secondary: oklch(0.3 0.01 260.7);
     --sale: oklch(0.53 0.207 22.3);
     --sale-foreground: oklch(1 0 0);
     --chart-1: oklch(0.87 0 0);

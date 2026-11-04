@@ -34,6 +34,14 @@
   "CategoryMenu": {
     "label": "Categorías"
   },
+  "CategoryBar": {
+    "label": "Categorías principales"
+  },
+  "TrustStrip": {
+    "shipping": "Envío a todo el país",
+    "pickup": "Retiro en el local",
+    "currency": "Precios en pesos o dólares"
+  },
   "SearchBox": {
     "label": "Buscar productos",
     "placeholder": "Buscar herramientas…",

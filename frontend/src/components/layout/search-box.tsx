@@ -32,7 +32,7 @@ export function SearchBox({ className }: { className?: string }) {
       action={`/${locale}${SEARCH_PATH}`}
       method="get"
       onSubmit={search}
-      className={cn("flex items-center gap-1", className)}
+      className={cn("flex items-center", className)}
     >
       <Input
         ref={input}
@@ -45,9 +45,15 @@ export function SearchBox({ className }: { className?: string }) {
         maxLength={100}
         aria-label={t("label")}
         placeholder={t("placeholder")}
+        className="h-11 rounded-r-none border-2 border-r-0 border-brand focus-visible:border-brand focus-visible:ring-brand/50"
       />
-      <Button type="submit" variant="ghost" size="icon" aria-label={t("submit")}>
-        <SearchIcon aria-hidden="true" />
+      <Button
+        type="submit"
+        size="icon"
+        aria-label={t("submit")}
+        className="h-11 w-12 shrink-0 rounded-l-none focus-visible:border-brand focus-visible:ring-brand/50 focus-visible:ring-offset-chrome"
+      >
+        <SearchIcon aria-hidden="true" className="size-5" />
       </Button>
     </form>
   );
