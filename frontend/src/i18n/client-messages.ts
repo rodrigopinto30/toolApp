@@ -16,7 +16,7 @@ export const LAYOUT_NAMESPACES = [
   "Error",
 ] as const;
 export const FORM_NAMESPACES = [...LAYOUT_NAMESPACES, "Validation", "Errors"] as const;
-export const CARD_NAMESPACES = ["Favorites"] as const;
+export const CARD_NAMESPACES = ["Favorites", "QuickAdd"] as const;
 export const SHOP_NAMESPACES = ["Listing", ...CARD_NAMESPACES] as const;
 export const PURCHASE_NAMESPACES = ["Catalog", "Product", "Cart", "Validation", "Errors"] as const;
 export const PRODUCT_NAMESPACES = [...PURCHASE_NAMESPACES, ...CARD_NAMESPACES, "Reviews"] as const;

@@ -5,6 +5,7 @@ import { LoginPage } from "../pages/login-page";
 import { OrderPage } from "../pages/order-page";
 import { ProductPage } from "../pages/product-page";
 import { cartVariants, emptyServerCart, quoteCart, serverCart, setServerLine } from "../support/cart";
+import { featuredProducts } from "../support/catalog";
 import { customerTest, expect, test } from "../support/fixtures";
 import { messages } from "../support/i18n";
 import { cancelOpenOrders } from "../support/orders";
@@ -53,6 +54,33 @@ test("a guest adds a product, changes it in the cart and keeps it after a reload
     await cartPage.remove(plenty.product_name);
     await expect(cartPage.empty).toBeVisible();
   });
+});
+
+test("a guest adds a product with one variant from its card, and one with options opens its page", async ({
+  page,
+  request,
+  homePage,
+}) => {
+  const featured = await featuredProducts(request, "ARS");
+  const single = featured.find((card) => card.single_variant_id !== null && card.stock_status !== "out_of_stock");
+  const withOptions = featured.find((card) => card.single_variant_id === null);
+  if (!single || !withOptions) {
+    throw new Error("The seed needs featured products with one variant and with options");
+  }
+  const cartPage = new CartPage(page);
+
+  await homePage.goto();
+  const optionsCard = homePage.productCard(withOptions.name);
+  await expect(optionsCard.getByText(t.Catalog.card.options, { exact: true })).toBeVisible();
+  await expect(optionsCard.getByRole("button", { name: new RegExp(`^${t.QuickAdd.add}`) })).toHaveCount(0);
+
+  const card = homePage.productCard(single.name);
+  await card.getByRole("button", { name: `${t.QuickAdd.add}: ${single.name}` }).click();
+  await expect(card.getByRole("button", { name: `${t.QuickAdd.added}: ${single.name}` })).toBeVisible();
+  await expect(homePage.header.cartLink).toHaveAccessibleName(units(1));
+
+  await cartPage.goto();
+  await expect(cartPage.line(single.name)).toBeVisible();
 });
 
 test("a guest sees how many units are left and keeps them with one click", async ({ page, request }) => {

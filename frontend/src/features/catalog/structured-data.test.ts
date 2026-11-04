@@ -15,6 +15,7 @@ const PRODUCT: ProductDetail = {
   price_varies: true,
   compare_at: null,
   stock_status: "in_stock",
+  single_variant_id: null,
   rating_avg: "0.00",
   rating_count: 0,
   description: "Cinta métrica.",

@@ -6,8 +6,11 @@ export function CategoryList({ categories }: { categories: CategoryNode[] }) {
   return (
     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map(({ slug, name, description, children = [] }) => (
-        <li key={slug} className="flex flex-col gap-2 rounded-xl border bg-card p-4 shadow-xs">
-          <Link href={categoryPath(slug)} className="font-medium underline-offset-4 hover:underline">
+        <li key={slug} className="flex flex-col gap-2 rounded-xl border border-l-4 border-l-brand bg-card p-4 shadow-xs">
+          <Link
+            href={categoryPath(slug)}
+            className="font-heading text-lg font-semibold underline-offset-4 hover:underline"
+          >
             {name}
           </Link>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
