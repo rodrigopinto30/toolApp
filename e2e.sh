@@ -4,6 +4,7 @@ cd "$(dirname "$0")"
 
 COMPOSE=(docker compose -f docker-compose.yml -f docker-compose.dev.yml)
 BASE_URL="https://localhost:8443"
+CACHE_NAMESPACES=(catalog pricing shipping)
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 fail() { printf '\033[1;31mError:\033[0m %s\n' "$*" >&2; exit 1; }
 
@@ -23,6 +24,19 @@ reset_rate_limits() {
     for pattern in "auth:rate:*" "auth:lockout:*"; do
       redis-cli --scan --pattern "$pattern" | xargs -r redis-cli del >/dev/null
     done'
+}
+
+refresh_caches() {
+  "${COMPOSE[@]}" exec -T redis sh -c '
+    for namespace in "$@"; do
+      redis-cli incr "cache:$namespace:version" >/dev/null
+    done' sh "${CACHE_NAMESPACES[@]}" &&
+    "${COMPOSE[@]}" exec -T frontend node -e '
+      fetch("http://localhost:3000/api/revalidate", {
+        method: "POST",
+        headers: { authorization: `Bearer ${process.env.REVALIDATE_SECRET}`, "content-type": "application/json" },
+        body: JSON.stringify({ tags: process.argv.slice(1) }),
+      }).then((response) => process.exit(response.ok ? 0 : 1), () => process.exit(1))' "${CACHE_NAMESPACES[@]}"
 }
 
 run_sql() {
@@ -66,6 +80,7 @@ DELETE FROM pickup_points WHERE name LIKE 'E2E %';
 DELETE FROM users WHERE email LIKE 'e2e+%@example.com';
 SQL
   rm -rf frontend/e2e/.auth
+  refresh_caches || info "Could not refresh the API and page caches; they expire on their own."
 }
 
 warm_up_revalidation() {
